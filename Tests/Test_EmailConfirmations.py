@@ -3,7 +3,6 @@ from Pages.LoginPage import *
 from Pages.SettingsPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
-from Locators.DashboardLocators import *
 from Helpers.SMTPHelper import *
 
 @pytest.fixture(scope='class')
@@ -18,14 +17,13 @@ def data_fixture():
 @pytest.mark.usefixtures("driver", "data_fixture")
 class TestClass:
 
-
     def test_BasicUserEmailVerification(self, driver):
         loginPage = LoginPage(driver)
         settingsPage = SettingsPage(driver)
         email_agent = SMTPHelper()
 
         loginPage.input_basic_user_registration_data(NewBasicUser.email, NewBasicUser.password, NewBasicUser.password)
-        waitAndClick(driver, LoginPageLocators.termsCheckbox)
+        loginPage.wait_and_click(LoginPageLocators.termsCheckbox)
         loginPage.assert_signup_button_state("enabled")
         loginPage.wait_and_click(LoginPageLocators.signUpButton)
         loginPage.input_pincode_create(NewBasicUser.pincode)

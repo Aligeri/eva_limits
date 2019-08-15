@@ -4,7 +4,7 @@ from Pages.SecurityPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from Locators.SecurityLocators import *
-from Locators.DashboardLocators import *
+
 
 @pytest.fixture(scope='class')
 def data_fixture(driver):

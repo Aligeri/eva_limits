@@ -2,7 +2,7 @@ import pytest
 from Pages.LoginPage import *
 from Config.Users import *
 from Locators.DashboardLocators import DashboardLocators
-from Helpers.SQLHelper import *
+
 
 @pytest.fixture(scope='class')
 def data_fixture():

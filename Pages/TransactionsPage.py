@@ -25,10 +25,10 @@ class TransactionsPage(Page):
         self.wait_and_click(Send.withdraw)
 
     def check_first_transaction(self, currency, amount, comment):
-        transactionTitle = "-%s %s" % (amount, currency)
-        commentFormatted = 'Comment "%s"' % comment
-        self.wait_and_assert_element_text(Send.firstTransactionAmount, transactionTitle)
-        self.wait_and_assert_element_text(Send.firstTransactionComment, commentFormatted)
+        transaction_title = "-%s %s" % (amount, currency)
+        comment_formatted = 'Comment "%s"' % comment
+        self.wait_and_assert_element_text(Send.firstTransactionAmount, transaction_title)
+        self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
 
     def navigate_to_send(self):
         #TODO: дописать во все подобные методы проверку, что топ левел навигейшен кнопки выбраны или нет

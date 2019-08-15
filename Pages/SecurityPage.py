@@ -1,8 +1,6 @@
 from Pages.BasePage import Page
 from Locators.DashboardLocators import *
 from Locators.SecurityLocators import *
-import time
-from Config.Users import *
 
 
 class SecurityPage(Page):
@@ -46,11 +44,10 @@ class SecurityPage(Page):
         self.wait_and_click(LimitModal.perWeek)
         self.wait_and_click(LimitModal.setLimit)
         self.wait_and_click(LimitModal.set)
-        activeLimit = "%s %s / 24h" % (amount, currency)
-        self.wait_and_assert_element_text(LimitModal.activeLimit, activeLimit)
-        availableAmount = "%s %s" % (amount, currency)
-        self.wait_and_assert_element_text(LimitModal.availableAmount, availableAmount)
-
+        active_limit = "%s %s / 24h" % (amount, currency)
+        self.wait_and_assert_element_text(LimitModal.activeLimit, active_limit)
+        available_amount = "%s %s" % (amount, currency)
+        self.wait_and_assert_element_text(LimitModal.availableAmount, available_amount)
 
     def change_limit_after_creation(self, amount):
         self.wait_and_click(LimitModal.changeLimit)

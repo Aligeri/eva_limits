@@ -4,6 +4,7 @@ from Config.Users import *
 from Helpers.SQLHelper import *
 from Locators.DashboardLocators import *
 
+
 @pytest.fixture(scope='class')
 def data_fixture():
     sql = SQLHelper()
@@ -31,12 +32,12 @@ class TestClass:
         loginPage = LoginPage(driver)
         loginPage.input_basic_user_registration_data('test1@test.test', '1234')
         loginPage.assert_signup_button_state("disabled")
-        waitAndAssertElementText(driver, LoginPageLocators.incorrectPasswordTooltip, "Password must be at least 8 characters")
+        loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Password must be at least 8 characters")
 
     def test_BasicUserRegistration(self, driver):
         loginPage = LoginPage(driver)
         loginPage.input_basic_user_registration_data(NewBasicUser.email, NewBasicUser.password, NewBasicUser.password)
-        waitAndClick(driver, LoginPageLocators.termsCheckbox)
+        loginPage.wait_and_click(LoginPageLocators.termsCheckbox)
         loginPage.assert_signup_button_state("enabled")
         loginPage.wait_and_click(LoginPageLocators.signUpButton)
         loginPage.input_pincode_create(NewBasicUser.pincode)

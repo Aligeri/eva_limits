@@ -10,14 +10,14 @@ class SettingsPage(Page):
         self.wait_and_click(NavigationButtons.settings)
         time.sleep(2)
         self.wait_and_click(NavigationLinks.account)
-        currentEmail = self.get_element_attribute(Account.emailNotifications, "value")
-        assert email == currentEmail
+        current_email = self.get_element_attribute(Account.emailNotifications, "value")
+        assert email == current_email
         self.wait_and_assert_element_text(Account.dangerText, "Verify email")
 
     def check_email_is_verified(self, email):
         self.wait_and_click(NavigationButtons.settings)
         self.wait_and_click(NavigationLinks.account)
-        currentEmail = self.get_element_attribute(Account.emailNotifications, "value")
-        assert email == currentEmail
+        current_email = self.get_element_attribute(Account.emailNotifications, "value")
+        assert email == current_email
         self.wait_and_assert_element_text(Account.successText, "Email is verified.")
 

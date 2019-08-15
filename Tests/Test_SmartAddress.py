@@ -3,7 +3,7 @@ from Pages.LoginPage import *
 from Pages.DashboardPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
-from Locators.DashboardLocators import *
+
 
 @pytest.fixture(scope='class')
 def data_fixture():
@@ -11,6 +11,7 @@ def data_fixture():
     print("setup fixture")  # тут создаем дату
     yield print("data from fixture")  # тут магия (если нужны будут какие-то ресурсы)
     print("teardown")
+
 
 @pytest.fixture(scope="function", autouse=True)
 @pytest.mark.usefixtures("driver")
@@ -37,4 +38,4 @@ class TestClass:
         dashboardPage.select_wallet("Bitcoin")
         currentAddress = dashboardPage.get_current_deposit_address()
         dashboardPage.generate_new_deposit_address(currentAddress)
-        dashboardPage.checkPreviousAddressInList(currentAddress)
+        dashboardPage.check_previous_address_in_list(currentAddress)
