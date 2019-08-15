@@ -8,7 +8,9 @@ import os
 def driver(request, url):
     options = webdriver.ChromeOptions()
     #options.add_argument('--headless')
-    driver = webdriver.Chrome(executable_path=r"/home/user/Downloads/chromedriver", options=options)
+    filepath = os.path.abspath(os.path.dirname(__file__))
+    driverpath = os.path.join(filepath, "chromedriver")
+    driver = webdriver.Chrome(executable_path=driverpath, options=options)  # Временное решение, потом допилю подхват драйвера из PATH
     driver.set_window_size(1920, 1080)
     driver.implicitly_wait(10)
     driver.get(url)
