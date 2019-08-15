@@ -120,7 +120,6 @@ class LoginPage(Page):
         self.wait_and_input_text(Pincode.create3, pin_by_char[2])
         self.wait_and_input_text(Pincode.create4, pin_by_char[3])
 
-    # Метод для повтора пин-кода при его создании, принимает пин-код в виде "1234"
     def input_pincode_repeat(self, pincode):
         """
         Ввод пин-кода после регистрации в нижнее поле (повтор)
@@ -132,7 +131,6 @@ class LoginPage(Page):
         self.wait_and_input_text(Pincode.repeat3, pin_by_char[2])
         self.wait_and_input_text(Pincode.repeat4, pin_by_char[3])
 
-    # Метод для повтора пин-кода при его логине, принимает пин-код в виде "1234"
     def input_pincode_login(self, pincode):
         """
         Ввод пин-кода после логина или обновления страницы
