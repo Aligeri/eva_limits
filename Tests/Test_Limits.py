@@ -25,7 +25,7 @@ def login_as_basic_user(driver):
 @pytest.mark.usefixtures("driver", "data_fixture")
 class TestClass:
 
-    @pytest.mark.skip("вынес тесты в другой факл")
+    @pytest.mark.skip("вынес тесты в другой файл")
     def test_ChangePincode(self, driver, url):
         securityPage = SecurityPage(driver)
         loginPage = LoginPage(driver)

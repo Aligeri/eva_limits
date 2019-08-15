@@ -2,12 +2,12 @@ from selenium.webdriver.common.by import By
 
 
 class NavigationLinks:
-    password = (By.ID, "react-tabs-0")
-    emailConfirmation = (By.ID, "react-tabs-2")
-    twoFactorAuthentication = (By.ID, "react-tabs-4")
-    pincode = (By.ID, "react-tabs-6")
-    activeSessions = (By.ID, "react-tabs-8")
-    limits = (By.ID, "react-tabs-10")
+    password = (By.ID, "react-tabs-0")  # Вкладка password на странице Security
+    emailConfirmation = (By.ID, "react-tabs-2")  # Вкладка email confirmation на странице Security
+    twoFactorAuthentication = (By.ID, "react-tabs-4")  # Вкладка 2-factor authentication на странице Security
+    pincode = (By.ID, "react-tabs-6")  # Вкладка pin-code на странице Security
+    activeSessions = (By.ID, "react-tabs-8")  # Вкладка active sessions на странице Security
+    limits = (By.ID, "react-tabs-10")  # Вкладка limits на странице Security
 
 
 class SecurityPincode:

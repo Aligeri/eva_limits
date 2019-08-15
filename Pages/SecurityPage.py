@@ -9,6 +9,10 @@ class SecurityPage(Page):
         self.wait_and_click(NavigationLinks.pincode)
 
     def input_security_pincode_current(self, pincode):
+        """
+        Ввод текущего пин-кода при изменении пин-кода
+        :param pincode: пин-код вида string из 4 цифр
+        """
         pin_by_char = list(pincode)
         self.wait_and_input_text(SecurityPincode.current1, pin_by_char[0])
         self.wait_and_input_text(SecurityPincode.current2, pin_by_char[1])
@@ -16,6 +20,10 @@ class SecurityPage(Page):
         self.wait_and_input_text(SecurityPincode.current4, pin_by_char[3])
 
     def input_security_pincode_new(self, pincode):
+        """
+        Ввод нового пин-кода при изменении пин-кода
+        :param pincode: пин-код вида string из 4 цифр
+        """
         pin_by_char = list(pincode)
         self.wait_and_input_text(SecurityPincode.new1, pin_by_char[0])
         self.wait_and_input_text(SecurityPincode.new2, pin_by_char[1])
@@ -23,6 +31,10 @@ class SecurityPage(Page):
         self.wait_and_input_text(SecurityPincode.new4, pin_by_char[3])
 
     def input_security_pincode_repeat(self, pincode):
+        """
+        Повтор нового пин-кода при изменении пин-кода
+        :param pincode: пин-код вида string из 4 цифр
+        """
         pin_by_char = list(pincode)
         self.wait_and_input_text(SecurityPincode.repeat1, pin_by_char[0])
         self.wait_and_input_text(SecurityPincode.repeat2, pin_by_char[1])
@@ -30,10 +42,19 @@ class SecurityPage(Page):
         self.wait_and_input_text(SecurityPincode.repeat4, pin_by_char[3])
 
     def navigate_to_limits(self):
+        """
+        Переходит на страницу security > limits с дашборда
+        :return:
+        """
         self.wait_and_click(NavigationButtons.security)
         self.wait_and_click(NavigationLinks.limits)
 
     def create_new_weekly_limit(self, currency, amount):
+        """
+        Создает новый лимит на странице Security/Limits
+        :param currency: валюта на которую создается лимит, BTC/FWH/ARDR
+        :param amount: string с размером лимита
+        """
         WALLET = {
             "FWH": LimitWallets.fwt,
             "BTC": LimitWallets.btc,
@@ -50,6 +71,11 @@ class SecurityPage(Page):
         self.wait_and_assert_element_text(LimitModal.availableAmount, available_amount)
 
     def change_limit_after_creation(self, amount):
+        """
+        Меняет лимит сразу после создания (модалка лимита должна быть открыта)
+        Проверяет что показано оповещение что лимит будет изменен через 2 дня
+        :param amount: новый размер лимита
+        """
         self.wait_and_click(LimitModal.changeLimit)
         self.wait_and_input_text(LimitModal.amount, amount)
         self.wait_and_click(LimitModal.changeLimitConfirm)
@@ -57,6 +83,10 @@ class SecurityPage(Page):
         self.wait_and_assert_element_text(LimitModal.pendingChange, "Limit settings will be changed in in 2 days")
 
     def disable_limit_after_creation(self):
+        """
+        Отключает лимит сразу после создания
+        Проверяет что показано оповещение что лимит будет изменен через 2 дня
+        """
         self.wait_and_click(LimitModal.disableLimit)
         self.wait_and_click(LimitModal.disableLimitConfirm)
         self.wait_and_assert_element_text(LimitModal.pendingChange, "Limit settings will be changed in in 2 days")

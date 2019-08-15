@@ -12,6 +12,14 @@ WALLETFROM = {
 
 class TransactionsPage(Page):
     def send_transaction_to_user_id(self, currency, amount, userID, comment):
+        """
+        Отправляет трансфер другому пользователю
+        :param currency: кошелек с которого отправляется трансфер, BTC/ETH
+        :param amount: string с количеством отправляемой валюты
+        :param userID: User ID получателя трансфера, можно использовать email
+        :param comment: комментарий к транзакции
+        :return:
+        """
         self.wait_and_click(WALLETFROM[currency])
         self.wait_and_click(Send.userIdOrEmail)
         self.wait_and_click(Send.continueButton1)
@@ -25,12 +33,21 @@ class TransactionsPage(Page):
         self.wait_and_click(Send.withdraw)
 
     def check_first_transaction(self, currency, amount, comment):
+        """
+        Проверяет данные самой верхней транзакции в history
+        :param currency: валюта транзакции, BTC/ETH
+        :param amount: string с количеством валюты
+        :param comment: комментарий к транзакции
+        """
         transaction_title = "-%s %s" % (amount, currency)
         comment_formatted = 'Comment "%s"' % comment
         self.wait_and_assert_element_text(Send.firstTransactionAmount, transaction_title)
         self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
 
     def navigate_to_send(self):
+        """
+        Переходит на страницу send с dashboard
+        """
         #TODO: дописать во все подобные методы проверку, что топ левел навигейшен кнопки выбраны или нет
         self.wait_and_click(WalletActionsButtons.send)
 

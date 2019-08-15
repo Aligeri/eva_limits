@@ -10,13 +10,27 @@ class Page(object):
         # self.url = url
 
     def get_current_url(self):
+        """
+        Возвращает текущий URL
+        :return: string с текущим URL
+        """
         return self.driver.current_url()
 
     def wait_to_be_clickable(self, element_locator, timeout=3):
+        """
+        Поиск и ожидание доступности клика по элементу
+        :param element_locator: локатор элемента из Locators/*
+        :param timeout: таймаут, по дефолту 3 секунды
+        """
         element = WebDriverWait(self.driver, timeout).until(
             EC.element_to_be_clickable(element_locator))
 
     def wait_and_input_text(self, element_locator, value):
+        """
+        Ввод текстовых данных в поле
+        :param element_locator: локатор элемента из Locators/*
+        :param value: string с данными
+        """
         retries_left = 2
         while retries_left > 0:
             try:
@@ -34,6 +48,10 @@ class Page(object):
             EC.visibility_of_element_located(element_locator))
 
     def wait_and_click(self, element_locator):
+        """
+        Ожидает элемент и кликает по нему
+        :param element_locator: локатор элемента из Locators/*
+        """
         retries_left = 2
         while retries_left > 0:
             try:
@@ -45,6 +63,11 @@ class Page(object):
         raise WebDriverException("Element is not clickable or not present on page")
 
     def wait_and_assert_element_text(self, element_locator, value):
+        """
+        Ожидает элемент и сравнивает его текст со значением
+        :param element_locator: локатор элемента из Locators/*
+        :param value: Значение с которым сравнивается текст элемента
+        """
         retries_left = 2
         while retries_left > 0:
             try:
@@ -58,10 +81,20 @@ class Page(object):
         raise WebDriverException("Element is not found or text is not found")
 
     def get_element_attribute(self, element_locator, attribute):
+        """
+        Возвращает значение атрибута элемента
+        :param element_locator: локатор элемента из Locators/*
+        :param attribute: название атрибута ("disabled", "text()")
+        :return: значение атрибута (string, boolean или None)
+        """
         value = self.driver.find_element(*element_locator).get_attribute(attribute)
         return value
 
     def assert_element_text_is_not_empty(self, element_locator):
+        """
+        Проверка того что в элементе есть какой-либо текст и он не пустая строка
+        :param element_locator: локатор элемента из Locators/*
+        """
         retries_left = 2
         while retries_left > 0:
             try:
@@ -74,6 +107,11 @@ class Page(object):
         raise WebDriverException("Element is not found or text is empty")
 
     def assert_element_text_is_not_equal(self, element_locator, value):
+        """
+        Проверка что текст в элементе НЕ равен значению
+        :param element_locator: локатор элемента из Locators/*
+        :param value: значение которому должен быть НЕ равен текст в элементе
+        """
         retries_left = 2
         while retries_left > 0:
             try:
@@ -86,10 +124,18 @@ class Page(object):
         raise WebDriverException("Element is not found or text equal to value")
 
     def navigate_to_link(self, link):
+        """
+        Переход по ссылке со страницы и возвращение на эту страницу
+        Используется для всяких verification link из писем
+        :param link: ссылка по которой надо перейти
+        """
         print(link)
         current_url = self.driver.current_url
         self.driver.get(link)
         self.driver.get(current_url)
 
     def refresh_page(self):
+        """
+        Перезагружает текущую страницу (учитывайте что после нужно вводить пин-код)
+        """
         self.driver.refresh()
