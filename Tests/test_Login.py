@@ -2,16 +2,17 @@ import pytest
 from Pages.LoginPage import *
 from Config.Users import *
 from Locators.DashboardLocators import DashboardLocators
+from selenium.common.exceptions import WebDriverException
+
+@pytest.fixture(scope='function', autouse=True)
+@pytest.mark.usefixtures("driver")
+def data_logout(driver):
+    loginPage = LoginPage(driver)
+    loginPage.reset_session()
+    yield
 
 
-@pytest.fixture(scope='class')
-def data_fixture():
-    print("setup fixture")  # тут создаем дату
-    yield print("data from fixture")  # тут магия (если нужны будут какие-то ресурсы)
-    print("teardown fixture")  # тут удаляем дату
-
-
-@pytest.mark.usefixtures("driver", "data_fixture")
+@pytest.mark.usefixtures("driver", "data_logout")
 class TestClass:
 
     def test_IncorrectPasswordLogin(self, driver):
@@ -26,6 +27,7 @@ class TestClass:
         loginPage.wait_until_element_visible(DashboardLocators.logout)
         loginPage.wait_and_assert_element_text(DashboardLocators.userName, ExistingBasicUser.userName)
 
+    @pytest.mark.google
     def test_LoginAsGoogleUser(self, driver):
         loginPage = LoginPage(driver)
         loginPage.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password)
@@ -33,6 +35,8 @@ class TestClass:
         loginPage.wait_until_element_visible(DashboardLocators.logout)
         loginPage.wait_and_assert_element_text(DashboardLocators.userName, ExistingGoogleUser.userName)
 
+
+    @pytest.mark.skip("Фейсбук блочит юзеров")
     def test_LoginAsFacebookUser(self, driver):
         loginPage = LoginPage(driver)
         loginPage.login_as_facebook_user(ExistingFacebookUser.email, ExistingFacebookUser.password)

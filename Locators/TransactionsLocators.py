@@ -16,3 +16,5 @@ class Send:
     firstTransaction = (By.XPATH, "//a[@class='item__wrapper--2HY-h']")
     firstTransactionAmount = (By.XPATH, "//a[@class='item__wrapper--2HY-h'][1]//div[contains(@class, 'item__committed--24hSZ item__amount--3WcgV')]")
     firstTransactionComment = (By.XPATH, "//a[@class='item__wrapper--2HY-h'][1]//div[contains(@class, 'item__address--V6FmR')]")
+
+    notVerifiedEmailModalMessage = (By.XPATH, "//div[contains(@class, 'pp__title--2cHYp pp__is-danger--3J_1v')]")

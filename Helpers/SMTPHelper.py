@@ -10,7 +10,7 @@ class SMTPHelper():
         self.__smtp_ssl_host ='smtp.gmail.com'
         self.__smtp_ssl_port = 465
 
-    def __getEmailFromGmail(self, address, password, email_from):
+    def __getEmailFromGmail(self, address, password, email_from, email_subject):
         mail = imaplib.IMAP4_SSL('imap.gmail.com', "993")
         retries_left = 10
         mail.login(address, password)
@@ -25,7 +25,7 @@ class SMTPHelper():
                 if data[0] == b'':
                     time.sleep(3)
                     mail.select('"INBOX"')
-                    search = ("(FROM '%s')" % email_from)
+                    search = ("(FROM '%s' SUBJECT '%s')" % (email_from, email_subject))
                     result, data = mail.search(None, search)
                     ids = data[0]
                     id_list = ids.split()
@@ -43,21 +43,21 @@ class SMTPHelper():
         raw_email = data[0][1]
         return raw_email
 
-    def __getEmailAsString(self, address, password, email_from):
-        raw_email = self.__getEmailFromGmail(address, password, email_from)
+    def __getEmailAsString(self, address, password, email_from, email_subject=''):
+        raw_email = self.__getEmailFromGmail(address, password, email_from, email_subject)
         msg = email.message_from_bytes(raw_email)
         msgtext = msg.as_string()
         email_string = re.sub('=\n', '', msgtext)
         return email_string
 
-    def getMultisigLinkFromEmail(self, address, password, email_from):
-        email_string = self.__getEmailAsString(address, password, email_from)
+    def get_multisig_link_from_email(self, address, password, email_from, email_subject=''):
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
         pattern = "https:\/\/\w*?\.?freewallet\.org\/multisig\/email\/\w*"
         multisig_link = re.search(pattern, email_string).group(0)
         return multisig_link
 
-    def get_verification_link_from_email(self, address, password, email_from):
-        email_string = self.__getEmailAsString(address, password, email_from)
+    def get_verification_link_from_email(self, address, password, email_from, email_subject=''):
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
         pattern = "(https:\/\/\w*?\.?freewallet\.org\/email-validate\/.*?)]"
         verification_link = re.search(pattern, email_string).group(1)
         fixed_link = re.sub("(=3D=3D)", "==", verification_link)

@@ -1,20 +1,24 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.common.by import By
 import time
-
+import conftest
 
 class Page(object):
     def __init__(self, driver):
         self.driver = driver
-        # self.url = url
+        self.url = conftest.url
+
+    def get_base_url(self):
+        self.driver.get(self.url)
 
     def get_current_url(self):
         """
         Возвращает текущий URL
         :return: string с текущим URL
         """
-        return self.driver.current_url()
+        return self.driver.current_url
 
     def wait_to_be_clickable(self, element_locator, timeout=3):
         """
@@ -43,6 +47,15 @@ class Page(object):
                 retries_left -= 1
         raise WebDriverException("Error occurred during text input")
 
+    def get_element(self, element_locator, timeout=1):
+        try:
+            element = WebDriverWait(self.driver, timeout).until(
+            EC.visibility_of_element_located(element_locator))
+            return True
+        except:
+            return False
+
+
     def wait_until_element_visible(self, element_locator, timeout=3):
         element = WebDriverWait(self.driver, timeout).until(
             EC.visibility_of_element_located(element_locator))
@@ -68,7 +81,7 @@ class Page(object):
         :param element_locator: локатор элемента из Locators/*
         :param value: Значение с которым сравнивается текст элемента
         """
-        retries_left = 2
+        retries_left = 4
         while retries_left > 0:
             try:
                 text = self.driver.find_element(*element_locator).text
@@ -134,8 +147,17 @@ class Page(object):
         self.driver.get(link)
         self.driver.get(current_url)
 
+    def reset_session(self):
+        self.driver.execute_script("window.localStorage.clear();")
+        self.driver.execute_script("window.sessionStorage.clear();")
+        self.get_base_url()
+
     def refresh_page(self):
         """
         Перезагружает текущую страницу (учитывайте что после нужно вводить пин-код)
         """
         self.driver.refresh()
+
+    def assert_element_attirbute_value(self, element_locator, attribute, value):
+        attribute_value = self.get_element_attribute(element_locator, attribute)
+        assert attribute_value == value

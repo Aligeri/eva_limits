@@ -2,6 +2,7 @@ import pytest
 from Helpers.SMTPHelper import *
 from Config.Users import *
 from Helpers.SQLHelper import *
+from Pages.BasePage import Page
 
 
 # Это тестовый файл, тут я всякие коннекшены к SQL и SMTP отрабатываю, чтобы ненароком всю базу не снести,
@@ -24,3 +25,8 @@ class TestClass():
         helper = SQLHelper()
         a = helper.delete_limits_by_email_from_database(ExistingBasicUser.email)
         print(a)
+
+    @pytest.mark.usefixtures("driver")
+    def test_lul(self, driver):
+        page = Page(driver)
+        page.find()

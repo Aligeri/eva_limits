@@ -2,10 +2,10 @@ from selenium.webdriver.common.by import By
 
 
 class NavigationLinks:
-    userDetails = (By.ID, "react-tabs-0")
-    account = (By.ID, "react-tabs-2")
-    importWallet = (By.ID, "react-tabs-4")
-    exportWallet = (By.ID, "react-tabs-6")
+    userDetails = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='User details']")
+    account = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='Account']")
+    importWallet = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='Import wallet']")
+    exportWallet = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='Export wallet']")
 
 class Account:
     emailNotifications = (By.XPATH, "//input[contains(@class, 'settings__input--oMx6t styles__input--2cyn3')]")

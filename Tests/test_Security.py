@@ -18,8 +18,12 @@ def data_fixture():
 @pytest.mark.usefixtures("driver")
 def loginAsBasicUser(driver):
     loginPage = LoginPage(driver)
+    sql = SQLHelper()
+    loginPage.reset_session()
     loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
+    yield
+    sql.delete_limits_by_email_from_database(ExistingBasicUser.email)
 
 
 @pytest.mark.usefixtures("driver", "data_fixture")

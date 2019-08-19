@@ -40,6 +40,13 @@ class SQLHelper():
         cursor.execute("DELETE FROM public.user_social WHERE email = (%s)", (email,))  # удаляем юзера из user_social
         connection.commit()  # коммитим изменения в БД, взяв коннекшен из внутреннего метода (постгрес такой постгрес)
 
+    def delete_multisig_emails(self, email):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("DELETE FROM public.user_multisig_pending_emails WHERE user_id = (%s)", (user_id,))
+        cursor.execute("DELETE FROM public.user_multisig_emails WHERE user_id = (%s)", (user_id,))
+
+
     def get_limits_by_email_from_database(self, email):
         """
         Получает лимиты по всем кошелькам по email юзера

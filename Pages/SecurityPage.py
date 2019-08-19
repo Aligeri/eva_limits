@@ -1,6 +1,7 @@
 from Pages.BasePage import Page
 from Locators.DashboardLocators import *
 from Locators.SecurityLocators import *
+import time
 
 
 class SecurityPage(Page):
@@ -84,9 +85,28 @@ class SecurityPage(Page):
 
     def disable_limit_after_creation(self):
         """
-        Отключает лимит сразу после создания
+        Отключает лимит сразу после создания (модалка лимита должна быть открыта)
         Проверяет что показано оповещение что лимит будет изменен через 2 дня
         """
         self.wait_and_click(LimitModal.disableLimit)
         self.wait_and_click(LimitModal.disableLimitConfirm)
         self.wait_and_assert_element_text(LimitModal.pendingChange, "Limit settings will be changed in in 2 days")
+
+    def navigate_to_email_confirmation(self):
+        self.wait_and_click(NavigationButtons.security)
+        self.wait_and_click(NavigationLinks.emailConfirmation)
+
+    def add_multisig_address(self, email):
+        self.assert_element_attirbute_value(Multisig.continueButton, "disabled", "true")
+        self.wait_and_input_text(Multisig.email1, email)
+        #time.sleep(1)
+        #self.wait_until_element_visible(Multisig.tooltip)
+        self.wait_and_click(Multisig.gotIt)
+        self.wait_and_click(Multisig.continueButton)
+
+    def discard_multisig_address(self):
+        self.wait_until_element_visible(Multisig.disclaimer)
+        self.wait_and_click(Multisig.disclaimerDiscard)
+        self.assert_element_attirbute_value(Multisig.email1, "value", "")
+
+

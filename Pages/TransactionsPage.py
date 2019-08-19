@@ -39,8 +39,10 @@ class TransactionsPage(Page):
         :param amount: string с количеством валюты
         :param comment: комментарий к транзакции
         """
-        transaction_title = "-%s %s" % (amount, currency)
+        transaction_title = "–%s %s" % (amount, currency)
         comment_formatted = 'Comment "%s"' % comment
+        self.navigate_to_send()
+        self.navigate_to_send()
         self.wait_and_assert_element_text(Send.firstTransactionAmount, transaction_title)
         self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
 
@@ -50,4 +52,14 @@ class TransactionsPage(Page):
         """
         #TODO: дописать во все подобные методы проверку, что топ левел навигейшен кнопки выбраны или нет
         self.wait_and_click(WalletActionsButtons.send)
+
+    def navigate_to_history(self):
+        """
+        Переходит на страницу send с dashboard
+        """
+        #TODO: дописать во все подобные методы проверку, что топ левел навигейшен кнопки выбраны или нет
+        self.wait_and_click(WalletActionsButtons.history)
+
+    def check_not_verified_email_modal(self):
+        self.wait_and_assert_element_text(Send.notVerifiedEmailModalMessage, "Email address is not verified")
 

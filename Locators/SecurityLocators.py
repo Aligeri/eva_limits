@@ -2,12 +2,12 @@ from selenium.webdriver.common.by import By
 
 
 class NavigationLinks:
-    password = (By.ID, "react-tabs-0")  # Вкладка password на странице Security
-    emailConfirmation = (By.ID, "react-tabs-2")  # Вкладка email confirmation на странице Security
-    twoFactorAuthentication = (By.ID, "react-tabs-4")  # Вкладка 2-factor authentication на странице Security
-    pincode = (By.ID, "react-tabs-6")  # Вкладка pin-code на странице Security
-    activeSessions = (By.ID, "react-tabs-8")  # Вкладка active sessions на странице Security
-    limits = (By.ID, "react-tabs-10")  # Вкладка limits на странице Security
+    password = (By.XPATH, "//li[contains(@class, 'security__tab--3spdg') and text()='Password']")  # Вкладка password на странице Security
+    emailConfirmation = (By.XPATH, "//li[contains(@class, 'security__tab--3spdg') and text()='Email confirmation']")  # Вкладка email confirmation на странице Security
+    twoFactorAuthentication = (By.XPATH, "//li[contains(@class, 'security__tab--3spdg') and text()='2-factor authentication']")  # Вкладка 2-factor authentication на странице Security
+    pincode = (By.XPATH, "//li[contains(@class, 'security__tab--3spdg') and text()='PIN code']")  # Вкладка pin-code на странице Security
+    activeSessions = (By.XPATH, "//li[contains(@class, 'security__tab--3spdg') and text()='Active sessions']")  # Вкладка active sessions на странице Security
+    limits = (By.XPATH, "//li[contains(@class, 'security__tab--3spdg') and text()='Limits']")  # Вкладка limits на странице Security
 
 
 class SecurityPincode:
@@ -55,3 +55,11 @@ class LimitModal:
     disableLimit = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Disable']")
     disableLimitConfirm = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 button__type-inline--3PR1T') and text()='Disable']")
     changeLimitConfirm = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Change']")
+
+class Multisig:
+    email1 = (By.XPATH, "//input[contains(@class, 'input__input--1lDmD tab-multisig__input--1ITcj')][1]")
+    tooltip = (By.XPATH, "//div[contains(@class, 'simple-tooltip__tooltip--umHW1 simple-tooltip__error--1zX2v simple-tooltip__visible--2BGlS tab-multisig__tooltip--2gsKq')]")
+    gotIt = (By.XPATH, "//a[contains(@class, 'tab-multisig__tooltipAction---Ts24')]")
+    continueButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 tab-multisig__saveButton--128q7')]")
+    disclaimer = (By.XPATH, "//div[contains(@class, 'tab-multisig__disclaimerWithChild--2DkfO')]")
+    disclaimerDiscard = (By.XPATH, "//a[contains(@class, 'tab-multisig__disclaimerCancelPending--2a7Ip')]")

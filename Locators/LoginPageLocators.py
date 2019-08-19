@@ -28,9 +28,12 @@ class LoginPageLocators:
     googleEmailSubmit = (By.ID, "identifierNext")  # Кнопка подтверждения емейла в поп-апе гугла
     googlePassword = (By.NAME, "password")  # Поле пароля в поп-апе гугла
     googlePasswordSubmit = (By.ID, "passwordNext")  # Кнопка подтверждения пароля в поп-апе гугла
+    googleChangeAddress = (By.CLASS_NAME, "BHzsHc")
 
     mobile = (By.ID, "mobile-login")  # Кнопка mobile на страницах авторизации и регистрации
 
+    logoutLink = (By.XPATH, "//a[contains(@class, 'header__logoutLink--uc90u header__link--1ckAu')]")
+    logoutButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Logout']")
 
 class Pincode:  # трешачина с фиксед позициями в xpath потому что нет айдишников
     create1 = (By.XPATH, "//h2[text()='Create 4-digit PIN code']/following-sibling::div[1]//input[1]")

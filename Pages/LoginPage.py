@@ -1,5 +1,6 @@
 from Pages.BasePage import Page
 from Locators.LoginPageLocators import *
+from selenium.common.exceptions import WebDriverException
 
 
 class LoginPage(Page):
@@ -23,16 +24,27 @@ class LoginPage(Page):
         """
         main_page = self.driver.current_window_handle
         google_popup = None
-        self.wait_and_click(LoginPageLocators.google)
-        while google_popup is None:
-            for handle in self.driver.window_handles:
-                if handle != main_page:
-                    google_popup = handle
-        self.driver.switch_to.window(google_popup)
-        self.wait_and_input_text(LoginPageLocators.googleEmail, google_email)
-        self.wait_and_click(LoginPageLocators.googleEmailSubmit)
-        self.wait_and_input_text(LoginPageLocators.googlePassword, google_password)
-        self.wait_and_click(LoginPageLocators.googlePasswordSubmit)
+        try:
+            self.wait_and_click(LoginPageLocators.google)
+            while google_popup is None:
+                for handle in self.driver.window_handles:
+                    if handle != main_page:
+                        google_popup = handle
+            self.driver.switch_to.window(google_popup)
+            if self.get_element(LoginPageLocators.googleEmail, 1) == True:
+                self.wait_and_input_text(LoginPageLocators.googleEmail, google_email)
+                self.wait_and_click(LoginPageLocators.googleEmailSubmit)
+                self.wait_and_input_text(LoginPageLocators.googlePassword, google_password)
+                self.wait_and_click(LoginPageLocators.googlePasswordSubmit)
+            else:
+                self.wait_and_click(LoginPageLocators.googleChangeAddress)
+                self.wait_and_input_text(LoginPageLocators.googleEmail, google_email)
+                self.wait_and_click(LoginPageLocators.googleEmailSubmit)
+                self.wait_and_input_text(LoginPageLocators.googlePassword, google_password)
+                self.wait_and_click(LoginPageLocators.googlePasswordSubmit)
+
+        except:
+            self.driver.switch_to.window(main_page)
         self.driver.switch_to.window(main_page)
 
     def login_as_facebook_user(self, facebook_email, facebook_password):
@@ -43,15 +55,18 @@ class LoginPage(Page):
         """
         main_page = self.driver.current_window_handle
         facebook_popup = None
-        self.wait_and_click(LoginPageLocators.facebook)
-        while facebook_popup is None:
-            for handle in self.driver.window_handles:
-                if handle != main_page:
-                    facebook_popup = handle
-        self.driver.switch_to.window(facebook_popup)
-        self.wait_and_input_text(LoginPageLocators.facebookEmail, facebook_email)
-        self.wait_and_input_text(LoginPageLocators.facebookPassword, facebook_password)
-        self.wait_and_click(LoginPageLocators.facebookLogin)
+        try:
+            self.wait_and_click(LoginPageLocators.facebook)
+            while facebook_popup is None:
+                for handle in self.driver.window_handles:
+                    if handle != main_page:
+                        facebook_popup = handle
+            self.driver.switch_to.window(facebook_popup)
+            self.wait_and_input_text(LoginPageLocators.facebookEmail, facebook_email)
+            self.wait_and_input_text(LoginPageLocators.facebookPassword, facebook_password)
+            self.wait_and_click(LoginPageLocators.facebookLogin)
+        except:
+            self.driver.switch_to.window(main_page)
         self.driver.switch_to.window(main_page)
 
     def register_as_facebook_user(self, facebook_email, facebook_password):
@@ -141,3 +156,22 @@ class LoginPage(Page):
         self.wait_and_input_text(Pincode.login2, pin_by_char[1])
         self.wait_and_input_text(Pincode.login3, pin_by_char[2])
         self.wait_and_input_text(Pincode.login4, pin_by_char[3])
+
+    def logout(self):
+        self.wait_and_click(LoginPageLocators.logoutLink)
+        self.wait_and_click(LoginPageLocators.logoutButton)
+
+    def clear_google_cookies(self):
+        current_window = self.driver.current_window_handle
+        current_page = self.get_current_url()
+        google_window = None
+        self.driver.execute_script("window.open('https://www.google.com')")
+        while google_window is None:
+            for handle in self.driver.window_handles:
+                if handle != current_window:
+                    google_window = handle
+        self.driver.switch_to.window(google_window)
+        self.driver.delete_all_cookies()
+        self.driver.close()
+        self.driver.switch_to.window(current_window)
+        self.driver.get(current_page)

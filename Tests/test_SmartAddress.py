@@ -4,6 +4,13 @@ from Pages.DashboardPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 
+@pytest.fixture(scope='function', autouse=True)
+@pytest.mark.usefixtures("driver")
+def data_logout(driver):
+    loginPage = LoginPage(driver)
+    loginPage.reset_session()
+    yield print
+
 
 @pytest.fixture(scope='class')
 def data_fixture():

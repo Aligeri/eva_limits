@@ -4,7 +4,14 @@ class ExistingBasicUser:
     pincode = "1234"
     changedPincode = "9876"
     userName = "Existing Basic User"
+    userID = "5d97f3d6"
 
+class ExistingBasicVerifiedUser:
+    email = "vasiliyautomation+1@gmail.com"
+    password = "qAwSeD123"
+    pincode = "1234"
+    changedPincode = "9876"
+    userName = "Existing Multisig User"
 
 class NewBasicUser:
     email = "petrautomation@gmail.com"
@@ -18,6 +25,12 @@ class ExistingGoogleUser:
     pincode = "4321"
     userName = "Oleg Automation"
     userID = "567e6928"
+
+
+class MultisigGoogleUser:
+    email = "kindlyfindattached0@gmail.com"
+    password = "qWeaSd123"
+    pincode = "1234"
 
 
 class NewGoogleUser:
