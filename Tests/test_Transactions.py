@@ -4,14 +4,14 @@ from Pages.TransactionsPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 
-
+"""
 @pytest.fixture(scope='function', autouse=True)
 @pytest.mark.usefixtures("driver")
 def data_logout(driver):
     loginPage = LoginPage(driver)
     loginPage.reset_session()
     yield print
-
+"""
 
 @pytest.fixture(scope='class')
 def data_fixture():
@@ -25,6 +25,7 @@ def data_fixture():
 @pytest.mark.usefixtures("driver")
 def login_as_basic_user(driver):
     loginPage = LoginPage(driver)
+    loginPage.reset_session()
     loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
     yield
@@ -34,6 +35,7 @@ def login_as_basic_user(driver):
 @pytest.mark.usefixtures("driver")
 def login_as_google_user(driver):
     loginPage = LoginPage(driver)
+    loginPage.reset_session()
     loginPage.clear_google_cookies()
     loginPage.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password)
     loginPage.input_pincode_login(ExistingGoogleUser.pincode)
@@ -51,7 +53,25 @@ class TestClass:
         transactionsPage.send_transaction_to_user_id("BTC", "0.00000001", ExistingGoogleUser.userID, comment)
         transactionsPage.check_first_transaction("BTC", "0.00000001", comment)
 
-    #@pytest.mark.google
+    @pytest.mark.usefixtures("login_as_basic_user")
+    def test_sendComplexTransactionToUserID(self, driver):
+        comment = str(time.time())
+        transactionsPage = TransactionsPage(driver)
+        loginPage = LoginPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_complex_transaction_to_user_id("XRP", "0.000001", ExistingGoogleUser.xrtWallet, ExistingGoogleUser.xrtTag, comment)
+        transactionsPage.check_first_transaction("XRP", "0.000001", comment)
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    def test_sendFailingETHTransactionToYourself(self, driver):
+        comment = str(time.time())
+        transactionsPage = TransactionsPage(driver)
+        loginPage = LoginPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_to_wallet_address("ETH", "0.001", ExistingBasicUser.ethWallet, "ETH", comment)
+        transactionsPage.check_first_transaction("ETH", "0.00184", comment)
+        transactionsPage.check_failed_transaction()
+
     @pytest.mark.usefixtures("login_as_google_user")
     def test_sendTransactionWithNotVerifiedEmail(self, driver):
         comment = str(time.time())

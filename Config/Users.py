@@ -5,6 +5,7 @@ class ExistingBasicUser:
     changedPincode = "9876"
     userName = "Existing Basic User"
     userID = "5d97f3d6"
+    ethWallet = "0x5cc7d8dd2fa7be1c2d9e6f88a5125937767fcf4e"
 
 class ExistingBasicVerifiedUser:
     email = "vasiliyautomation+1@gmail.com"
@@ -25,7 +26,8 @@ class ExistingGoogleUser:
     pincode = "4321"
     userName = "Oleg Automation"
     userID = "567e6928"
-
+    xrtWallet = "rMKqYAmXX21qsxGsJ4YtmpE5xPaDeoq6Me"
+    xrtTag = "1065871430"
 
 class MultisigGoogleUser:
     email = "kindlyfindattached0@gmail.com"
