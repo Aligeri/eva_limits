@@ -15,6 +15,7 @@ def data_logout(driver):
 @pytest.mark.usefixtures("driver", "data_logout")
 class TestClass:
 
+
     def test_IncorrectPasswordLogin(self, driver):
         loginPage = LoginPage(driver)
         loginPage.login_as_basic_user("test@test.test", "12345678")
@@ -30,6 +31,7 @@ class TestClass:
     @pytest.mark.google
     def test_LoginAsGoogleUser(self, driver):
         loginPage = LoginPage(driver)
+        loginPage.clear_google_cookies()
         loginPage.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password)
         loginPage.input_pincode_login(ExistingGoogleUser.pincode)
         loginPage.wait_until_element_visible(DashboardLocators.logout)

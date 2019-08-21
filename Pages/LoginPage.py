@@ -1,7 +1,7 @@
 from Pages.BasePage import Page
 from Locators.LoginPageLocators import *
 from selenium.common.exceptions import WebDriverException
-
+import time
 
 class LoginPage(Page):
 
@@ -35,14 +35,15 @@ class LoginPage(Page):
                 self.wait_and_input_text(LoginPageLocators.googleEmail, google_email)
                 self.wait_and_click(LoginPageLocators.googleEmailSubmit)
                 self.wait_and_input_text(LoginPageLocators.googlePassword, google_password)
+                time.sleep(0.5)
                 self.wait_and_click(LoginPageLocators.googlePasswordSubmit)
             else:
                 self.wait_and_click(LoginPageLocators.googleChangeAddress)
                 self.wait_and_input_text(LoginPageLocators.googleEmail, google_email)
                 self.wait_and_click(LoginPageLocators.googleEmailSubmit)
                 self.wait_and_input_text(LoginPageLocators.googlePassword, google_password)
+                time.sleep(0.5)
                 self.wait_and_click(LoginPageLocators.googlePasswordSubmit)
-
         except:
             self.driver.switch_to.window(main_page)
         self.driver.switch_to.window(main_page)

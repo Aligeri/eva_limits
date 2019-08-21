@@ -47,8 +47,8 @@ class TestClass:
     def test_AddAndChangeLimit(self, driver):
         securityPage = SecurityPage(driver)
         securityPage.navigate_to_limits()
-        securityPage.create_new_weekly_limit("FWH", 100)
-        securityPage.change_limit_after_creation(200)
+        securityPage.create_new_weekly_limit("FWH", "100")
+        securityPage.change_limit_after_creation("200")
 
     def test_AddAndDisableLimit(self, driver):
         securityPage = SecurityPage(driver)

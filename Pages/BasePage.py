@@ -72,6 +72,7 @@ class Page(object):
                 return
             except WebDriverException:
                 self.wait_to_be_clickable(element_locator)
+                time.sleep(0.5)
                 retries_left -= 1
         raise WebDriverException("Element is not clickable or not present on page")
 

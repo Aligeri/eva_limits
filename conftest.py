@@ -11,19 +11,33 @@ url = r"https://app.sanitarium.freewallet.org/"
 @pytest.yield_fixture(scope="session")
 def driver(request, get_url):
     options = webdriver.ChromeOptions()
-    #options.add_argument('--headless')
+    options.add_argument('--headless')
     filepath = os.path.abspath(os.path.dirname(__file__))
     driverpath = os.path.join(filepath, "chromedriver")
+    #driverpath = "D:\FC\chromedriver.exe"
+    global driver
     driver = webdriver.Chrome(executable_path=driverpath, options=options)  # Временное решение, потом допилю подхват драйвера из PATH
     driver.set_window_size(1920, 1080)
     driver.implicitly_wait(5)
     driver.get(get_url)
-    failed_tests = request.session.testsfailed
     yield driver
-    if request.session.testsfailed != failed_tests:
-        test_name = request.node.name
-        take_screenshot(driver, test_name)
+    driver.close()
     driver.quit()
+
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+    setattr(item, "rep_" + rep.when, rep)
+    return rep
+
+
+@pytest.fixture(scope="function", autouse=True)
+def screenshot(request):
+    yield
+    if request.node.rep_call.failed:
+        global driver
+        take_screenshot(driver, request.node.name)
 
 
 # Фикстура для получения урла, на случай если урл мы будем получать извне (из CI например)

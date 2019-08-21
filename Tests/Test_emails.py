@@ -25,8 +25,3 @@ class TestClass():
         helper = SQLHelper()
         a = helper.delete_limits_by_email_from_database(ExistingBasicUser.email)
         print(a)
-
-    @pytest.mark.usefixtures("driver")
-    def test_lul(self, driver):
-        page = Page(driver)
-        page.find()

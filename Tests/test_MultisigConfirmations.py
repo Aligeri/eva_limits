@@ -23,12 +23,12 @@ def data_basic_user(driver):
 def data_google_user(driver):
     sql = SQLHelper()
     loginPage = LoginPage(driver)
+    loginPage.reset_session()
     loginPage.navigate_to_signup_page()
     loginPage.login_as_google_user(MultisigGoogleUser.email, MultisigGoogleUser.password)
     loginPage.input_pincode_create(MultisigGoogleUser.pincode)
     loginPage.input_pincode_repeat(MultisigGoogleUser.pincode)
     yield
-    loginPage.reset_session()
     sql.delete_multisig_emails(MultisigGoogleUser.email)
     sql.delete_user_from_database(MultisigGoogleUser.email)
 

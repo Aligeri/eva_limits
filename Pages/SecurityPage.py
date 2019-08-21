@@ -79,6 +79,7 @@ class SecurityPage(Page):
         """
         self.wait_and_click(LimitModal.changeLimit)
         self.wait_and_input_text(LimitModal.amount, amount)
+        self.wait_to_be_clickable(LimitModal.changeLimitConfirm)
         self.wait_and_click(LimitModal.changeLimitConfirm)
         self.wait_and_click(LimitModal.set)
         self.wait_and_assert_element_text(LimitModal.pendingChange, "Limit settings will be changed in in 2 days")
