@@ -2,7 +2,8 @@ import pytest
 from selenium import webdriver
 import os
 
-
+global driver_screenshots
+driver_screenshots = None
 global url
 url = r"https://app.sanitarium.freewallet.org/"
 
@@ -15,8 +16,10 @@ def driver(request, get_url):
     filepath = os.path.abspath(os.path.dirname(__file__))
     driverpath = os.path.join(filepath, "chromedriver")
     #driverpath = "D:\FC\chromedriver.exe"
-    global driver
     driver = webdriver.Chrome(executable_path=driverpath, options=options)  # Временное решение, потом допилю подхват драйвера из PATH
+    global driver_screenshots
+    if driver_screenshots == None:
+        driver_screenshots = driver
     driver.set_window_size(1920, 1080)
     driver.implicitly_wait(5)
     driver.get(get_url)
@@ -36,8 +39,8 @@ def pytest_runtest_makereport(item, call):
 def screenshot(request):
     yield
     if request.node.rep_call.failed:
-        global driver
-        take_screenshot(driver, request.node.name)
+        global driver_screenshots
+        take_screenshot(driver_screenshots, request.node.name)
 
 
 # Фикстура для получения урла, на случай если урл мы будем получать извне (из CI например)
