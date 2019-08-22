@@ -162,19 +162,31 @@ class TransactionsPage(Page):
         self.wait_and_assert_element_text(Send.firstTransactionAmount, transaction_title)
         self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
 
-    def check_failed_transaction(self):
+    def check_first_transaction_comment(self, comment):
         """
         Проверяет данные самой верхней транзакции в history
         :param currency: валюта транзакции, BTC/ETH
         :param amount: string с количеством валюты
         :param comment: комментарий к транзакции
         """
-        #transaction_title = "–%s %s" % (amount, currency)
-        #comment_formatted = 'Comment "%s"' % comment
+        self.wait_and_assert_element_text(Send.firstTransactionComment, comment)
+
+    def check_failed_transaction(self):
+        """
+        Проверяет данные внутри упавшей транзакции в history
+        """
         self.navigate_to_send()
         self.navigate_to_history()
         self.wait_and_click(Send.firstErrorTransaction)
         self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Cannot send eth to yourself pay in address")
+
+    def send_top_up_phone_transaction(self, phone):
+        self.wait_and_input_text(TopUpPhone.mobileNumber, phone)
+        self.wait_to_be_clickable(TopUpPhone.continueButton, 10)
+        self.wait_and_click(TopUpPhone.continueButton)
+        self.wait_and_click(TopUpPhone.firstPaymentValue)
+        self.wait_and_click(TopUpPhone.sendCoinsButton)
+        self.wait_until_element_visible(TopUpPhone.successModal)
 
     def navigate_to_send(self):
         """
@@ -182,6 +194,9 @@ class TransactionsPage(Page):
         """
         #TODO: дописать во все подобные методы проверку, что топ левел навигейшен кнопки выбраны или нет
         self.wait_and_click(WalletActionsButtons.send)
+
+    def navigate_to_top_up_phone(self):
+        self.wait_and_click(WalletActionsButtons.topUpPhone)
 
     def navigate_to_history(self):
         """

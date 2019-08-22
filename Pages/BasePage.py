@@ -60,6 +60,10 @@ class Page(object):
         element = WebDriverWait(self.driver, timeout).until(
             EC.visibility_of_element_located(element_locator))
 
+    def wait_until_element_invisible(self, element_locator, timeout=0):
+        element = WebDriverWait(self.driver, timeout).until(
+            EC.invisibility_of_element_located(element_locator))
+
     def wait_and_click(self, element_locator):
         """
         Ожидает элемент и кликает по нему
@@ -180,3 +184,16 @@ class Page(object):
     def assert_element_attirbute_value(self, element_locator, attribute, value):
         attribute_value = self.get_element_attribute(element_locator, attribute)
         assert attribute_value == value
+
+    def wait_and_click_element_within_element(self, node_locator, element_locator):
+        retries_left = 2
+        while retries_left > 0:
+            try:
+                node_element = self.driver.find_element(*node_locator)
+                node_element.find_element(*element_locator).click()
+                return
+            except WebDriverException:
+                self.wait_to_be_clickable(element_locator)
+                time.sleep(0.5)
+                retries_left -= 1
+        raise WebDriverException("Element is not clickable or not present on page")

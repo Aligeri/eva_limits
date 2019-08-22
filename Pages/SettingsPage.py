@@ -7,6 +7,9 @@ from Config.Users import *
 
 class SettingsPage(Page):
 
+    def navigate_to_account(self):
+        self.wait_and_click(NavigationLinks.account)
+
     def check_email_is_not_verified(self, email):
         """
         Проверяет что email не подтвержден со страницы dashboard
@@ -33,3 +36,13 @@ class SettingsPage(Page):
         assert email == current_email
         self.wait_and_assert_element_text(Account.successText, "Email is verified.")
 
+    def change_fiat_currency(self, currency):
+        CURRENCY = {
+            "usd": FiatCurrency.fiatUsd,
+            "eur": FiatCurrency.fiatEur,
+            "gbp": FiatCurrency.fiatGbp,
+            "rub": FiatCurrency.fiatRub,
+        }
+        self.navigate_to_account()
+        self.wait_and_click(FiatCurrency.fiatCurrencyDropdown)
+        self.wait_and_click(CURRENCY[currency])

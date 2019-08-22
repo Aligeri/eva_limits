@@ -23,7 +23,6 @@ class Send:
     withdraw = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 send__buttonContinue--3pUpw')]")
     destinationTag = (By.XPATH, "//input[contains(@class, 'input__input--1lDmD') and @placeholder='Enter destination tag']")
 
-
     networkFee = (By.XPATH, ".//div[@class='send__feeBlock--3EjJC']/div[1]")
     arrivalAmount = (By.XPATH, ".//h4[contains(text(), 'Arrival amount')]")
     totalWithFee = (By.XPATH, ".//h4[text()='Total amount']/span")
@@ -34,7 +33,6 @@ class Send:
     fastFee = (By.XPATH, "//div[contains(@class, 'send__tab--22xga') and text()='Fast']")
     urgentFee = (By.XPATH, "//div[contains(@class, 'send__tab--22xga') and text()='Urgent']")
 
-
     firstTransaction = (By.XPATH, "//a[@class='item__wrapper--2HY-h']")
     firstTransactionAmount = (By.XPATH, "//a[contains(@class, 'item__wrapper--2HY-h')][1]//div[contains(@class, 'item__amount--3WcgV')]")
     firstTransactionComment = (By.XPATH, "//a[contains(@class, 'item__wrapper--2HY-h')][1]//div[contains(@class, 'item__address--V6FmR')]")
@@ -42,3 +40,12 @@ class Send:
     firstErrorTransaction = (By.XPATH, "//a[contains(@class, 'item__wrapper--2HY-h item__wrapper__failed--16kTs')][1]")
     errorMessageInTransaction = (By.XPATH, "//td[text()='Error']/following-sibling::td")
     notVerifiedEmailModalMessage = (By.XPATH, "//div[contains(@class, 'pp__title--2cHYp pp__is-danger--3J_1v')]")
+
+
+class TopUpPhone:
+    mobileNumber = (By.XPATH, "//input[contains(@class, 'mobile-pay-section__input--bGf8n')]")
+    continueButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0')]")
+    firstPaymentValue = (By.XPATH, "//div[contains(@class, 'mobile-pay-section__package--di8ED')][1]")
+    sendCoinsButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Send coins']")
+    successModal = (By.XPATH, "//div[contains(@class, 'mobile-pay-section__header--b5oUb')]")
+    historyButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='History']")

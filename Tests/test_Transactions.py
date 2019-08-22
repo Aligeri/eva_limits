@@ -1,6 +1,7 @@
 import pytest
 from Pages.LoginPage import *
 from Pages.TransactionsPage import *
+from Pages.DashboardPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 
@@ -91,6 +92,8 @@ class TestClass:
         transactionsPage.wait_and_click(Send.includeExcludeSwitch)
         transactionsPage.check_include_fee()
 
+
+
     @pytest.mark.usefixtures("login_as_google_user")
     def test_sendTransactionWithNotVerifiedEmail(self, driver):
         comment = str(time.time())
@@ -98,3 +101,11 @@ class TestClass:
         transactionsPage.navigate_to_send()
         transactionsPage.send_transaction_to_user_id("BTC", "0.00000001", ExistingBasicUser.userID, comment)
         transactionsPage.check_not_verified_email_modal()
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    def test_sendBitrefillTransaction(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_top_up_phone()
+        transactionsPage.send_top_up_phone_transaction("+79050593996")
+        transactionsPage.wait_and_click(TopUpPhone.historyButton)
+        transactionsPage.check_first_transaction_comment("Top up phone")
