@@ -91,7 +91,7 @@ class Page(object):
             except (AssertionError, WebDriverException) as e:
                 self.wait_until_element_visible(element_locator)
                 retries_left -= 1
-                time.sleep(2)
+                time.sleep(1)
         raise WebDriverException("Element is not found or text is not found")
 
     def get_element_attribute(self, element_locator, attribute):
@@ -103,6 +103,24 @@ class Page(object):
         """
         value = self.driver.find_element(*element_locator).get_attribute(attribute)
         return value
+
+    def get_element_text(self, element_locator):
+        """
+        Возвращает значение атрибута элемента
+        :param element_locator: локатор элемента из Locators/*
+        :return: текст элемента
+        """
+        retries_left = 4
+        while retries_left > 0:
+            try:
+                text = self.driver.find_element(*element_locator).text
+                return text
+            except (AssertionError, WebDriverException) as e:
+                self.wait_until_element_visible(element_locator)
+                retries_left -= 1
+                time.sleep(2)
+        raise WebDriverException("Element is not found or text is not found")
+
 
     def assert_element_text_is_not_empty(self, element_locator):
         """

@@ -72,6 +72,25 @@ class TestClass:
         transactionsPage.check_first_transaction("ETH", "0.00184", comment)
         transactionsPage.check_failed_transaction()
 
+    @pytest.mark.usefixtures("login_as_basic_user")
+    def test_checkBTCFeesDisplayed(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.show_fee_for_wallet_address("BTC", "0.00001", ExistingBasicUser.btcWallet, "BTC")
+        transactionsPage.check_BTC_Fee("Low", "0.00008")
+        transactionsPage.check_BTC_Fee("Normal", "0.00011")
+        transactionsPage.check_BTC_Fee("Fast", "0.00013")
+        transactionsPage.check_BTC_Fee("Urgent", "0.00016")
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    def test_checkIncludeExcludeFee(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.show_fee_for_wallet_address("BTC", "0.001", ExistingBasicUser.btcWallet, "BTC")
+        transactionsPage.check_exclude_fee()
+        transactionsPage.wait_and_click(Send.includeExcludeSwitch)
+        transactionsPage.check_include_fee()
+
     @pytest.mark.usefixtures("login_as_google_user")
     def test_sendTransactionWithNotVerifiedEmail(self, driver):
         comment = str(time.time())

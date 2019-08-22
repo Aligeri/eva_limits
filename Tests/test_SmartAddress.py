@@ -24,8 +24,8 @@ def data_fixture():
 @pytest.mark.usefixtures("driver")
 def loginAsBasicUser(driver):
     loginPage = LoginPage(driver)
-    loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
-    loginPage.input_pincode_login(ExistingBasicUser.pincode)
+    loginPage.login_as_basic_user(ExistingBasicVerifiedUser.email, ExistingBasicVerifiedUser.password)
+    loginPage.input_pincode_login(ExistingBasicVerifiedUser.pincode)
 
 
 @pytest.mark.usefixtures("driver", "data_fixture")

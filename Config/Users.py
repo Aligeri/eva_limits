@@ -6,6 +6,8 @@ class ExistingBasicUser:
     userName = "Existing Basic User"
     userID = "5d97f3d6"
     ethWallet = "0x5cc7d8dd2fa7be1c2d9e6f88a5125937767fcf4e"
+    btcWallet = "3NMcXFk5PoCYquUa9qwU2bbhkm5x4KzimU"
+
 
 class ExistingBasicVerifiedUser:
     email = "vasiliyautomation+1@gmail.com"
@@ -13,6 +15,7 @@ class ExistingBasicVerifiedUser:
     pincode = "1234"
     changedPincode = "9876"
     userName = "Existing Multisig User"
+    btcWallet = "37BvpPZ8Cvo4ZTrbi7UQBN8WPt2vcPTfCX"
 
 class NewBasicUser:
     email = "petrautomation@gmail.com"

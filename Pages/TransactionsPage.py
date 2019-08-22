@@ -1,9 +1,8 @@
 from Pages.BasePage import Page
 from Locators.DashboardLocators import *
 from Locators.TransactionsLocators import *
-from Locators.SettingsLocators import *
+import re
 import time
-from Config.Users import *
 
 WALLETFROM = {
     "BTC": Send.btcWallet,
@@ -16,7 +15,8 @@ COMPLEX_WALLET = {
 
 DESTINATION_WALLET = {
     "XRP": Send.xrpRecieverWallet,
-    "ETH": Send.ethRecieverWallet
+    "ETH": Send.ethRecieverWallet,
+    "BTC": Send.btcRecieverWallet,
 }
 
 class TransactionsPage(Page):
@@ -62,6 +62,68 @@ class TransactionsPage(Page):
         self.wait_and_click(Send.continueButton3)
         self.wait_and_input_text(Send.comment, comment)
         self.wait_and_click(Send.withdraw)
+
+    def show_fee_for_wallet_address(self, currency, amount, wallet_address, waller_receiver):
+        """
+        Отправляет трансфер другому пользователю
+        :param currency: кошелек с которого отправляется трансфер, BTC/ETH
+        :param amount: string с количеством отправляемой валюты
+        :param wallet_address: Wallet address получателя трансфера
+        :param comment: комментарий к транзакции
+        :return:
+        """
+        self.wait_and_click(WALLETFROM[currency])
+        self.wait_and_click(Send.userWalletAddress)
+        self.wait_and_click(Send.continueButton1)
+        self.wait_and_input_text(Send.sendToAddress, wallet_address)
+        self.wait_and_click(DESTINATION_WALLET[waller_receiver])
+        self.wait_to_be_clickable(Send.continueButton2)
+        self.wait_and_click(Send.continueButton2)
+        self.wait_and_input_text(Send.amount, amount)
+
+    def __get_network_fee(self):
+        text = self.get_element_text(Send.networkFee)
+        number = re.search("\d\.\d*", text).group(0)
+        return number
+
+    def __get_arrival_amount(self):
+        text = self.get_element_text(Send.arrivalAmount)
+        number = re.search("\d\.\d*", text).group(0)
+        return number
+
+    def __get_total_amount(self):
+        text = self.get_element_text(Send.totalWithFee)
+        number = re.search("\d\.\d*", text).group(0)
+        return number
+
+    def check_BTC_Fee(self, fee_type, amount):
+        FEE_TYPE = {
+            "Low" : Send.lowFee,
+            "Normal": Send.normalFee,
+            "Fast": Send.fastFee,
+            "Urgent": Send.urgentFee
+        }
+        self.wait_and_click(FEE_TYPE[fee_type])
+        amount_text = "%s BTC" % amount
+        self.wait_and_assert_element_text(Send.totalWithFee, amount_text)
+
+    def check_exclude_fee(self):
+        network_fee = self.__get_network_fee()
+        arrival_amount = self.__get_arrival_amount()
+        total_amount = self.__get_total_amount()
+        a = float(network_fee) + float(arrival_amount)
+        b = float(total_amount)
+        assert a == b
+
+    def check_include_fee(self):
+        network_fee = self.__get_network_fee()
+        arrival_amount = self.__get_arrival_amount()
+        total_amount = self.__get_total_amount()
+        a = float(total_amount) - float(network_fee)
+        b = float(arrival_amount)
+        assert a == b
+
+
 
     def send_complex_transaction_to_user_id(self, currency, amount, wallet_address, wallet_tag, comment):
         """
