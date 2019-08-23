@@ -79,6 +79,10 @@ class DashboardPage(Page):
         assert previous_address == current_address
 
     def checkFiatSymbols(self, fiat_symbol):
+        """
+        Проверяет символ текущей фиатной валюты пользователя в total balance, my wallets, графике и в send
+        :param fiat_symbol: символ фиатной валюты, $/€
+        """
         self.navigate_to_history()
         assert re.search("(\W)\d", self.get_element_text(Fiat.totalFiat)).group(1) == fiat_symbol
         assert re.search("(\W)\d", self.get_element_text(Fiat.walletsFiat)).group(1) == fiat_symbol
@@ -88,11 +92,19 @@ class DashboardPage(Page):
         assert re.search("(\W)\d", self.get_element_text(Fiat.sendFiat)).group(1) == fiat_symbol
 
     def apply_filter(self, history_filter):
+        """
+        Применяет фильтры на странице History
+        :param history_filter: название фильтра, Exchange, Pay Out, Pay In, Failed
+        """
         self.wait_and_click(Filters.filtersButton)
         self.wait_and_click(FILTER_APPLY[history_filter])
         self.wait_and_click(Filters.applyFilters)
         self.wait_until_element_visible(FILTER_BUTTON[history_filter])
 
     def remove_filter(self, history_filter):
+        """
+        Отключает фильтры на странице History
+        :param history_filter: название фильтра, Exchange, Pay Out, Pay In, Failed
+        """
         self.wait_and_click_element_within_element(FILTER_BUTTON[history_filter], Filters.removeFilter)
         self.wait_until_element_invisible(FILTER_BUTTON[history_filter], 0.5)

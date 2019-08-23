@@ -98,14 +98,23 @@ class SecurityPage(Page):
         self.wait_and_click(NavigationLinks.emailConfirmation)
 
     def add_multisig_address(self, email):
+        """
+        Добавляет multisig емейл на странице Security > Email confirmation
+        :param email: емейл который добавляется в качестве multisig
+        :return:
+        """
         self.assert_element_attirbute_value(Multisig.continueButton, "disabled", "true")
+        time.sleep(0.5)
         self.wait_and_input_text(Multisig.email1, email)
-        #time.sleep(1)
-        #self.wait_until_element_visible(Multisig.tooltip)
         self.wait_and_click(Multisig.gotIt)
         self.wait_and_click(Multisig.continueButton)
 
+
     def discard_multisig_address(self):
+        """
+        Удаляет неподтвержденные multisig емейлы на странице Security > Email confirmation
+        :return:
+        """
         self.wait_until_element_visible(Multisig.disclaimer)
         self.wait_and_click(Multisig.disclaimerDiscard)
         self.assert_element_attirbute_value(Multisig.email1, "value", "")

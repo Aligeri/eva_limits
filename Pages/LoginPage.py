@@ -159,10 +159,18 @@ class LoginPage(Page):
         self.wait_and_input_text(Pincode.login4, pin_by_char[3])
 
     def logout(self):
+        """
+        Метод для логаута со страниц, где видно кнопку Logout в хедере
+        :return:
+        """
         self.wait_and_click(LoginPageLocators.logoutLink)
         self.wait_and_click(LoginPageLocators.logoutButton)
 
     def clear_google_cookies(self):
+        """
+        Хитрый костыль для логаута гугл-юзеров, открывает вкладку с google.com, чистит cookies и возвращается на предыдующую вкладку
+        :return:
+        """
         current_window = self.driver.current_window_handle
         current_page = self.get_current_url()
         google_window = None

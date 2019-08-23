@@ -11,6 +11,10 @@ class Page(object):
         self.url = conftest.url
 
     def get_base_url(self):
+        """
+        Переходит на стартовую страницу (/auth/login)
+        :return:
+        """
         self.driver.get(self.url)
 
     def get_current_url(self):
@@ -57,10 +61,21 @@ class Page(object):
 
 
     def wait_until_element_visible(self, element_locator, timeout=3):
+        """
+        Ожидает пока элемент не станет видимым
+        :param element_locator: локатор элемента из Locators/*
+        :param timeout: таймаут, по умолчанию 3 секунды
+        """
         element = WebDriverWait(self.driver, timeout).until(
             EC.visibility_of_element_located(element_locator))
 
     def wait_until_element_invisible(self, element_locator, timeout=0):
+        """
+        Проверяет что элемент не виден на странице
+        :param element_locator: локатор элемента из Locators/*
+        :param timeout: таймаут, по умолчанию 0 секунд
+        :return:
+        """
         element = WebDriverWait(self.driver, timeout).until(
             EC.invisibility_of_element_located(element_locator))
 
@@ -95,7 +110,7 @@ class Page(object):
             except (AssertionError, WebDriverException) as e:
                 self.wait_until_element_visible(element_locator)
                 retries_left -= 1
-                time.sleep(1)
+                time.sleep(2)
         raise WebDriverException("Element is not found or text is not found")
 
     def get_element_attribute(self, element_locator, attribute):
@@ -171,9 +186,15 @@ class Page(object):
         self.driver.get(current_url)
 
     def reset_session(self):
-        self.driver.execute_script("window.localStorage.clear();")
-        self.driver.execute_script("window.sessionStorage.clear();")
-        self.get_base_url()
+        """
+        Чистит текущую сессию и возвращается к начальной странице
+        :return:
+        """
+        while self.driver.current_url != self.url:
+            self.driver.execute_script("window.localStorage.clear();")
+            self.driver.execute_script("window.sessionStorage.clear();")
+            self.driver.delete_all_cookies()
+            self.get_base_url()
 
     def refresh_page(self):
         """
@@ -182,10 +203,22 @@ class Page(object):
         self.driver.refresh()
 
     def assert_element_attirbute_value(self, element_locator, attribute, value):
+        """
+        Сравнивает значение атрибута элемента с заданным значением
+        :param element_locator: локатор элемента из Locators/*
+        :param attribute: название атрибута
+        :param value: значение, с которым сравнивается значение атрибута
+        """
         attribute_value = self.get_element_attribute(element_locator, attribute)
         assert attribute_value == value
 
+
     def wait_and_click_element_within_element(self, node_locator, element_locator):
+        """
+        Находит элемент внутри другого элемента и кликает по нему
+        :param node_locator: локатор родительского элемента из Locators/*
+        :param element_locator: локатор дочернего элемента из Locators/*
+        """
         retries_left = 2
         while retries_left > 0:
             try:

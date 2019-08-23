@@ -108,6 +108,10 @@ class TransactionsPage(Page):
         self.wait_and_assert_element_text(Send.totalWithFee, amount_text)
 
     def check_exclude_fee(self):
+        """
+        Проверяет правильность расчета fee при exclude
+        :return:
+        """
         network_fee = self.__get_network_fee()
         arrival_amount = self.__get_arrival_amount()
         total_amount = self.__get_total_amount()
@@ -116,6 +120,10 @@ class TransactionsPage(Page):
         assert a == b
 
     def check_include_fee(self):
+        """
+        Проверяет правильность расчета fee при include
+        :return:
+        """
         network_fee = self.__get_network_fee()
         arrival_amount = self.__get_arrival_amount()
         total_amount = self.__get_total_amount()
@@ -124,13 +132,13 @@ class TransactionsPage(Page):
         assert a == b
 
 
-
     def send_complex_transaction_to_user_id(self, currency, amount, wallet_address, wallet_tag, comment):
         """
-        Отправляет трансфер другому пользователю
+        Отправляет трансфер в составной валюте на wallet address
         :param currency: кошелек с которого отправляется трансфер в составной валюте, XRP
         :param amount: string с количеством отправляемой валюты
-        :param userID: User ID получателя трансфера, можно использовать email
+        :param wallet_address: Wallet address получателя трансфера
+        :param wallet_tag: Destination tag получателя трансфера
         :param comment: комментарий к транзакции
         :return:
         """
@@ -164,9 +172,7 @@ class TransactionsPage(Page):
 
     def check_first_transaction_comment(self, comment):
         """
-        Проверяет данные самой верхней транзакции в history
-        :param currency: валюта транзакции, BTC/ETH
-        :param amount: string с количеством валюты
+        Проверяет комментарий самой верхней транзакции в history
         :param comment: комментарий к транзакции
         """
         self.wait_and_assert_element_text(Send.firstTransactionComment, comment)
@@ -182,7 +188,7 @@ class TransactionsPage(Page):
 
     def send_top_up_phone_transaction(self, phone):
         self.wait_and_input_text(TopUpPhone.mobileNumber, phone)
-        self.wait_to_be_clickable(TopUpPhone.continueButton, 10)
+        self.wait_to_be_clickable(TopUpPhone.continueButton, 20)
         self.wait_and_click(TopUpPhone.continueButton)
         self.wait_and_click(TopUpPhone.firstPaymentValue)
         self.wait_and_click(TopUpPhone.sendCoinsButton)

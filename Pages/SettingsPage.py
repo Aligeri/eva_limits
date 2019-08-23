@@ -37,6 +37,11 @@ class SettingsPage(Page):
         self.wait_and_assert_element_text(Account.successText, "Email is verified.")
 
     def change_fiat_currency(self, currency):
+        """
+        Меняет local currency со страницы settings
+        :param currency: валюта на которую поменяется local currency, usd/eur/gbp/rub
+        :return:
+        """
         CURRENCY = {
             "usd": FiatCurrency.fiatUsd,
             "eur": FiatCurrency.fiatEur,

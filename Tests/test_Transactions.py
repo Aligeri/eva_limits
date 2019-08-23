@@ -36,10 +36,11 @@ def login_as_basic_user(driver):
 @pytest.mark.usefixtures("driver")
 def login_as_google_user(driver):
     loginPage = LoginPage(driver)
-    loginPage.reset_session()
     loginPage.clear_google_cookies()
+    loginPage.reset_session()
     loginPage.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password)
     loginPage.input_pincode_login(ExistingGoogleUser.pincode)
+    yield
 
 @pytest.mark.usefixtures("driver", "data_fixture")
 class TestClass:
@@ -91,7 +92,6 @@ class TestClass:
         transactionsPage.check_exclude_fee()
         transactionsPage.wait_and_click(Send.includeExcludeSwitch)
         transactionsPage.check_include_fee()
-
 
 
     @pytest.mark.usefixtures("login_as_google_user")

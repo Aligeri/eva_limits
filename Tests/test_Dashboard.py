@@ -3,6 +3,7 @@ from Pages.LoginPage import *
 from Pages.SettingsPage import *
 from Pages.DashboardPage import *
 from Config.Users import *
+from Helpers.SQLHelper import *
 
 
 @pytest.fixture(scope='class')
@@ -13,6 +14,8 @@ def data_fixture():
 @pytest.mark.usefixtures("driver")
 def login_as_basic_user(driver):
     loginPage = LoginPage(driver)
+    sql = SQLHelper()
+    sql.set_local_currency(ExistingBasicUser.email, "usd")
     loginPage.reset_session()
     loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
@@ -32,12 +35,11 @@ class TestClass:
         settingsPage.change_fiat_currency("eur")
         dashboardPage.navigate_to_dashboard()
         dashboardPage.checkFiatSymbols("€")
-        loginPage.reset_session()
-        loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
+        loginPage.refresh_page()
         loginPage.input_pincode_login(ExistingBasicUser.pincode)
         dashboardPage.checkFiatSymbols("€")
         dashboardPage.navigate_to_settings()
-        settingsPage.change_fiat_currency("eur")
+        settingsPage.change_fiat_currency("usd")
 
     @pytest.mark.usefixtures("login_as_basic_user")
     def test_ApplyFilters(self, driver):

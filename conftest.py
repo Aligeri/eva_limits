@@ -5,7 +5,7 @@ import os
 global driver_screenshots
 driver_screenshots = None
 global url
-url = r"https://app.sanitarium.freewallet.org/"
+url = r"https://app.sanitarium.freewallet.org/auth/login"
 
 # Фикстура для инициализации драйвера, возможно дописать выбор хром/хедлесс хром/фантомЖС из строки запуска
 @pytest.mark.usefixtures("get_url")
@@ -38,9 +38,13 @@ def pytest_runtest_makereport(item, call):
 @pytest.fixture(scope="function", autouse=True)
 def screenshot(request):
     yield
-    if request.node.rep_call.failed:
-        global driver_screenshots
-        take_screenshot(driver_screenshots, request.node.name)
+    global driver_screenshots
+    try:
+        if request.node.rep_call.failed:
+            take_screenshot(driver_screenshots, request.node.name)
+    except AttributeError:
+        if request.node.rep_setup.failed:
+            take_screenshot(driver_screenshots, request.node.name)
 
 
 # Фикстура для получения урла, на случай если урл мы будем получать извне (из CI например)

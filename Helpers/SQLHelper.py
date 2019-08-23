@@ -68,3 +68,15 @@ class SQLHelper():
         cursor.execute("DELETE FROM public.user_limits WHERE user_id = (%s)", (user_id,))
         cursor.execute("DELETE FROM public.user_limits_periods WHERE user_id = (%s)", (user_id,))
         connection.commit()
+
+    def set_local_currency(self, email, currency):
+        """
+        Меняет local currency у юзера с заданным email
+        :param email: Емейл пользователя
+        :param currency: local currency, usd/eur
+        :return:
+        """
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("UPDATE public.user_settings SET local_currency = (%s) WHERE user_id = (%s)", (currency, user_id,))
+        connection.commit()
