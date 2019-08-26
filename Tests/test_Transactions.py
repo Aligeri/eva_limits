@@ -109,3 +109,10 @@ class TestClass:
         transactionsPage.send_top_up_phone_transaction("+79050593996")
         transactionsPage.wait_and_click(TopUpPhone.historyButton)
         transactionsPage.check_first_transaction_comment("Top up phone")
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    def test_checkETHTokenTransactionFailing(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_to_ETH_token("ETH", CommonData.unsupportedEthToken)
+

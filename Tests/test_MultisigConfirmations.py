@@ -22,13 +22,17 @@ def data_basic_user(driver):
 @pytest.fixture(scope='function')
 def data_google_user(driver):
     sql = SQLHelper()
+    email = SMTPHelper()
+    email.delete_emails_from_gmail(ExistingBasicUser.email, ExistingBasicUser.password)
     loginPage = LoginPage(driver)
     loginPage.reset_session()
+    loginPage.clear_google_cookies()
     loginPage.navigate_to_signup_page()
     loginPage.login_as_google_user(MultisigGoogleUser.email, MultisigGoogleUser.password)
     loginPage.input_pincode_create(MultisigGoogleUser.pincode)
     loginPage.input_pincode_repeat(MultisigGoogleUser.pincode)
     yield
+    email.delete_emails_from_gmail(ExistingBasicUser.email, ExistingBasicUser.password)
     sql.delete_multisig_emails(MultisigGoogleUser.email)
     sql.delete_user_from_database(MultisigGoogleUser.email)
 
@@ -43,17 +47,16 @@ class TestClass:
         securityPage.add_multisig_address(ExistingBasicUser.email)
         securityPage.discard_multisig_address()
 
-    @pytest.mark.skip("Опять емейлы")
+    #@pytest.mark.skip("Опять емейлы")
     @pytest.mark.usefixtures("data_google_user")
     def test_MultisigEmailConfirm(self, driver):
         smtp = SMTPHelper()
         securityPage = SecurityPage(driver)
         loginPage = LoginPage(driver)
-        loginPage.clear_google_cookies()
         securityPage.navigate_to_email_confirmation()
         securityPage.add_multisig_address(ExistingBasicUser.email)
-        link = smtp.get_multisig_link_from_email(ExistingBasicUser.email, ExistingBasicUser.password, "Freewallet", "Verify your multisig email")
+        link = smtp.get_multisig_link_from_email(ExistingBasicUser.email, ExistingBasicUser.password, "Freewallet", "Verify")
         securityPage.navigate_to_link(link)
         loginPage.input_pincode_login(MultisigGoogleUser.pincode)
-
+        #TODO: дописать мультисиг
 

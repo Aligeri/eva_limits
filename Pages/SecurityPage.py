@@ -93,6 +93,12 @@ class SecurityPage(Page):
         self.wait_and_click(LimitModal.disableLimitConfirm)
         self.wait_and_assert_element_text(LimitModal.pendingChange, "Limit settings will be changed in in 2 days")
 
+    def close_limit_modal(self):
+        self.wait_and_click(LimitModal.overlay)
+
+    def check_BTC_limit_percent(self, percent):
+        self.wait_and_assert_element_text(LimitModal.BTCLimitPercent, percent)
+
     def navigate_to_email_confirmation(self):
         self.wait_and_click(NavigationButtons.security)
         self.wait_and_click(NavigationLinks.emailConfirmation)
@@ -104,7 +110,7 @@ class SecurityPage(Page):
         :return:
         """
         self.assert_element_attirbute_value(Multisig.continueButton, "disabled", "true")
-        time.sleep(0.5)
+        time.sleep(1)
         self.wait_and_input_text(Multisig.email1, email)
         self.wait_and_click(Multisig.gotIt)
         self.wait_and_click(Multisig.continueButton)

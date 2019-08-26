@@ -2,6 +2,8 @@ from Pages.BasePage import Page
 from Locators.DashboardLocators import *
 from Locators.WalletLocators import *
 import re
+import time
+
 
 FILTER_APPLY = {
     "Exchange": Filters.exchangeFilter,
@@ -28,9 +30,6 @@ class DashboardPage(Page):
 
     def navigate_to_history(self):
         self.wait_and_click(WalletActionsButtons.history)
-
-    def navigate_to_dashboard(self):
-        self.wait_and_click(NavigationButtons.dashboard)
 
     def navigate_to_settings(self):
         self.wait_and_click(NavigationButtons.settings)
@@ -84,6 +83,7 @@ class DashboardPage(Page):
         :param fiat_symbol: символ фиатной валюты, $/€
         """
         self.navigate_to_history()
+        time.sleep(1)
         assert re.search("(\W)\d", self.get_element_text(Fiat.totalFiat)).group(1) == fiat_symbol
         assert re.search("(\W)\d", self.get_element_text(Fiat.walletsFiat)).group(1) == fiat_symbol
         self.wait_and_click(WalletActionsButtons.firstWallet)

@@ -2,6 +2,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
+from Locators.DashboardLocators import *
 import time
 import conftest
 
@@ -101,7 +102,7 @@ class Page(object):
         :param element_locator: локатор элемента из Locators/*
         :param value: Значение с которым сравнивается текст элемента
         """
-        retries_left = 4
+        retries_left = 10
         while retries_left > 0:
             try:
                 text = self.driver.find_element(*element_locator).text
@@ -190,11 +191,16 @@ class Page(object):
         Чистит текущую сессию и возвращается к начальной странице
         :return:
         """
-        while self.driver.current_url != self.url:
-            self.driver.execute_script("window.localStorage.clear();")
-            self.driver.execute_script("window.sessionStorage.clear();")
-            self.driver.delete_all_cookies()
-            self.get_base_url()
+        retries_left = 2
+        while retries_left > 0:
+            if self.driver.current_url != ("%s/auth/login" % self.url) or self.driver.current_url != self.url:
+                self.driver.execute_script("window.localStorage.clear();")
+                self.driver.execute_script("window.sessionStorage.clear();")
+                self.driver.delete_all_cookies()
+                self.get_base_url()
+                retries_left -= 1
+            else:
+                return
 
     def refresh_page(self):
         """
@@ -230,3 +236,6 @@ class Page(object):
                 time.sleep(0.5)
                 retries_left -= 1
         raise WebDriverException("Element is not clickable or not present on page")
+
+    def navigate_to_dashboard(self):
+        self.wait_and_click(NavigationButtons.dashboard)

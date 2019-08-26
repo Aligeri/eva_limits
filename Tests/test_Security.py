@@ -1,6 +1,7 @@
 import pytest
 from Pages.LoginPage import *
 from Pages.SecurityPage import *
+from Pages.TransactionsPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from Locators.SecurityLocators import *
@@ -55,3 +56,22 @@ class TestClass:
         securityPage.navigate_to_limits()
         securityPage.create_new_weekly_limit("BTC", 100)
         securityPage.disable_limit_after_creation()
+
+    def test_AddAndSpendLimit(self, driver):
+        securityPage = SecurityPage(driver)
+        loginPage = LoginPage(driver)
+        transactionsPage = TransactionsPage(driver)
+        comment = str(time.time())
+        securityPage.navigate_to_limits()
+        securityPage.create_new_weekly_limit("BTC", "0.00000001")
+        securityPage.refresh_page()
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        securityPage.check_BTC_limit_percent("100%")
+        securityPage.navigate_to_dashboard()
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_to_user_id("BTC", "0.00000001", ExistingGoogleUser.userID, comment)
+        transactionsPage.wait_until_element_visible(Send.firstTransactionAmount)
+        transactionsPage.navigate_to_send()
+        transactionsPage.check_limit_exceeded_transaction("BTC", "0.00000001", ExistingGoogleUser.userID)
+        securityPage.navigate_to_limits()
+        securityPage.check_BTC_limit_percent("0%")

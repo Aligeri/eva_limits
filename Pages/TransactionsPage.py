@@ -63,6 +63,22 @@ class TransactionsPage(Page):
         self.wait_and_input_text(Send.comment, comment)
         self.wait_and_click(Send.withdraw)
 
+    def send_transaction_to_ETH_token(self, currency, wallet_address):
+        """
+        Отправляет трансфер на адрес запрещенного токена ETH
+        :param currency: кошелек с которого отправляется трансфер ETH
+        :param amount: string с количеством отправляемой валюты
+        :param wallet_address: Wallet address получателя трансфера
+        :param comment: комментарий к транзакции
+        :return:
+        """
+        self.wait_and_click(WALLETFROM[currency])
+        self.wait_and_click(Send.userWalletAddress)
+        self.wait_and_click(Send.continueButton1)
+        self.wait_and_input_text(Send.sendToAddress, wallet_address)
+        self.wait_and_assert_element_text(Send.tokenError, "Sorry we don’t support this token.")
+
+
     def show_fee_for_wallet_address(self, currency, amount, wallet_address, waller_receiver):
         """
         Отправляет трансфер другому пользователю
@@ -130,7 +146,6 @@ class TransactionsPage(Page):
         a = float(total_amount) - float(network_fee)
         b = float(arrival_amount)
         assert a == b
-
 
     def send_complex_transaction_to_user_id(self, currency, amount, wallet_address, wallet_tag, comment):
         """
@@ -201,6 +216,7 @@ class TransactionsPage(Page):
         #TODO: дописать во все подобные методы проверку, что топ левел навигейшен кнопки выбраны или нет
         self.wait_and_click(WalletActionsButtons.send)
 
+
     def navigate_to_top_up_phone(self):
         self.wait_and_click(WalletActionsButtons.topUpPhone)
 
@@ -214,3 +230,21 @@ class TransactionsPage(Page):
     def check_not_verified_email_modal(self):
         self.wait_and_assert_element_text(Send.notVerifiedEmailModalMessage, "Email address is not verified")
 
+    def check_limit_exceeded_transaction(self, currency, amount, userID):
+        """
+        Отправляет трансфер другому пользователю
+        :param currency: кошелек с которого отправляется трансфер, BTC/ETH
+        :param amount: string с количеством отправляемой валюты
+        :param userID: User ID получателя трансфера, можно использовать email
+        :param comment: комментарий к транзакции
+        :return:
+        """
+        self.wait_and_click(WALLETFROM[currency])
+        self.wait_and_click(Send.userIdOrEmail)
+        self.wait_and_click(Send.continueButton1)
+        self.wait_and_input_text(Send.sendToIdOrEmail, userID)
+        self.wait_to_be_clickable(Send.continueButton2)
+        self.wait_and_click(Send.continueButton2)
+        self.wait_and_input_text(Send.amount, amount)
+        self.wait_and_assert_element_text(Send.limitExceededTooltip, "Limit exceeded")
+        self.assert_element_attirbute_value(Send.continueButton3, "disabled", "true")

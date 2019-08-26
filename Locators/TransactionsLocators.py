@@ -22,6 +22,8 @@ class Send:
     comment = (By.XPATH, "//input[contains(@class, 'input__input--1lDmD') and @placeholder='Enter comment (optional)']")
     withdraw = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 send__buttonContinue--3pUpw')]")
     destinationTag = (By.XPATH, "//input[contains(@class, 'input__input--1lDmD') and @placeholder='Enter destination tag']")
+    limitExceededTooltip = (By.CLASS_NAME, 'tippy-tooltip-content')
+    tokenError = (By.XPATH, "//div[@class='send__tokenError--7Q4J_']")
 
     networkFee = (By.XPATH, ".//div[@class='send__feeBlock--3EjJC']/div[1]")
     arrivalAmount = (By.XPATH, ".//h4[contains(text(), 'Arrival amount')]")
