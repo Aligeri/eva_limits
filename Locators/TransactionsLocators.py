@@ -43,6 +43,11 @@ class Send:
     errorMessageInTransaction = (By.XPATH, ".//td[text()='Error']/following-sibling::td")
     notVerifiedEmailModalMessage = (By.XPATH, ".//div[contains(@class, 'pp__title--2cHYp pp__is-danger--3J_1v')]")
 
+    firstUnconfirmedTransaction = (By.XPATH, ".//a[contains(@class, 'item__wrapper--2HY-h item__wrapper__unconfirmed--3YAln')][1]")
+    statusInTransaction = (By.XPATH, "//tr[@class='transaction-view__statusRow--3b34v']/td[2]")
+    cancelButtonInTransaction = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Cancel']")
+
+    newEmailTransferPassword = (By.XPATH, "//h1/span[@style='color: #000;']")
 
 class TopUpPhone:
     mobileNumber = (By.XPATH, "//input[contains(@class, 'mobile-pay-section__input--bGf8n')]")

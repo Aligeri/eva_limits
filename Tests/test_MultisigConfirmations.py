@@ -1,6 +1,7 @@
 import pytest
 from Pages.LoginPage import *
 from Pages.SettingsPage import *
+from Pages.TransactionsPage import *
 from Pages.SecurityPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
@@ -15,27 +16,39 @@ def data_basic_user(driver):
     loginPage.reset_session()
     loginPage.login_as_basic_user(ExistingBasicVerifiedUser.email, ExistingBasicVerifiedUser.password)
     loginPage.input_pincode_login(ExistingBasicVerifiedUser.pincode)
-    yield
     sql.delete_multisig_emails(ExistingBasicVerifiedUser.email)
+    yield
+
 
 
 @pytest.fixture(scope='function')
+@pytest.mark.usefixtures("driver")
 def data_google_user(driver):
     sql = SQLHelper()
     email = SMTPHelper()
     email.delete_emails_from_gmail(ExistingBasicUser.email, ExistingBasicUser.password)
+    sql.delete_multisig_emails(MultisigGoogleUser.email)
     loginPage = LoginPage(driver)
     loginPage.reset_session()
     loginPage.clear_google_cookies()
-    loginPage.navigate_to_signup_page()
     loginPage.login_as_google_user(MultisigGoogleUser.email, MultisigGoogleUser.password)
-    loginPage.input_pincode_create(MultisigGoogleUser.pincode)
-    loginPage.input_pincode_repeat(MultisigGoogleUser.pincode)
+    loginPage.input_pincode_login(MultisigGoogleUser.pincode)
     yield
     email.delete_emails_from_gmail(ExistingBasicUser.email, ExistingBasicUser.password)
-    sql.delete_multisig_emails(MultisigGoogleUser.email)
-    sql.delete_user_from_database(MultisigGoogleUser.email)
 
+@pytest.fixture(scope='function')
+@pytest.mark.usefixtures("driver")
+def existing_multisig(driver):
+    sql = SQLHelper()
+    sql.delete_multisig_emails(MultisigGoogleUser.email)
+    sql.add_multisig_email(MultisigGoogleUser.email, ExistingBasicUser.email)
+    loginPage = LoginPage(driver)
+    loginPage.reset_session()
+    loginPage.clear_google_cookies()
+    loginPage.login_as_google_user(MultisigGoogleUser.email, MultisigGoogleUser.password)
+    loginPage.input_pincode_login(MultisigGoogleUser.pincode)
+    yield
+    #sql.delete_multisig_emails(MultisigGoogleUser.email)
 
 @pytest.mark.usefixtures("driver")
 class TestClass:
@@ -48,15 +61,16 @@ class TestClass:
         securityPage.discard_multisig_address()
 
     #@pytest.mark.skip("Опять емейлы")
-    @pytest.mark.usefixtures("data_google_user")
-    def test_MultisigEmailConfirm(self, driver):
-        smtp = SMTPHelper()
-        securityPage = SecurityPage(driver)
-        loginPage = LoginPage(driver)
-        securityPage.navigate_to_email_confirmation()
-        securityPage.add_multisig_address(ExistingBasicUser.email)
-        link = smtp.get_multisig_link_from_email(ExistingBasicUser.email, ExistingBasicUser.password, "Freewallet", "Verify")
-        securityPage.navigate_to_link(link)
-        loginPage.input_pincode_login(MultisigGoogleUser.pincode)
-        #TODO: дописать мультисиг
+    @pytest.mark.usefixtures("existing_multisig")
+    def test_CancelMultisigTransaction(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        comment = str(time.time())
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("BTC")
+        transactionsPage.send_transaction_step_2_user_id(ExistingBasicUser.userID)
+        transactionsPage.send_transaction_step_3("0.00000001")
+        transactionsPage.send_transaction_step_4(comment)
+        transactionsPage.check_unconfirmed_transaction()
+        transactionsPage.cancel_unconfirmed_transaction()
+
 

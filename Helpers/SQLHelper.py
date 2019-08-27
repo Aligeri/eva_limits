@@ -45,6 +45,13 @@ class SQLHelper():
         user_id = self.__get_user_from_database(email)
         cursor.execute("DELETE FROM public.user_multisig_pending_emails WHERE user_id = (%s)", (user_id,))
         cursor.execute("DELETE FROM public.user_multisig_emails WHERE user_id = (%s)", (user_id,))
+        connection.commit()
+
+    def add_multisig_email(self, email, multisig_email):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("INSERT INTO public.user_multisig_emails (user_id, email) VALUES (%s, %s)", (user_id, multisig_email, ))
+        connection.commit()
 
 
     def get_limits_by_email_from_database(self, email):

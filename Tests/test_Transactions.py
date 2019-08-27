@@ -4,6 +4,7 @@ from Pages.TransactionsPage import *
 from Pages.DashboardPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
+from Helpers.SMTPHelper import *
 
 """
 @pytest.fixture(scope='function', autouse=True)
@@ -31,6 +32,19 @@ def login_as_basic_user(driver):
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
     yield
 
+@pytest.fixture(scope="function")
+@pytest.mark.usefixtures("driver")
+def new_email_transaction(driver):
+    sql = SQLHelper()
+    smtp = SMTPHelper()
+    loginPage = LoginPage(driver)
+    sql.delete_user_from_database(UnregisteredBasicUser.email)
+    smtp.delete_emails_from_gmail(MultisigGoogleUser.email, MultisigGoogleUser.password)
+    loginPage.reset_session()
+    loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
+    loginPage.input_pincode_login(ExistingBasicUser.pincode)
+    yield
+
 
 @pytest.fixture(scope="function")
 @pytest.mark.usefixtures("driver")
@@ -52,7 +66,10 @@ class TestClass:
         transactionsPage = TransactionsPage(driver)
         loginPage = LoginPage(driver)
         transactionsPage.navigate_to_send()
-        transactionsPage.send_transaction_to_user_id("BTC", "0.00000001", ExistingGoogleUser.userID, comment)
+        transactionsPage.send_transaction_step_1_user_id("BTC")
+        transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
+        transactionsPage.send_transaction_step_3("0.00000001")
+        transactionsPage.send_transaction_step_4(comment)
         transactionsPage.check_first_transaction("BTC", "0.00000001", comment)
 
     @pytest.mark.usefixtures("login_as_basic_user")
@@ -61,7 +78,10 @@ class TestClass:
         transactionsPage = TransactionsPage(driver)
         loginPage = LoginPage(driver)
         transactionsPage.navigate_to_send()
-        transactionsPage.send_complex_transaction_to_user_id("XRP", "0.000001", ExistingGoogleUser.xrtWallet, ExistingGoogleUser.xrtTag, comment)
+        transactionsPage.send_complex_transaction_step_1("XRP")
+        transactionsPage.send_complex_transaction_step_2("XRP", ExistingGoogleUser.xrtWallet, ExistingGoogleUser.xrtTag)
+        transactionsPage.send_transaction_step_3("0.000001")
+        transactionsPage.send_transaction_step_4(comment)
         transactionsPage.check_first_transaction("XRP", "0.000001", comment)
 
     @pytest.mark.usefixtures("login_as_basic_user")
@@ -70,7 +90,10 @@ class TestClass:
         transactionsPage = TransactionsPage(driver)
         loginPage = LoginPage(driver)
         transactionsPage.navigate_to_send()
-        transactionsPage.send_transaction_to_wallet_address("ETH", "0.001", ExistingBasicUser.ethWallet, "ETH", comment)
+        transactionsPage.send_transaction_step_1_wallet_address("ETH")
+        transactionsPage.send_transaction_step_2_wallet_address(ExistingBasicUser.ethWallet, "ETH")
+        transactionsPage.send_transaction_step_3("0.001")
+        transactionsPage.send_transaction_step_4(comment)
         transactionsPage.check_first_transaction("ETH", "0.00184", comment)
         transactionsPage.check_failed_transaction()
 
@@ -78,7 +101,9 @@ class TestClass:
     def test_checkBTCFeesDisplayed(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
-        transactionsPage.show_fee_for_wallet_address("BTC", "0.00001", ExistingBasicUser.btcWallet, "BTC")
+        transactionsPage.send_transaction_step_1_wallet_address("BTC")
+        transactionsPage.send_transaction_step_2_wallet_address(ExistingBasicUser.btcWallet, "BTC")
+        transactionsPage.wait_and_input_text(Send.amount, "0.00001")
         transactionsPage.check_BTC_Fee("Low", "0.00008")
         transactionsPage.check_BTC_Fee("Normal", "0.00011")
         transactionsPage.check_BTC_Fee("Fast", "0.00013")
@@ -88,7 +113,9 @@ class TestClass:
     def test_checkIncludeExcludeFee(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
-        transactionsPage.show_fee_for_wallet_address("BTC", "0.001", ExistingBasicUser.btcWallet, "BTC")
+        transactionsPage.send_transaction_step_1_wallet_address("BTC")
+        transactionsPage.send_transaction_step_2_wallet_address(ExistingBasicUser.btcWallet, "BTC")
+        transactionsPage.wait_and_input_text(Send.amount, "0.001")
         transactionsPage.check_exclude_fee()
         transactionsPage.wait_and_click(Send.includeExcludeSwitch)
         transactionsPage.check_include_fee()
@@ -99,7 +126,10 @@ class TestClass:
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
-        transactionsPage.send_transaction_to_user_id("BTC", "0.00000001", ExistingBasicUser.userID, comment)
+        transactionsPage.send_transaction_step_1_user_id("BTC")
+        transactionsPage.send_transaction_step_2_user_id(ExistingBasicUser.userID)
+        transactionsPage.send_transaction_step_3("0.00000001")
+        transactionsPage.send_transaction_step_4(comment)
         transactionsPage.check_not_verified_email_modal()
 
     @pytest.mark.usefixtures("login_as_basic_user")
@@ -116,3 +146,21 @@ class TestClass:
         transactionsPage.navigate_to_send()
         transactionsPage.send_transaction_to_ETH_token("ETH", CommonData.unsupportedEthToken)
 
+    @pytest.mark.usefixtures("new_email_transaction")
+    def test_transactionToNewAddress(self, driver):
+        comment = str(time.time())
+        smtp = SMTPHelper()
+        transactionsPage = TransactionsPage(driver)
+        loginPage = LoginPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("BTC")
+        transactionsPage.send_transaction_step_2_user_id(UnregisteredBasicUser.email)
+        transactionsPage.send_transaction_step_3("0.00000001")
+        transactionsPage.send_transaction_step_4(comment)
+        password_link = smtp.get_registration_link_from_email(MultisigGoogleUser.email, MultisigGoogleUser.password, "Freewallet", "You've")
+        password = transactionsPage.get_new_email_transfer_password(password_link)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(UnregisteredBasicUser.email, password)
+        loginPage.input_pincode_create(UnregisteredBasicUser.pincode)
+        loginPage.input_pincode_repeat(UnregisteredBasicUser.pincode)
+        transactionsPage.check_first_transaction_receive("BTC", "0.00000001", comment)

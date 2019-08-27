@@ -19,7 +19,49 @@ DESTINATION_WALLET = {
     "BTC": Send.btcRecieverWallet,
 }
 
+
 class TransactionsPage(Page):
+    def send_transaction_step_1_user_id(self, currency):
+        self.wait_and_click(WALLETFROM[currency])
+        self.wait_and_click(Send.userIdOrEmail)
+        self.wait_and_click(Send.continueButton1)
+
+    def send_transaction_step_2_user_id(self, userID):
+        self.wait_and_input_text(Send.sendToIdOrEmail, userID)
+        self.wait_to_be_clickable(Send.continueButton2)
+        self.wait_and_click(Send.continueButton2)
+
+    def send_transaction_step_3(self, amount):
+        self.wait_and_input_text(Send.amount, amount)
+        self.wait_to_be_clickable(Send.continueButton3)
+        self.wait_and_click(Send.continueButton3)
+
+    def send_transaction_step_4(self, comment):
+        self.wait_and_input_text(Send.comment, comment)
+        self.wait_and_click(Send.withdraw)
+
+    def send_transaction_step_1_wallet_address(self, currency):
+        self.wait_and_click(WALLETFROM[currency])
+        self.wait_and_click(Send.userWalletAddress)
+        self.wait_and_click(Send.continueButton1)
+
+    def send_transaction_step_2_wallet_address(self, wallet_address, wallet_receiver):
+        self.wait_and_input_text(Send.sendToAddress, wallet_address)
+        self.wait_and_click(DESTINATION_WALLET[wallet_receiver])
+        self.wait_to_be_clickable(Send.continueButton2)
+
+    def send_complex_transaction_step_1(self, currency):
+        self.wait_and_click(COMPLEX_WALLET[currency])
+        self.wait_and_click(Send.userWalletAddress)
+        self.wait_and_click(Send.continueButton1)
+
+    def send_complex_transaction_step_2(self, currency, wallet_address, wallet_tag):
+        self.wait_and_input_text(Send.sendToAddress, wallet_address)
+        self.wait_and_click(DESTINATION_WALLET[currency])
+        self.wait_and_input_text(Send.destinationTag, wallet_tag)
+        self.wait_to_be_clickable(Send.continueButton2)
+
+
     def send_transaction_to_user_id(self, currency, amount, userID, comment):
         """
         Отправляет трансфер другому пользователю
@@ -185,6 +227,20 @@ class TransactionsPage(Page):
         self.wait_and_assert_element_text(Send.firstTransactionAmount, transaction_title)
         self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
 
+    def check_first_transaction_receive(self, currency, amount, comment):
+        """
+        Проверяет данные самой верхней транзакции в history
+        :param currency: валюта транзакции, BTC/ETH
+        :param amount: string с количеством валюты
+        :param comment: комментарий к транзакции
+        """
+        transaction_title = "+%s %s" % (amount, currency)
+        comment_formatted = 'Comment "%s"' % comment
+        self.navigate_to_send()
+        self.navigate_to_history()
+        self.wait_and_assert_element_text(Send.firstTransactionAmount, transaction_title)
+        self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
+
     def check_first_transaction_comment(self, comment):
         """
         Проверяет комментарий самой верхней транзакции в history
@@ -200,6 +256,20 @@ class TransactionsPage(Page):
         self.navigate_to_history()
         self.wait_and_click(Send.firstErrorTransaction)
         self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Cannot send eth to yourself pay in address")
+
+    def check_unconfirmed_transaction(self):
+        """
+        Проверяет данные внутри упавшей транзакции в history
+        """
+        self.navigate_to_send()
+        self.navigate_to_history()
+        self.wait_and_click(Send.firstUnconfirmedTransaction)
+        self.wait_and_assert_element_text(Send.statusInTransaction, "Requires email confirmation")
+
+    def cancel_unconfirmed_transaction(self):
+        self.wait_and_click(Send.cancelButtonInTransaction)
+        self.wait_and_click(Send.firstErrorTransaction)
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Email confirmation canceled by user")
 
     def send_top_up_phone_transaction(self, phone):
         self.wait_and_input_text(TopUpPhone.mobileNumber, phone)
@@ -248,3 +318,8 @@ class TransactionsPage(Page):
         self.wait_and_input_text(Send.amount, amount)
         self.wait_and_assert_element_text(Send.limitExceededTooltip, "Limit exceeded")
         self.assert_element_attirbute_value(Send.continueButton3, "disabled", "true")
+
+    def get_new_email_transfer_password(self, create_password_link):
+        self.driver.get(create_password_link)
+        password = self.get_element_text(Send.newEmailTransferPassword)
+        return password

@@ -191,9 +191,9 @@ class Page(object):
         Чистит текущую сессию и возвращается к начальной странице
         :return:
         """
-        retries_left = 2
+        retries_left = 4
         while retries_left > 0:
-            if self.driver.current_url != ("%s/auth/login" % self.url) or self.driver.current_url != self.url:
+            if not (self.driver.current_url == ("%s/auth/login" % self.url) or self.driver.current_url == self.url):
                 self.driver.execute_script("window.localStorage.clear();")
                 self.driver.execute_script("window.sessionStorage.clear();")
                 self.driver.delete_all_cookies()

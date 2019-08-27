@@ -63,6 +63,18 @@ class SMTPHelper():
         fixed_link = re.sub("(=3D=3D)", "==", verification_link)
         return (fixed_link)
 
+    def get_registration_link_from_email(self, address, password, email_from, email_subject=''):
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+        pattern = "(https:\/\/\w*?\.?freewallet\.org\/email-temporary\/.*?)]"
+        registration_link = re.search(pattern, email_string).group(1)
+        return (registration_link)
+
+    def get_multisig_transaction_link_from_email(self, address, password, email_from, email_subject=''):
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+        pattern = "(https:\/\/\w*?\.?freewallet\.org\/multisig\/tx\/.*?)]"
+        registration_link = re.search(pattern, email_string).group(1)
+        return (registration_link)
+
     def delete_emails_from_gmail(self, address, password):
         mail = imaplib.IMAP4_SSL('imap.gmail.com', "993")
         mail.login(address, password)
