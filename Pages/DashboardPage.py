@@ -4,6 +4,13 @@ from Locators.WalletLocators import *
 import re
 import time
 
+BUY_CURRENCY = {
+    "BTC": BuyWithACard.bitcoin,
+    "ETH": BuyWithACard.ethereum,
+    "LTC": BuyWithACard.litecoin,
+}
+
+
 
 FILTER_APPLY = {
     "Exchange": Filters.exchangeFilter,
@@ -34,6 +41,9 @@ class DashboardPage(Page):
     def navigate_to_settings(self):
         self.wait_and_click(NavigationButtons.settings)
 
+    def navigate_to_buy_with_a_card(self):
+        self.wait_and_click(WalletActionsButtons.buy)
+
     def select_wallet(self, wallet):
         """
         Выбор кошелька в receive
@@ -45,6 +55,12 @@ class DashboardPage(Page):
             "Bitcoin Cash": ReceiveWallets.bcc,
         }
         self.wait_and_click(WALLET[wallet])
+
+    def select_buy_currency(self, currency):
+        self.wait_and_click(BUY_CURRENCY[currency])
+        buy_text = "Buy %s" % currency
+        self.wait_to_be_clickable(BuyWithACard.buyButton)
+        self.wait_and_assert_element_text(BuyWithACard.buyButton, buy_text)
 
     def assert_deposit_address_is_not_empty(self):
         """

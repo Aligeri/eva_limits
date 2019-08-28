@@ -53,5 +53,15 @@ class TestClass:
         dashboardPage.remove_filter("Pay In")
         dashboardPage.remove_filter("Failed")
 
+    @pytest.mark.usefixtures("login_as_basic_user")
+    def test_buyWithACard(self, driver):
+        dashboardPage = DashboardPage(driver)
+        dashboardPage.navigate_to_buy_with_a_card()
+        dashboardPage.select_buy_currency("ETH")
+        dashboardPage.select_buy_currency("LTC")
+        dashboardPage.select_buy_currency("BTC")
+
+
+
 
 

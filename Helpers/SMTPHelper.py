@@ -3,6 +3,7 @@ import imaplib
 import email
 import re
 import time
+from conftest import *
 
 
 class SMTPHelper():
@@ -12,7 +13,7 @@ class SMTPHelper():
 
     def __getEmailFromGmail(self, address, password, email_from, email_subject):
         mail = imaplib.IMAP4_SSL('imap.gmail.com', "993")
-        retries_left = 10
+        retries_left = 20
         mail.login(address, password)
         mail.list()
         mail.select('"INBOX"')
@@ -26,7 +27,7 @@ class SMTPHelper():
                     time.sleep(3)
                     mail.select('"INBOX"')
                     search = ("(FROM '%s' SUBJECT '%s')" % (email_from, email_subject))
-                    result, data = mail.search(None, search)
+                    result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
                     ids = data[0]
                     id_list = ids.split()
                     retries_left -= 1
@@ -58,10 +59,11 @@ class SMTPHelper():
 
     def get_verification_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "(https:\/\/\w*?\.?freewallet\.org\/email-validate\/.*?)]"
+        pattern = "https:\/\/\w*?\.?freewallet\.org(\/email-validate\/.*?)]"
         verification_link = re.search(pattern, email_string).group(1)
         fixed_link = re.sub("(=3D=3D)", "==", verification_link)
-        return (fixed_link)
+        domain_link = email_url + fixed_link
+        return (domain_link)
 
     def get_registration_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)

@@ -125,4 +125,8 @@ class SecurityPage(Page):
         self.wait_and_click(Multisig.disclaimerDiscard)
         self.assert_element_attirbute_value(Multisig.email1, "value", "")
 
+    def disable_multisig(self):
+        self.wait_until_element_visible(Multisig.disclaimerDisable)
+        self.wait_and_click(Multisig.disclaimerDisable)
+
 

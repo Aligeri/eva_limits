@@ -184,7 +184,7 @@ class Page(object):
         print(link)
         current_url = self.driver.current_url
         self.driver.get(link)
-        self.driver.get(current_url)
+        self.driver.get(self.url)
 
     def reset_session(self):
         """
@@ -193,7 +193,7 @@ class Page(object):
         """
         retries_left = 4
         while retries_left > 0:
-            if not (self.driver.current_url == ("%s/auth/login" % self.url) or self.driver.current_url == self.url):
+            if not (self.driver.current_url == self.url or self.driver.current_url == ("%s/auth/login" % self.url)):
                 self.driver.execute_script("window.localStorage.clear();")
                 self.driver.execute_script("window.sessionStorage.clear();")
                 self.driver.delete_all_cookies()
@@ -236,6 +236,7 @@ class Page(object):
                 time.sleep(0.5)
                 retries_left -= 1
         raise WebDriverException("Element is not clickable or not present on page")
+
 
     def navigate_to_dashboard(self):
         self.wait_and_click(NavigationButtons.dashboard)

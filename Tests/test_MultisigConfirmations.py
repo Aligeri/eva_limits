@@ -35,6 +35,24 @@ def data_google_user(driver):
     loginPage.input_pincode_login(MultisigGoogleUser.pincode)
     yield
     email.delete_emails_from_gmail(ExistingBasicUser.email, ExistingBasicUser.password)
+    sql.delete_multisig_emails(MultisigGoogleUser.email)
+
+@pytest.fixture(scope='function')
+@pytest.mark.usefixtures("driver")
+def disable_multisig(driver):
+    sql = SQLHelper()
+    email = SMTPHelper()
+    email.delete_emails_from_gmail(ExistingBasicUser.email, ExistingBasicUser.password)
+    sql.delete_multisig_emails(MultisigGoogleUser.email)
+    sql.add_multisig_email(MultisigGoogleUser.email, ExistingBasicUser.email)
+    loginPage = LoginPage(driver)
+    loginPage.reset_session()
+    loginPage.clear_google_cookies()
+    loginPage.login_as_google_user(MultisigGoogleUser.email, MultisigGoogleUser.password)
+    loginPage.input_pincode_login(MultisigGoogleUser.pincode)
+    yield
+    email.delete_emails_from_gmail(ExistingBasicUser.email, ExistingBasicUser.password)
+    sql.delete_multisig_emails(MultisigGoogleUser.email)
 
 @pytest.fixture(scope='function')
 @pytest.mark.usefixtures("driver")
@@ -60,6 +78,34 @@ class TestClass:
         securityPage.add_multisig_address(ExistingBasicUser.email)
         securityPage.discard_multisig_address()
 
+    @pytest.mark.usefixtures("data_google_user")
+    def test_EnableMultisigConfirmation(self, driver):
+        securityPage = SecurityPage(driver)
+        loginPage = LoginPage(driver)
+        smtp = SMTPHelper()
+        securityPage.navigate_to_email_confirmation()
+        securityPage.add_multisig_address(ExistingBasicUser.email)
+        link = smtp.get_multisig_link_from_email(ExistingBasicUser.email, ExistingBasicUser.password, "Freewallet", "Verify your multisig email")
+        securityPage.navigate_to_link(link)
+        loginPage.input_pincode_login(MultisigGoogleUser.pincode)
+        securityPage.navigate_to_email_confirmation()
+        securityPage.wait_until_element_visible(Multisig.confirmedAddressFirst)
+        securityPage.wait_and_assert_element_text(Multisig.confirmedAddressFirst, ExistingBasicUser.email)
+
+    @pytest.mark.usefixtures("disable_multisig")
+    def test_DisableMultisigConfirmation(self, driver):
+        securityPage = SecurityPage(driver)
+        loginPage = LoginPage(driver)
+        smtp = SMTPHelper()
+        securityPage.navigate_to_email_confirmation()
+        securityPage.disable_multisig()
+        link = smtp.get_multisig_link_from_email(ExistingBasicUser.email, ExistingBasicUser.password, "Freewallet", "Verify removing your confirmation email")
+        securityPage.navigate_to_link(link)
+        loginPage.input_pincode_login(MultisigGoogleUser.pincode)
+        securityPage.navigate_to_email_confirmation()
+        securityPage.wait_and_assert_element_text(Multisig.email1, '')
+
+
     #@pytest.mark.skip("Опять емейлы")
     @pytest.mark.usefixtures("existing_multisig")
     def test_CancelMultisigTransaction(self, driver):
@@ -72,5 +118,6 @@ class TestClass:
         transactionsPage.send_transaction_step_4(comment)
         transactionsPage.check_unconfirmed_transaction()
         transactionsPage.cancel_unconfirmed_transaction()
+
 
 

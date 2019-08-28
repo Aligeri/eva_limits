@@ -65,3 +65,6 @@ class Multisig:
     continueButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 tab-multisig__saveButton--128q7')]")
     disclaimer = (By.XPATH, "//div[contains(@class, 'tab-multisig__disclaimerWithChild--2DkfO')]")
     disclaimerDiscard = (By.XPATH, "//a[contains(@class, 'tab-multisig__disclaimerCancelPending--2a7Ip')]")
+    disclaimerDisable = (By.XPATH, "//a[contains(@class, 'tab-multisig__disclaimerDisableAll--2RjWV')]")
+
+    confirmedAddressFirst = (By.XPATH, "//div[contains(@class, 'tab-multisig__confirmedEmailItem--3LH85')]")

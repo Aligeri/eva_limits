@@ -7,6 +7,7 @@ import time
 WALLETFROM = {
     "BTC": Send.btcWallet,
     "ETH": Send.ethWallet,
+    "XRP": Send.xrpWallet
 }
 
 COMPLEX_WALLET = {
@@ -49,6 +50,7 @@ class TransactionsPage(Page):
         self.wait_and_input_text(Send.sendToAddress, wallet_address)
         self.wait_and_click(DESTINATION_WALLET[wallet_receiver])
         self.wait_to_be_clickable(Send.continueButton2)
+        self.wait_and_click(Send.continueButton2)
 
     def send_complex_transaction_step_1(self, currency):
         self.wait_and_click(COMPLEX_WALLET[currency])

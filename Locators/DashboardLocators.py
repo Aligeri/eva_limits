@@ -51,3 +51,9 @@ class Filters:
     failedButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__typeTag--22azq') and text()='Failed']")
 
     removeFilter = (By.XPATH, "//span[@class='svg-icon__svgIcon--216sc tags__removeIcon--SbaLA']")
+
+class BuyWithACard:
+    bitcoin = (By.XPATH, "//div[contains(@class, 'wallets-select__currencyFrom--3N3t5') and @data-currency='btc']")
+    ethereum = (By.XPATH, "//div[contains(@class, 'wallets-select__currencyFrom--3N3t5') and @data-currency='eth']")
+    litecoin = (By.XPATH, "//div[contains(@class, 'wallets-select__currencyFrom--3N3t5') and @data-currency='ltc']")
+    buyButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 buy__submitButton--1miUq')]")

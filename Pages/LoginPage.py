@@ -183,4 +183,4 @@ class LoginPage(Page):
         self.driver.delete_all_cookies()
         self.driver.close()
         self.driver.switch_to.window(current_window)
-        self.driver.get(current_page)
+        self.driver.get(self.url)

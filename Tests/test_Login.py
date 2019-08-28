@@ -20,6 +20,7 @@ class TestClass:
         loginPage = LoginPage(driver)
         loginPage.login_as_basic_user("test@test.test", "12345678")
         loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Incorrect password")
+        loginPage.get_base_url()
 
     def test_LoginAsBasicUser(self, driver):
         loginPage = LoginPage(driver)

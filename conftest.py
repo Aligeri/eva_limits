@@ -5,7 +5,9 @@ import os
 global driver_screenshots
 driver_screenshots = None
 global url
-url = r"https://app.sanitarium.freewallet.org/auth/login"
+server = "sanitarium"
+url = r"https://app.%s.freewallet.org" % server
+email_url = r"https://%s.freewallet.org" % server
 
 # Фикстура для инициализации драйвера, возможно дописать выбор хром/хедлесс хром/фантомЖС из строки запуска
 @pytest.mark.usefixtures("get_url")

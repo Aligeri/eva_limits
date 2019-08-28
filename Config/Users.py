@@ -16,6 +16,7 @@ class ExistingBasicVerifiedUser:
     changedPincode = "9876"
     userName = "Existing Multisig User"
     btcWallet = "37BvpPZ8Cvo4ZTrbi7UQBN8WPt2vcPTfCX"
+    userID = "865ab861"
 
 class NewBasicUser:
     email = "petrautomation@gmail.com"
