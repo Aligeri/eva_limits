@@ -53,6 +53,11 @@ class SQLHelper():
         cursor.execute("INSERT INTO public.user_multisig_emails (user_id, email) VALUES (%s, %s)", (user_id, multisig_email, ))
         connection.commit()
 
+    def set_user_language(self, email, language):
+        cursor, connection = self.connect_to_database()
+        cursor.execute("UPDATE public.user SET lang = (%s) WHERE email = (%s)", (language, email,))
+        connection.commit()
+
 
     def get_limits_by_email_from_database(self, email):
         """

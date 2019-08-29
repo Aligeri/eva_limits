@@ -21,6 +21,18 @@ def login_as_basic_user(driver):
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
     yield
 
+@pytest.fixture(scope="function")
+@pytest.mark.usefixtures("driver")
+def language_change(driver):
+    loginPage = LoginPage(driver)
+    sql = SQLHelper()
+    sql.set_user_language(ExistingBasicUser.email, "en")
+    loginPage.reset_session()
+    loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
+    loginPage.input_pincode_login(ExistingBasicUser.pincode)
+    yield
+    sql.set_user_language(ExistingBasicUser.email, "en")
+
 @pytest.mark.usefixtures("driver", "data_fixture")
 class TestClass:
 
@@ -69,7 +81,7 @@ class TestClass:
         dashboardPage.select_graph_period("week")
         dashboardPage.select_graph_period("month")
 
-    @pytest.mark.usefixtures("login_as_basic_user")
+    @pytest.mark.usefixtures("language_change")
     def test_ChangeLanguage(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.select_language("ja")
