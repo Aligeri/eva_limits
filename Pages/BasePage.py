@@ -2,6 +2,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 from Locators.DashboardLocators import *
 import time
 import conftest
@@ -85,13 +86,12 @@ class Page(object):
         Ожидает элемент и кликает по нему
         :param element_locator: локатор элемента из Locators/*
         """
-        retries_left = 2
+        retries_left = 3
         while retries_left > 0:
             try:
                 self.driver.find_element(*element_locator).click()
                 return
-            except WebDriverException:
-                self.wait_to_be_clickable(element_locator)
+            except (WebDriverException, TimeoutError) as e:
                 time.sleep(0.5)
                 retries_left -= 1
         raise WebDriverException("Element is not clickable or not present on page")
@@ -141,6 +141,19 @@ class Page(object):
                 time.sleep(2)
         raise WebDriverException("Element is not found or text is not found")
 
+    def hover_over_element(self, element_locator):
+        retries_left = 2
+        while retries_left > 0:
+            try:
+                element = self.driver.find_element(*element_locator)
+                action = ActionChains(self.driver)
+                hover = action.move_to_element(element)
+                hover.perform()
+                return
+            except (AssertionError, WebDriverException) as e:
+                retries_left -= 1
+                time.sleep(1)
+        raise WebDriverException("Element is not found or text is empty")
 
     def assert_element_text_is_not_empty(self, element_locator):
         """
@@ -240,3 +253,4 @@ class Page(object):
 
     def navigate_to_dashboard(self):
         self.wait_and_click(NavigationButtons.dashboard)
+

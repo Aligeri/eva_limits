@@ -205,3 +205,15 @@ class TestClass:
         loginPage.login_as_basic_user(ExistingBasicVerifiedUser.email, ExistingBasicVerifiedUser.password)
         loginPage.input_pincode_login(ExistingBasicVerifiedUser.pincode)
         transactionsPage.check_first_transaction_receive("XRP", "0.00001", comment)
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    def test_sendSimpleTransactionToYourself(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        loginPage = LoginPage(driver)
+        comment = str(time.time())
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("BTC")
+        transactionsPage.send_transaction_step_2_user_id(ExistingBasicUser.userID)
+        transactionsPage.send_transaction_step_3("0.000006")
+        transactionsPage.send_transaction_step_4(comment)
+        transactionsPage.cancel_first_transaction_without_hash(comment)

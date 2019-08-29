@@ -4,13 +4,23 @@ from Locators.WalletLocators import *
 import re
 import time
 
+LANGUAGE = {
+    "en": LanguageSelectors.en,
+    "ja": LanguageSelectors.ja,
+    "ko": LanguageSelectors.ko,
+}
+
 BUY_CURRENCY = {
     "BTC": BuyWithACard.bitcoin,
     "ETH": BuyWithACard.ethereum,
     "LTC": BuyWithACard.litecoin,
 }
 
-
+GRAPH_PERIOD = {
+    "day": Graph.day,
+    "week": Graph.week,
+    "month": Graph.month,
+}
 
 FILTER_APPLY = {
     "Exchange": Filters.exchangeFilter,
@@ -27,7 +37,9 @@ FILTER_BUTTON = {
 
 class DashboardPage(Page):
     def select_language(self, language):
-        pass
+        #self.hover_over_element(LanguageSelectors.dropdown)
+        self.wait_and_click(LanguageSelectors.dropdown)
+        self.wait_and_click(LANGUAGE[language])
 
     def navigate_to_receive(self):
         self.wait_and_click(WalletActionsButtons.receive)
@@ -61,6 +73,11 @@ class DashboardPage(Page):
         buy_text = "Buy %s" % currency
         self.wait_to_be_clickable(BuyWithACard.buyButton)
         self.wait_and_assert_element_text(BuyWithACard.buyButton, buy_text)
+
+    def select_graph_period(self, period):
+        self.wait_and_click(GRAPH_PERIOD[period])
+        self.wait_until_element_visible(Graph.table)
+        self.wait_until_element_visible(Graph.chart)
 
     def assert_deposit_address_is_not_empty(self):
         """

@@ -259,16 +259,41 @@ class TransactionsPage(Page):
         self.wait_and_click(Send.firstErrorTransaction)
         self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Cannot send eth to yourself pay in address")
 
-    def check_unconfirmed_transaction(self):
+    def check_unconfirmed_transaction(self, comment):
         """
         Проверяет данные внутри упавшей транзакции в history
         """
+        self.open_transaction_by_comment(comment)
+        self.wait_and_assert_element_text(Send.statusInTransaction, "Requires email confirmation")
+        time.sleep(1)
+
+    def cancel_transaction(self):
+        self.wait_and_click(Send.cancelButtonInTransaction)
+
+    def check_canceled_transaction(self, comment, reason):
+        #self.navigate_to_send()
+        #self.navigate_to_history()
+        self.open_failed_transaction_by_comment(comment)
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, reason)
+
+
+    def open_transaction_by_comment(self, comment):
         self.navigate_to_send()
         self.navigate_to_history()
-        self.wait_and_click(Send.firstUnconfirmedTransaction)
-        self.wait_and_assert_element_text(Send.statusInTransaction, "Requires email confirmation")
+        self.wait_and_click((By.XPATH, (".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment)))
 
-    def cancel_unconfirmed_transaction(self):
+    def open_failed_transaction_by_comment(self, comment):
+        #self.navigate_to_send()
+        #self.navigate_to_history()
+        self.wait_and_click((By.XPATH, (".//a[contains(@class, 'item__wrapper__failed--16kTs')][.//div[contains(text(), '%s')]]" % comment)))
+
+    def cancel_first_transaction_without_hash(self, comment):
+        self.open_transaction_by_comment(comment)
+        self.wait_and_click(Send.cancelButtonInTransaction)
+        self.open_failed_transaction_by_comment(comment)
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Canceled transaction")
+
+    def cancel_first_transaction(self):
         self.wait_and_click(Send.cancelButtonInTransaction)
         self.wait_and_click(Send.firstErrorTransaction)
         self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Email confirmation canceled by user")

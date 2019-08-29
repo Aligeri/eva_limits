@@ -61,7 +61,23 @@ class TestClass:
         dashboardPage.select_buy_currency("LTC")
         dashboardPage.select_buy_currency("BTC")
 
+    @pytest.mark.usefixtures("login_as_basic_user")
+    def test_ChangeGraphs(self, driver):
+        dashboardPage = DashboardPage(driver)
+        dashboardPage.wait_and_click(WalletActionsButtons.firstWallet)
+        dashboardPage.select_graph_period("day")
+        dashboardPage.select_graph_period("week")
+        dashboardPage.select_graph_period("month")
 
-
-
+    @pytest.mark.usefixtures("login_as_basic_user")
+    def test_ChangeLanguage(self, driver):
+        dashboardPage = DashboardPage(driver)
+        dashboardPage.select_language("ja")
+        dashboardPage.wait_and_assert_element_text(NavigationButtons.dashboard, "ダッシュボード")
+        dashboardPage.wait_and_assert_element_text(NavigationButtons.settings, "設定")
+        dashboardPage.wait_and_assert_element_text(NavigationButtons.security, "セキュリティ")
+        dashboardPage.select_language("en")
+        dashboardPage.wait_and_assert_element_text(NavigationButtons.dashboard, "Dashboard")
+        dashboardPage.wait_and_assert_element_text(NavigationButtons.settings, "Settings")
+        dashboardPage.wait_and_assert_element_text(NavigationButtons.security, "Security")
 

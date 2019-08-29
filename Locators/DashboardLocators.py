@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 
 class LanguageSelectors:
+    dropdown = (By.XPATH, "//div[contains(@class, 'language-selector__flag--1h7bx')]")
     en = (By.XPATH, "//button[@data-lang='en']")
     ru = (By.XPATH, "//button[@data-lang='ru']")
     ja = (By.XPATH, "//button[@data-lang='ja']")
@@ -13,7 +14,7 @@ class LanguageSelectors:
     keys = (By.XPATH, "//button[@data-lang='keys']")
 
 class NavigationButtons:
-    dashboard = (By.XPATH, '//a[@href="/" and @class="header__link--1ckAu"]')
+    dashboard = (By.XPATH, '//a[@href="/" and contains(@class, "header__link--1ckAu")]')
     settings = (By.XPATH, '//a[@href="/settings"]')
     security = (By.XPATH, '//a[@href="/security"]')
     logout = (By.XPATH, '//a[contains(@class, "header__logoutLink--uc90u header__link--1ckAu")]')
@@ -57,3 +58,10 @@ class BuyWithACard:
     ethereum = (By.XPATH, "//div[contains(@class, 'wallets-select__currencyFrom--3N3t5') and @data-currency='eth']")
     litecoin = (By.XPATH, "//div[contains(@class, 'wallets-select__currencyFrom--3N3t5') and @data-currency='ltc']")
     buyButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 buy__submitButton--1miUq')]")
+
+class Graph:
+    day = (By.XPATH, ".//div[@data-period='day']")
+    week = (By.XPATH, ".//div[@data-period='week']")
+    month = (By.XPATH, ".//div[@data-period='month']")
+    table = (By.XPATH, ".//div[contains(@class, 'graph-widget__tableData--1dvDO')]")
+    chart = (By.XPATH, ".//div[contains(@class, 'graph-widget__chartWrapper--jbxzD')]")

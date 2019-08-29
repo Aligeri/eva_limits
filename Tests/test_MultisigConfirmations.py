@@ -58,8 +58,8 @@ def disable_multisig(driver):
 @pytest.mark.usefixtures("driver")
 def existing_multisig(driver):
     sql = SQLHelper()
-    sql.delete_multisig_emails(MultisigGoogleUser.email)
-    sql.add_multisig_email(MultisigGoogleUser.email, ExistingBasicUser.email)
+    #sql.delete_multisig_emails(MultisigGoogleUser.email)
+    #sql.add_multisig_email(MultisigGoogleUser.email, ExistingBasicUser.email)
     loginPage = LoginPage(driver)
     loginPage.reset_session()
     loginPage.clear_google_cookies()
@@ -116,8 +116,8 @@ class TestClass:
         transactionsPage.send_transaction_step_2_user_id(ExistingBasicUser.userID)
         transactionsPage.send_transaction_step_3("0.00000001")
         transactionsPage.send_transaction_step_4(comment)
-        transactionsPage.check_unconfirmed_transaction()
-        transactionsPage.cancel_unconfirmed_transaction()
-
+        transactionsPage.check_unconfirmed_transaction(comment)
+        transactionsPage.cancel_transaction()
+        transactionsPage.check_canceled_transaction(comment, "Email confirmation canceled by user")
 
 
