@@ -1,6 +1,7 @@
 import pytest
 from selenium import webdriver
 import os
+import platform
 
 global driver_screenshots
 driver_screenshots = None
@@ -14,9 +15,14 @@ email_url = r"https://%s.freewallet.org" % server
 @pytest.yield_fixture(scope="session")
 def driver(request, get_url):
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    filepath = os.path.abspath(os.path.dirname(__file__))
-    driverpath = os.path.join(filepath, "chromedriver")
+    if platform.system() == "Linux":
+        filepath = os.path.abspath(os.path.dirname(__file__))
+        driverpath = os.path.join(filepath, "chromedriverLinux")
+    if platform.system() == "Darwin":
+        filepath = os.path.abspath(os.path.dirname(__file__))
+        driverpath = os.path.join(filepath, "chromedriverMac")
+
+    #options.add_argument('--headless')
     #driverpath = "D:\FC\chromedriver.exe"
     driver = webdriver.Chrome(executable_path=driverpath, options=options)  # Временное решение, потом допилю подхват драйвера из PATH
     global driver_screenshots
