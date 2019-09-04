@@ -8,6 +8,9 @@ import time
 import conftest
 
 class Page(object):
+
+    admin_url = "https://board.cain.loc/"
+
     def __init__(self, driver):
         self.driver = driver
         self.url = conftest.url

@@ -92,3 +92,28 @@ class SQLHelper():
         user_id = self.__get_user_from_database(email)
         cursor.execute("UPDATE public.user_settings SET local_currency = (%s) WHERE user_id = (%s)", (currency, user_id,))
         connection.commit()
+
+    def set_settings_payouts_limits(self, slug, limit_amount):
+        """
+        Меняет лимиты в таблице settings_payout_limits
+        :param slug: Название параметра лимита бекенда
+        :param limit_amount: лимит
+        :return:
+        """
+
+        cursor, connection = self.connect_to_database()
+        cursor.execute("UPDATE public.settings_payout_limits SET \"limit\" = (%s) WHERE slug = (%s)", (limit_amount, slug,))
+        connection.commit()
+
+    def get_user_account_id(self, email):
+        """
+        Получает account_id(номер кошелька) по емейлу юзера
+        :param email:
+        :return:
+        """
+
+        cursor, connection = self.connect_to_database()
+        cursor.execute("SELECT wallet FROM public.user WHERE email = (%s)", (email,))
+        return cursor.fetchall()
+
+

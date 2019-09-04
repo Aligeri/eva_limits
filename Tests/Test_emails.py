@@ -25,3 +25,14 @@ class TestClass():
         helper = SQLHelper()
         a = helper.delete_limits_by_email_from_database(ExistingBasicUser.email)
         print(a)
+
+    @pytest.mark.skip()
+    def test_set_limit(self):
+        helper = SQLHelper()
+        a = helper.settings_payouts_limits("user_amount_too_big", 1.00000001)
+
+    #@pytest.mark.skip()
+    def test_get_wallet(self):
+        helper = SQLHelper()
+        a = helper.get_user_account_id('testermail38@gmail.com')
+        print(a)

@@ -7,7 +7,8 @@ import time
 WALLETFROM = {
     "BTC": Send.btcWallet,
     "ETH": Send.ethWallet,
-    "XRP": Send.xrpWallet
+    "XRP": Send.xrpWallet,
+    "Doge": Send.dogeWallet,
 }
 
 COMPLEX_WALLET = {
@@ -18,6 +19,7 @@ DESTINATION_WALLET = {
     "XRP": Send.xrpRecieverWallet,
     "ETH": Send.ethRecieverWallet,
     "BTC": Send.btcRecieverWallet,
+    "Doge": Send.dogeRecieverWallet,
 }
 
 
@@ -350,3 +352,10 @@ class TransactionsPage(Page):
         self.driver.get(create_password_link)
         password = self.get_element_text(Send.newEmailTransferPassword)
         return password
+
+    def get_transaction_ID_by_comment(self, comment):
+        link = self.get_element_attribute(
+            (By.XPATH, (".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment)),
+            "@href")
+        transaction_id = re.search("transaction\/(.*)", link).group(1)
+        return transaction_id

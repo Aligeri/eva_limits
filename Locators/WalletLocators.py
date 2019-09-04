@@ -5,6 +5,7 @@ class ReceiveWallets:
     btc = (By.XPATH, "//div[@data-currency='btc']//span")
     ardr = (By.XPATH, "//div[@data-currency='ardr']//span")
     bcc = (By.XPATH, "//div[@data-currency='bcc']//span")
+    doge = (By.XPATH, "//div[@data-currency='doge']//span")
 
 
 class DepositAddress:
