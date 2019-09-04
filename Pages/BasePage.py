@@ -155,6 +155,19 @@ class Page(object):
                 time.sleep(1)
         raise WebDriverException("Element is not found or text is empty")
 
+    def hover_and_click(self, element_locator):
+        retries_left = 2
+        while retries_left > 0:
+            try:
+                element = self.driver.find_element(*element_locator)
+                action = ActionChains(self.driver)
+                click = action.move_to_element(element).move_by_offset("-200", "-200").click().perform()
+                return
+            except (AssertionError, WebDriverException) as e:
+                retries_left -= 1
+                time.sleep(1)
+        raise WebDriverException("Element is not found or text is empty")
+
     def assert_element_text_is_not_empty(self, element_locator):
         """
         Проверка того что в элементе есть какой-либо текст и он не пустая строка

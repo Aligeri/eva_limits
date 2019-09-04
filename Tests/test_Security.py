@@ -20,6 +20,7 @@ def data_fixture():
 def loginAsBasicUser(driver):
     loginPage = LoginPage(driver)
     sql = SQLHelper()
+    sql.delete_limits_by_email_from_database(ExistingBasicUser.email)
     loginPage.reset_session()
     loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
@@ -49,13 +50,20 @@ class TestClass:
         securityPage = SecurityPage(driver)
         securityPage.navigate_to_limits()
         securityPage.create_new_weekly_limit("FWH", "100")
-        securityPage.change_limit_after_creation("200")
+        securityPage.close_limit_modal()
+        securityPage.change_limit_after_creation("200", "FWH")
+        securityPage.close_limit_modal()
+        securityPage.check_limit_buttons_are_not_displayed("FWH")
+
 
     def test_AddAndDisableLimit(self, driver):
         securityPage = SecurityPage(driver)
         securityPage.navigate_to_limits()
         securityPage.create_new_weekly_limit("BTC", 100)
-        securityPage.disable_limit_after_creation()
+        securityPage.close_limit_modal()
+        securityPage.disable_limit_after_creation("BTC")
+        securityPage.close_limit_modal()
+        securityPage.check_limit_buttons_are_not_displayed("BTC")
 
     def test_AddAndSpendLimit(self, driver):
         securityPage = SecurityPage(driver)
@@ -64,8 +72,7 @@ class TestClass:
         comment = str(time.time())
         securityPage.navigate_to_limits()
         securityPage.create_new_weekly_limit("BTC", "0.00000001")
-        securityPage.refresh_page()
-        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        securityPage.close_limit_modal()
         securityPage.check_BTC_limit_percent("100%")
         securityPage.navigate_to_dashboard()
         transactionsPage.navigate_to_send()
