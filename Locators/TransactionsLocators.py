@@ -51,6 +51,9 @@ class Send:
 
     newEmailTransferPassword = (By.XPATH, "//h1/span[@style='color: #000;']")
 
+    confirmTheTransactionReceive = (By.XPATH, "//button[text()='Receive link']")
+    confirmTheTransactionCancel = (By.XPATH, "//button[text()='Cancel']")
+
 class TopUpPhone:
     mobileNumber = (By.XPATH, "//input[contains(@class, 'mobile-pay-section__input--bGf8n')]")
     continueButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0')]")

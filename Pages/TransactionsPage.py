@@ -361,3 +361,11 @@ class TransactionsPage(Page):
             "href")
         transaction_id = re.search("transaction\/(.*)", link).group(1)
         return transaction_id
+
+    def confirm_transaction_by_email(self):
+        self.wait_to_be_clickable(Send.confirmTheTransactionReceive)
+        self.wait_and_click(Send.confirmTheTransactionReceive)
+
+    def cancel_transaction_by_email(self):
+        self.wait_to_be_clickable(Send.confirmTheTransactionCancel)
+        self.wait_and_click(Send.confirmTheTransactionCancel)
