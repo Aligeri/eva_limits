@@ -116,4 +116,9 @@ class SQLHelper():
         cursor.execute("SELECT wallet FROM public.user WHERE email = (%s)", (email,))
         return cursor.fetchall()
 
+    def set_user_kyc(self, email, kyc):
+        cursor, connection = self.connect_to_database()
+        cursor.execute("UPDATE public.user SET level = (%s) WHERE email = (%s)", (kyc, email,))
+        connection.commit()
+
 
