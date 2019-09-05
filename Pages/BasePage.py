@@ -105,7 +105,7 @@ class Page(object):
         :param element_locator: локатор элемента из Locators/*
         :param value: Значение с которым сравнивается текст элемента
         """
-        retries_left = 10
+        retries_left = 20
         while retries_left > 0:
             try:
                 text = self.driver.find_element(*element_locator).text

@@ -9,7 +9,7 @@ class AdminMainPage(Page):
         Переход на страницу списка транзакций
         :return:
         """
-        self.wait_to_be_clickable(TransactionsSelectors.transDropdown)
+
         self.wait_and_click(TransactionsSelectors.transDropdown)
-        self.wait_to_be_clickable(TransactionsSelectors.transList)
+
         self.wait_and_click(TransactionsSelectors.transList)

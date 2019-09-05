@@ -65,6 +65,7 @@ class DashboardPage(Page):
             "Ardor": ReceiveWallets.ardr,
             "Bitcoin": ReceiveWallets.btc,
             "Bitcoin Cash": ReceiveWallets.bcc,
+            "Dogecoin": ReceiveWallets.doge,
         }
         self.wait_and_click(WALLET[wallet])
 
@@ -90,9 +91,18 @@ class DashboardPage(Page):
         Получает текущий deposit address выбранного кошелька
         :return: возвращает string с deposit address
         """
-        return self.get_element_attribute(DepositAddress.currentAddress, "text()")
+        address = self.get_element_text(DepositAddress.currentAddress)
+        retries = 5
+        while retries > 0:
+            if address is None:
+                address = self.get_element_text(DepositAddress.currentAddress)
+                time.sleep(1)
+                retries -= 1
+            else:
+                return address
 
-    def generate_new_deposit_address(self, current_address):
+
+    def check_new_deposit_address(self, current_address):
         """
         Генерирует новый deposit address у текущего выбранного кошелька
         Проверяет что новый deposit address не равен старому
@@ -100,6 +110,13 @@ class DashboardPage(Page):
         """
         self.wait_and_click(DepositAddress.generateNew)
         self.assert_element_text_is_not_equal(DepositAddress.currentAddress, current_address)
+
+    def generate_new_deposit_address(self,):
+        """
+        Генерирует новый deposit address у текущего выбранного кошелька
+
+        """
+        self.wait_and_click(DepositAddress.generateNew)
 
     def check_previous_address_in_list(self, current_address):
         """

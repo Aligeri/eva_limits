@@ -34,3 +34,8 @@ class AdminTransactionsPage(Page):
         self.wait_to_be_clickable(AdminTransTableLocators.disapproveButton)
         self.wait_and_click(AdminTransTableLocators.disapproveButton)
 
+    def assert_manual_approve_transaction(self):
+        self.wait_and_assert_element_text(AdminTransTableLocators.statusTransaction, "waiting_approval")
+
+
+

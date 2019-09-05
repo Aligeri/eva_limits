@@ -8,7 +8,7 @@ WALLETFROM = {
     "BTC": Send.btcWallet,
     "ETH": Send.ethWallet,
     "XRP": Send.xrpWallet,
-    "Doge": Send.dogeWallet,
+    "DOGE": Send.dogeWallet,
 }
 
 COMPLEX_WALLET = {
@@ -19,7 +19,7 @@ DESTINATION_WALLET = {
     "XRP": Send.xrpRecieverWallet,
     "ETH": Send.ethRecieverWallet,
     "BTC": Send.btcRecieverWallet,
-    "Doge": Send.dogeRecieverWallet,
+    "DOGE": Send.dogeRecieverWallet,
 }
 
 
@@ -354,8 +354,10 @@ class TransactionsPage(Page):
         return password
 
     def get_transaction_ID_by_comment(self, comment):
+        comment_formatted = 'Comment "%s"' % comment
+        self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
         link = self.get_element_attribute(
             (By.XPATH, (".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment)),
-            "@href")
+            "href")
         transaction_id = re.search("transaction\/(.*)", link).group(1)
         return transaction_id
