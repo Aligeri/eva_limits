@@ -22,13 +22,15 @@ def driver(request, get_url):
         filepath = os.path.abspath(os.path.dirname(__file__))
         driverpath = os.path.join(filepath, "chromedriverMac")
 
+    #options.add_argument('--start-maximized')
     #options.add_argument('--headless')
     #driverpath = "D:\FC\chromedriver.exe"
     driver = webdriver.Chrome(executable_path=driverpath, options=options)  # Временное решение, потом допилю подхват драйвера из PATH
+    driver.maximize_window()
     global driver_screenshots
     if driver_screenshots == None:
         driver_screenshots = driver
-    driver.set_window_size(1920, 1080)
+    #driver.set_window_size(1920, 1080)
     driver.implicitly_wait(5)
     driver.get(get_url)
     yield driver

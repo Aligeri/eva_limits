@@ -55,7 +55,7 @@ class LimitModal:
     disableLimit = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Disable']")
     disableLimitConfirm = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 button__type-inline--3PR1T') and text()='Disable']")
     changeLimitConfirm = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Change']")
-    overlay = (By.XPATH, "//div[@class = 'pp__overlay--3alEV']")
+    overlay = (By.XPATH, "//div[@class='pp__title--2cHYp']")
     BTCLimitPercent = (By.XPATH, "//div[text()='Bitcoin wallet']/following-sibling::div//span[contains(@class, 'item__percentLeft--2jVK3')]")
 
 class Multisig:
