@@ -11,6 +11,7 @@ class HostelHelper:
         """
         response = requests.get('http://hostel.cain.loc:80/v1/transactions/%s' % transaction_id)
         data = response.json().get("data")
+        assert response.status_code == 200
         value = data.get("%s" % parameter)
         return value
 
@@ -39,4 +40,5 @@ class HostelHelper:
         response = requests.post("http://hostel.cain.loc:80/v1/transactions/transfers", json=transaction_json)
         transaction_id = response.json().get("data").get("transaction_id")
         response_put = requests.put("http://hostel.cain.loc:80/v1/transactions/%s" % transaction_id)
-        return response_put
+        assert response_put.status_code == 200
+
