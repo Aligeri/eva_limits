@@ -3,7 +3,7 @@ from Helpers.SMTPHelper import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from Pages.BasePage import Page
-
+from Helpers.XrayHelper import *
 
 # Это тестовый файл, тут я всякие коннекшены к SQL и SMTP отрабатываю, чтобы ненароком всю базу не снести,
 # Здесь нет настоящих тестов
@@ -25,3 +25,7 @@ class TestClass():
         helper = SQLHelper()
         a = helper.delete_limits_by_email_from_database(ExistingBasicUser.email)
         print(a)
+
+    def test_get_exec(self):
+        helper = XrayHelper()
+        helper.update_test_status()

@@ -2,6 +2,7 @@ import pytest
 from selenium import webdriver
 import os
 import platform
+from Helpers.XrayHelper import *
 
 global driver_screenshots
 driver_screenshots = None
@@ -71,4 +72,8 @@ def take_screenshot(driver, test_name):
         screenshot_file_path
     )
 
+def create_xray_smoke_execution():
+    pass
 
+def publish_test_execution_details():
+    pass
