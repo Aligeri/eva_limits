@@ -5,6 +5,7 @@ from Pages.DashboardPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from Helpers.SMTPHelper import *
+from xrayplugin.plugin import xray
 
 """
 @pytest.fixture(scope='function', autouse=True)
@@ -24,7 +25,6 @@ def data_fixture():
 
 
 @pytest.fixture(scope="function")
-@pytest.mark.usefixtures("driver")
 def login_as_basic_user(driver):
     loginPage = LoginPage(driver)
     loginPage.reset_session()
@@ -33,7 +33,6 @@ def login_as_basic_user(driver):
     yield
 
 @pytest.fixture(scope="function")
-@pytest.mark.usefixtures("driver")
 def new_email_transaction(driver):
     sql = SQLHelper()
     smtp = SMTPHelper()
@@ -47,7 +46,6 @@ def new_email_transaction(driver):
 
 
 @pytest.fixture(scope="function")
-@pytest.mark.usefixtures("driver")
 def login_as_google_user(driver):
     loginPage = LoginPage(driver)
     loginPage.clear_google_cookies()
@@ -56,11 +54,12 @@ def login_as_google_user(driver):
     loginPage.input_pincode_login(ExistingGoogleUser.pincode)
     yield
 
-@pytest.mark.usefixtures("driver", "data_fixture")
+@pytest.mark.usefixtures("data_fixture")
 class TestClass:
 
     # QA-842
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-746")
     def test_sendTransactionToUserID(self, driver):
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
@@ -73,6 +72,7 @@ class TestClass:
         transactionsPage.check_first_transaction("BTC", "0.00000001", comment)
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-745")
     def test_sendComplexTransactionToUserID(self, driver):
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
@@ -85,6 +85,7 @@ class TestClass:
         transactionsPage.check_first_transaction("XRP", "0.000001", comment)
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-783")
     def test_sendFailingETHTransactionToYourself(self, driver):
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
@@ -98,6 +99,7 @@ class TestClass:
         transactionsPage.check_failed_transaction()
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-749")
     def test_checkBTCFeesDisplayed(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
@@ -110,6 +112,7 @@ class TestClass:
         transactionsPage.check_BTC_Fee("Urgent", "0.00016")
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-756")
     def test_checkETHFeesNotDisplayed(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
@@ -119,6 +122,7 @@ class TestClass:
         transactionsPage.wait_until_element_invisible(Send.normalFee)
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-757")
     def test_checkIncludeExcludeFee(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
@@ -131,6 +135,7 @@ class TestClass:
 
 
     @pytest.mark.usefixtures("login_as_google_user")
+    @xray("QA-721")
     def test_sendTransactionWithNotVerifiedEmail(self, driver):
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
@@ -142,6 +147,7 @@ class TestClass:
         transactionsPage.check_not_verified_email_modal()
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-976")
     def test_sendBitrefillTransaction(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_top_up_phone()
@@ -150,12 +156,14 @@ class TestClass:
         transactionsPage.check_first_transaction_comment("Top up phone")
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-779")
     def test_checkETHTokenTransactionFailing(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
         transactionsPage.send_transaction_to_ETH_token("ETH", CommonData.unsupportedEthToken)
 
     @pytest.mark.usefixtures("new_email_transaction")
+    @xray("QA-743", "QA-763", "QA-796", "QA-742")
     def test_transactionToNewAddress(self, driver):
         comment = str(time.time())
         smtp = SMTPHelper()
@@ -191,6 +199,7 @@ class TestClass:
         transactionsPage.check_first_transaction_receive("XRP", "0.00001", comment)
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-744")
     def test_sendComplexTransactionToUserEmail(self, driver):
         transactionsPage = TransactionsPage(driver)
         loginPage = LoginPage(driver)
@@ -207,6 +216,7 @@ class TestClass:
         transactionsPage.check_first_transaction_receive("XRP", "0.00001", comment)
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-781")
     def test_sendSimpleTransactionToYourself(self, driver):
         transactionsPage = TransactionsPage(driver)
         loginPage = LoginPage(driver)

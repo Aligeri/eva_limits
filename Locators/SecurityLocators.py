@@ -46,8 +46,8 @@ class LimitModal:
     per24h = (By.XPATH, "//label[//input[@value='1']]")
     perWeek = (By.XPATH, "//label[//input[@value='7']]")
     setLimit = (By.XPATH, "//button[@type='submit' and text()='Set limit']")
-    cancel = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 button__type-inline--3PR1T') and text()='Cancel']")
-    set = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 button__type-inline--3PR1T') and text()='Set']")
+    cancel = (By.XPATH, ".//button[contains(@class, 'button__button--2ccS0') and text()='Cancel']")
+    set = (By.XPATH, ".//button[contains(@class, 'button__button--2ccS0') and text()='Set']")
     activeLimit = (By.XPATH, "//div[contains(@class, 'detail__activeValue--1zKef')]")
     availableAmount = (By.XPATH, "//div[contains(@class, 'detail__periodValue--57-h6')]")
     pendingChange = (By.XPATH, "//div[contains(@class, 'detail__pendingTitle--1x3Cw')]")
@@ -55,7 +55,7 @@ class LimitModal:
     disableLimit = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Disable']")
     disableLimitConfirm = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 button__type-inline--3PR1T') and text()='Disable']")
     changeLimitConfirm = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Change']")
-    overlay = (By.XPATH, "//div[@class='pp__title--2cHYp']")
+    overlay = (By.XPATH, ".//div[contains(@class, 'pp__popup--2rStv')]")
     BTCLimitPercent = (By.XPATH, "//div[text()='Bitcoin wallet']/following-sibling::div//span[contains(@class, 'item__percentLeft--2jVK3')]")
 
 class Multisig:

@@ -65,6 +65,7 @@ class SecurityPage(Page):
         self.wait_and_input_text(LimitModal.amount, amount)
         self.wait_and_click(LimitModal.perWeek)
         self.wait_and_click(LimitModal.setLimit)
+        time.sleep(2)
         self.wait_and_click(LimitModal.set)
         active_limit = "%s %s / 24h" % (amount, currency)
         self.wait_and_assert_element_text(LimitModal.activeLimit, active_limit)
@@ -104,7 +105,6 @@ class SecurityPage(Page):
         self.wait_and_click(LimitModal.disableLimit)
         self.wait_and_click(LimitModal.disableLimitConfirm)
         self.wait_and_assert_element_text(LimitModal.pendingChange, "Limit settings will be changed in in 2 days")
-        a = self.admin_url
 
     def check_limit_buttons_are_not_displayed(self, currency):
         """

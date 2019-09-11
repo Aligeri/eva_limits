@@ -5,9 +5,9 @@ from Helpers.SQLHelper import *
 from Locators.DashboardLocators import *
 import time
 import requests
+from xrayplugin.plugin import xray
 
 @pytest.fixture(scope='function', autouse=True)
-@pytest.mark.usefixtures("driver")
 def data_logout(driver):
     loginPage = LoginPage(driver)
     loginPage.reset_session()
@@ -37,7 +37,7 @@ def data_facebook_registration():
     sql.delete_user_from_database(NewFacebookUser.email)
 
 
-@pytest.mark.usefixtures("driver", "data_logout")
+@pytest.mark.usefixtures("data_logout")
 class TestClass:
 
     def test_PasswordsDoNotMatch(self, driver):
@@ -54,6 +54,7 @@ class TestClass:
         loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Password must be at least 8 characters")
 
     @pytest.mark.usefixtures("data_basic_registration")
+    @xray("QA-709", "QA-798")
     def test_BasicUserRegistration(self, driver):
         loginPage = LoginPage(driver)
         loginPage.input_basic_user_registration_data(NewBasicUser.email, NewBasicUser.password, NewBasicUser.password)
@@ -66,6 +67,7 @@ class TestClass:
 
     @pytest.mark.google
     @pytest.mark.usefixtures("data_google_registration")
+    @xray("QA-727", "QA-693")
     def test_GoogleUserRegistration(self, driver):
         loginPage = LoginPage(driver)
         loginPage.navigate_to_signup_page()
@@ -77,6 +79,7 @@ class TestClass:
 
     @pytest.mark.skip("Фейсбук блочит юзеров")
     @pytest.mark.usefixtures("data_facebook_registration")
+    @xray("QA-708", "QA-794")
     def test_FacebookUserRegistration(self, driver):
         loginPage = LoginPage(driver)
         loginPage.navigate_to_signup_page()

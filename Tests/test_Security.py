@@ -5,6 +5,7 @@ from Pages.TransactionsPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from Locators.SecurityLocators import *
+from xrayplugin.plugin import xray
 
 
 @pytest.fixture(scope='class')
@@ -16,7 +17,6 @@ def data_fixture():
 
 
 @pytest.fixture(scope="function", autouse=True)
-@pytest.mark.usefixtures("driver")
 def loginAsBasicUser(driver):
     loginPage = LoginPage(driver)
     sql = SQLHelper()
@@ -28,9 +28,10 @@ def loginAsBasicUser(driver):
     sql.delete_limits_by_email_from_database(ExistingBasicUser.email)
 
 
-@pytest.mark.usefixtures("driver", "data_fixture")
+@pytest.mark.usefixtures("data_fixture")
 class TestClass:
 
+    @xray("QA-954", "QA-713")
     def test_ChangePincode(self, driver):
         securityPage = SecurityPage(driver)
         loginPage = LoginPage(driver)
@@ -46,6 +47,7 @@ class TestClass:
         securityPage.input_security_pincode_repeat(ExistingBasicUser.pincode)
         securityPage.wait_until_element_visible(SecurityPincode.successPopup)
 
+    @xray("QA-837", "QA-838")
     def test_AddAndChangeLimit(self, driver):
         securityPage = SecurityPage(driver)
         securityPage.navigate_to_limits()
@@ -55,7 +57,7 @@ class TestClass:
         securityPage.close_limit_modal()
         securityPage.check_limit_buttons_are_not_displayed("FWH")
 
-
+    @xray("QA-1037")
     def test_AddAndDisableLimit(self, driver):
         securityPage = SecurityPage(driver)
         securityPage.navigate_to_limits()
@@ -65,6 +67,7 @@ class TestClass:
         securityPage.close_limit_modal()
         securityPage.check_limit_buttons_are_not_displayed("BTC")
 
+    @xray("QA-1034")
     def test_AddAndSpendLimit(self, driver):
         securityPage = SecurityPage(driver)
         loginPage = LoginPage(driver)
@@ -79,6 +82,8 @@ class TestClass:
         transactionsPage.send_transaction_to_user_id("BTC", "0.00000001", ExistingGoogleUser.userID, comment)
         transactionsPage.wait_until_element_visible(Send.firstTransactionAmount)
         transactionsPage.navigate_to_send()
+        loginPage.refresh_page()
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
         transactionsPage.check_limit_exceeded_transaction("BTC", "0.00000001", ExistingGoogleUser.userID)
         securityPage.navigate_to_limits()
         securityPage.check_BTC_limit_percent("0%")

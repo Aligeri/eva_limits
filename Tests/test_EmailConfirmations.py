@@ -5,6 +5,7 @@ from Pages.SecurityPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from Helpers.SMTPHelper import *
+from xrayplugin.plugin import xray
 
 @pytest.fixture(scope='function')
 def data_basic_user():
@@ -25,11 +26,11 @@ def data_google_user():
     sql.delete_user_from_database(NewGoogleUser.email)
     email.delete_emails_from_gmail(NewGoogleUser.email, NewGoogleUser.password)
 
-@pytest.mark.usefixtures("driver")
 class TestClass:
 
     #@pytest.mark.skip("Пока не разберусь с временем отправки емейлов")
     @pytest.mark.usefixtures("data_basic_user")
+    @xray("QA-797", "QA-795")
     def test_BasicUserEmailVerification(self, driver):
         loginPage = LoginPage(driver)
         settingsPage = SettingsPage(driver)
@@ -49,6 +50,7 @@ class TestClass:
 
     #@pytest.mark.skip("Пока не разберусь с временем отправки емейлов")
     @pytest.mark.usefixtures("data_google_user")
+    @xray("QA-725", "QA-724")
     def test_GoogleUserEmailVerification(self, driver):
         loginPage = LoginPage(driver)
         settingsPage = SettingsPage(driver)

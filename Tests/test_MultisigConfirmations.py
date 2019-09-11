@@ -6,10 +6,10 @@ from Pages.SecurityPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from Helpers.SMTPHelper import *
+from xrayplugin.plugin import xray
 
 
 @pytest.fixture(scope='function')
-@pytest.mark.usefixtures("driver")
 def data_basic_user(driver):
     sql = SQLHelper()
     loginPage = LoginPage(driver)
@@ -22,7 +22,6 @@ def data_basic_user(driver):
 
 
 @pytest.fixture(scope='function')
-@pytest.mark.usefixtures("driver")
 def data_google_user(driver):
     sql = SQLHelper()
     email = SMTPHelper()
@@ -38,7 +37,6 @@ def data_google_user(driver):
     sql.delete_multisig_emails(MultisigGoogleUser.email)
 
 @pytest.fixture(scope='function')
-@pytest.mark.usefixtures("driver")
 def disable_multisig(driver):
     sql = SQLHelper()
     email = SMTPHelper()
@@ -55,7 +53,6 @@ def disable_multisig(driver):
     sql.delete_multisig_emails(MultisigGoogleUser.email)
 
 @pytest.fixture(scope='function')
-@pytest.mark.usefixtures("driver")
 def existing_multisig(driver):
     sql = SQLHelper()
     sql.delete_multisig_emails(MultisigGoogleUser.email)
@@ -68,7 +65,7 @@ def existing_multisig(driver):
     yield
     sql.delete_multisig_emails(MultisigGoogleUser.email)
 
-@pytest.mark.usefixtures("driver")
+
 class TestClass:
 
     @pytest.mark.usefixtures("data_basic_user")
@@ -79,6 +76,7 @@ class TestClass:
         securityPage.discard_multisig_address()
 
     @pytest.mark.usefixtures("data_google_user")
+    @xray("QA-814")
     def test_EnableMultisigConfirmation(self, driver):
         securityPage = SecurityPage(driver)
         loginPage = LoginPage(driver)
@@ -93,6 +91,7 @@ class TestClass:
         securityPage.wait_and_assert_element_text(Multisig.confirmedAddressFirst, ExistingBasicUser.email)
 
     @pytest.mark.usefixtures("disable_multisig")
+    @xray("QA-815")
     def test_DisableMultisigConfirmation(self, driver):
         securityPage = SecurityPage(driver)
         loginPage = LoginPage(driver)
@@ -108,6 +107,7 @@ class TestClass:
 
     #@pytest.mark.skip("Опять емейлы")
     @pytest.mark.usefixtures("existing_multisig")
+    @xray("QA-766")
     def test_CancelMultisigTransaction(self, driver):
         transactionsPage = TransactionsPage(driver)
         comment = str(time.time())

@@ -86,15 +86,19 @@ class Page(object):
         Ожидает элемент и кликает по нему
         :param element_locator: локатор элемента из Locators/*
         """
-        retries_left = 3
+        retries_left = 10
         while retries_left > 0:
             try:
                 self.driver.find_element(*element_locator).click()
                 return
             except (WebDriverException, TimeoutError) as e:
-                time.sleep(0.5)
+                time.sleep(1)
                 retries_left -= 1
         raise WebDriverException("Element is not clickable or not present on page")
+
+    def assert_element_text(self, element_locator, value):
+        text = self.driver.find_element(*element_locator).text
+        assert (text == value)
 
     def wait_and_assert_element_text(self, element_locator, value):
         """
@@ -102,7 +106,7 @@ class Page(object):
         :param element_locator: локатор элемента из Locators/*
         :param value: Значение с которым сравнивается текст элемента
         """
-        retries_left = 10
+        retries_left = 20
         while retries_left > 0:
             try:
                 text = self.driver.find_element(*element_locator).text
@@ -156,17 +160,11 @@ class Page(object):
         raise WebDriverException("Element is not found or text is empty")
 
     def hover_and_click(self, element_locator):
-        retries_left = 2
-        while retries_left > 0:
-            try:
-                element = self.driver.find_element(*element_locator)
-                action = ActionChains(self.driver)
-                click = action.move_to_element(element).move_by_offset("-200", "-200").click().perform()
-                return
-            except (AssertionError, WebDriverException) as e:
-                retries_left -= 1
-                time.sleep(1)
-        raise WebDriverException("Element is not found or text is empty")
+
+        element = self.driver.find_element(*element_locator)
+        action = ActionChains(self.driver)
+        click = action.move_to_element_with_offset(element, -50, -50).click().perform()
+
 
     def assert_element_text_is_not_empty(self, element_locator):
         """

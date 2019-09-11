@@ -4,6 +4,7 @@ from Pages.SettingsPage import *
 from Pages.DashboardPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
+from xrayplugin.plugin import xray
 
 
 @pytest.fixture(scope='class')
@@ -11,7 +12,6 @@ def data_fixture():
     yield
 
 @pytest.fixture(scope="function")
-@pytest.mark.usefixtures("driver")
 def login_as_basic_user(driver):
     loginPage = LoginPage(driver)
     sql = SQLHelper()
@@ -22,7 +22,6 @@ def login_as_basic_user(driver):
     yield
 
 @pytest.fixture(scope="function")
-@pytest.mark.usefixtures("driver")
 def language_change(driver):
     loginPage = LoginPage(driver)
     sql = SQLHelper()
@@ -33,10 +32,11 @@ def language_change(driver):
     yield
     sql.set_user_language(ExistingBasicUser.email, "en")
 
-@pytest.mark.usefixtures("driver", "data_fixture")
+@pytest.mark.usefixtures("data_fixture")
 class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-1047")
     def test_CheckFiatCurrency(self, driver):
         dashboardPage = DashboardPage(driver)
         settingsPage = SettingsPage(driver)
@@ -54,6 +54,7 @@ class TestClass:
         settingsPage.change_fiat_currency("usd")
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-991")
     def test_ApplyFilters(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.apply_filter("Exchange")
@@ -66,6 +67,7 @@ class TestClass:
         dashboardPage.remove_filter("Failed")
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-844", "QA-832")
     def test_buyWithACard(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_buy_with_a_card()
@@ -74,6 +76,7 @@ class TestClass:
         dashboardPage.select_buy_currency("BTC")
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-1178")
     def test_ChangeGraphs(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.wait_and_click(WalletActionsButtons.firstWallet)
@@ -82,6 +85,7 @@ class TestClass:
         dashboardPage.select_graph_period("month")
 
     @pytest.mark.usefixtures("language_change")
+    @xray("QA-834")
     def test_ChangeLanguage(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.select_language("ja")

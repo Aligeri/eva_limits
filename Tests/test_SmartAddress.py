@@ -3,9 +3,9 @@ from Pages.LoginPage import *
 from Pages.DashboardPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
+from xrayplugin.plugin import xray
 
 @pytest.fixture(scope='function', autouse=True)
-@pytest.mark.usefixtures("driver")
 def data_logout(driver):
     loginPage = LoginPage(driver)
     loginPage.reset_session()
@@ -21,17 +21,17 @@ def data_fixture():
 
 
 @pytest.fixture(scope="function", autouse=True)
-@pytest.mark.usefixtures("driver")
 def loginAsBasicUser(driver):
     loginPage = LoginPage(driver)
     loginPage.login_as_basic_user(ExistingBasicVerifiedUser.email, ExistingBasicVerifiedUser.password)
     loginPage.input_pincode_login(ExistingBasicVerifiedUser.pincode)
 
 
-@pytest.mark.usefixtures("driver", "data_fixture")
+@pytest.mark.usefixtures("data_fixture")
 class TestClass:
 
     # QA-842
+    @xray("QA-842")
     def test_CheckBTCSmartAddressExist(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_receive()
@@ -39,6 +39,7 @@ class TestClass:
         dashboardPage.assert_deposit_address_is_not_empty()
 
     # QA-841, QA-840
+    @xray("QA-841", "QA-840")
     def test_GenerateBTCSmartAddress(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_receive()

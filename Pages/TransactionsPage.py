@@ -3,6 +3,7 @@ from Locators.DashboardLocators import *
 from Locators.TransactionsLocators import *
 import re
 import time
+from selenium.common.exceptions import NoSuchElementException
 
 WALLETFROM = {
     "BTC": Send.btcWallet,
@@ -224,10 +225,20 @@ class TransactionsPage(Page):
         """
         transaction_title = "–%s %s" % (amount, currency)
         comment_formatted = 'Comment "%s"' % comment
-        self.navigate_to_send()
-        self.navigate_to_history()
-        self.wait_and_assert_element_text(Send.firstTransactionAmount, transaction_title)
-        self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
+        retries_left = 10
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible(Send.firstTransaction)
+                self.navigate_to_send()
+                self.navigate_to_history()
+                self.assert_element_text(Send.firstTransactionAmount, transaction_title)
+                self.assert_element_text(Send.firstTransactionComment, comment_formatted)
+                return
+            except:
+                time.sleep(3)
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
+
 
     def check_first_transaction_receive(self, currency, amount, comment):
         """
@@ -278,6 +289,7 @@ class TransactionsPage(Page):
 
 
     def open_transaction_by_comment(self, comment):
+        self.wait_until_element_visible(Send.firstTransaction)
         self.navigate_to_send()
         self.navigate_to_history()
         self.wait_and_click((By.XPATH, (".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment)))
