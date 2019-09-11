@@ -3,7 +3,7 @@ import imaplib
 import email
 import re
 import time
-from conftest import *
+from conftest import email_url
 
 
 class SMTPHelper():

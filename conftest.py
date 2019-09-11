@@ -20,7 +20,7 @@ pytest_plugins = "xrayplugin.conftest"
 
 # Фикстура для инициализации драйвера, возможно дописать выбор хром/хедлесс хром/фантомЖС из строки запуска
 @pytest.mark.usefixtures("get_url")
-@pytest.yield_fixture(scope="session", autouse=True)
+@pytest.yield_fixture(scope="session")
 def driver(request, get_url):
     options = webdriver.ChromeOptions()
     if platform.system() == "Linux":
