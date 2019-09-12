@@ -10,7 +10,7 @@ import conftest
 class Page(object):
     def __init__(self, driver):
         self.driver = driver
-        self.url = conftest.url
+        self.url = conftest.url + '/'
 
     def get_base_url(self):
         """
@@ -215,9 +215,13 @@ class Page(object):
         Чистит текущую сессию и возвращается к начальной странице
         :return:
         """
-        retries_left = 4
+        self.driver.execute_script("window.localStorage.clear();")
+        self.driver.execute_script("window.sessionStorage.clear();")
+        self.get_base_url()
+
+        retries_left = 2
         while retries_left > 0:
-            if not (self.driver.current_url == self.url or self.driver.current_url == ("%s/auth/login" % self.url)):
+            if not (self.driver.current_url == self.url or self.driver.current_url == ("%sauth/login" % self.url)):
                 self.driver.execute_script("window.localStorage.clear();")
                 self.driver.execute_script("window.sessionStorage.clear();")
                 self.driver.delete_all_cookies()
