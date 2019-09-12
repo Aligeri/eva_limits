@@ -8,6 +8,9 @@ import re
 import warnings
 from jira import JIRA
 import time
+import os
+import base64
+from json import dumps
 
 # Reference: http://docs.gurock.com/testrail-api2/reference-statuses
 
@@ -32,7 +35,7 @@ def get_test_outcome(outcome):
     Return numerical value of test outcome.
 
     :param str outcome: pytest reported test outcome value.
-    :returns: int relating to test outcome.
+    :returns: string relating to test outcome.
     """
     return PYTEST_TO_XRAY[outcome]
 
@@ -46,7 +49,7 @@ def testrun_name():
 
 
 def get_xray_keys(items):
-    """Return Tuple of Pytest nodes and TestRail ids from pytests markers"""
+
     testcaseids = []
     for item in items:
         if item.get_closest_marker(XRAY_PREFIX):
@@ -105,24 +108,55 @@ class PytestXrayPlugin(object):
         self.create_test_execution()
         self.create_execution_for_smoke()
 
-    @pytest.hookimpl(tryfirst=True, hookwrapper=True)
+    @pytest.hookimpl(trylast=True, hookwrapper=True)
     def pytest_runtest_makereport(self, item, call):
-        """ Collect result and associated testcases (TestRail) of an execution """
         outcome = yield
         rep = outcome.get_result()
+
+
+
         if item.get_closest_marker(XRAY_PREFIX):
             testcaseids = item.get_closest_marker(XRAY_PREFIX).kwargs.get('ids')
-
             if rep.when == 'call' and testcaseids:
+
+
                 for testcase in testcaseids:
-                    self.update_test_status(
-                        testcase,
-                        self.test_execution,
-                        PYTEST_TO_XRAY[outcome.get_result().outcome]
-                    )
+                    if rep.outcome == "failed":
+
+                        feature_request = item.funcargs['request']
+                        driver = feature_request.getfixturevalue('driver')
+                        dirname = os.path.dirname(__file__)
+                        screenshot_file_path = "{}/../screenshots/{}.png".format(dirname, item.name)
+                        driver.save_screenshot(
+                            screenshot_file_path
+                        )
+
+                        self.update_test_status(
+                            testcase,
+                            self.test_execution,
+                            PYTEST_TO_XRAY[outcome.get_result().outcome],
+                            str(outcome.get_result().longrepr),
+                            self.get_screenshot(item.name)
+                        )
+                    else:
+                        self.update_test_status(
+                            testcase,
+                            self.test_execution,
+                            PYTEST_TO_XRAY[outcome.get_result().outcome])
+
         return rep
 
-    def update_test_status(self, issue_key, test_execution, status):
+    def get_screenshot(self, test_name):
+        dirname = os.path.dirname(__file__)
+        filename = os.path.join(dirname, 'screenshots')
+        screenshot_file_path = "{}/../screenshots/{}.png".format(dirname, test_name)
+        with open(screenshot_file_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+            base64_string = encoded_string.decode("utf-8")
+            #json_data = dumps(encoded_string, indent=2)
+            return base64_string
+
+    def update_test_status(self, issue_key, test_execution, status, comment='', screenshot=''):
         """
         Обновляет статус testrun в test execution
         :param issue_key:
@@ -130,10 +164,23 @@ class PytestXrayPlugin(object):
         :param status: FAIL, PASS, ABORTED
         :return:
         """
-        jsontest = {
-            "status": status,
-        }
-        print("переменные " + issue_key + " " + test_execution + " " + status)
+        if status == "FAIL":
+            jsontest = {
+                "status": status,
+                "comment": comment,
+                "evidences": {
+                    "add": [{
+                        "filename": (issue_key+".jpeg"),
+                        "contentType": "image/jpeg",
+                        "data": screenshot
+                    }]
+                }
+            }
+        else:
+            jsontest = {
+                "status": status
+            }
+
         a = requests.get("https://jira.adam.loc/rest/raven/1.0/api/testrun/?testExecIssueKey=%s&testIssueKey=%s" % (test_execution, issue_key),
                          auth=HTTPBasicAuth(self.username, self.password), verify=False)
         b = a.json()
@@ -141,31 +188,3 @@ class PytestXrayPlugin(object):
         d = requests.put(("https://jira.adam.loc/rest/raven/1.0/api/testrun/%s/" % c), json=jsontest,
                          auth=HTTPBasicAuth(self.username, self.password), verify=False)
 
-
-'''
-    def pytest_sessionfinish(self, session, exitstatus):
-        """ Publish results in TestRail """
-        print('[{}] Start publishing'.format(TESTRAIL_PREFIX))
-        if self.results:
-            tests_list = [str(result['case_id']) for result in self.results]
-            print('[{}] Testcases to publish: {}'.format(TESTRAIL_PREFIX, ', '.join(tests_list)))
-
-            if self.testrun_id:
-                self.add_results(self.testrun_id)
-            elif self.testplan_id:
-                testruns = self.get_available_testruns(self.testplan_id)
-                print('[{}] Testruns to update: {}'.format(TESTRAIL_PREFIX, ', '.join([str(elt) for elt in testruns])))
-                for testrun_id in testruns:
-                    self.add_results(testrun_id)
-            else:
-                print('[{}] No data published'.format(TESTRAIL_PREFIX))
-
-            if self.close_on_complete and self.testrun_id:
-                self.close_test_run(self.testrun_id)
-            elif self.close_on_complete and self.testplan_id:
-                self.close_test_plan(self.testplan_id)
-        print('[{}] End publishing'.format(TESTRAIL_PREFIX))
-
-    # plugin
-
-'''
