@@ -1,6 +1,7 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from Locators.DashboardLocators import *
@@ -51,7 +52,7 @@ class Page(object):
             except WebDriverException:
                 self.wait_until_element_visible(element_locator, 1)
                 retries_left -= 1
-        raise WebDriverException("Error occurred during text input")
+        raise NoSuchElementException("Error occurred during text input")
 
     def get_element(self, element_locator, timeout=1):
         try:
@@ -94,7 +95,7 @@ class Page(object):
             except (WebDriverException, TimeoutError) as e:
                 time.sleep(1)
                 retries_left -= 1
-        raise WebDriverException("Element is not clickable or not present on page")
+        raise NoSuchElementException("Element is not clickable or not present on page")
 
     def assert_element_text(self, element_locator, value):
         text = self.driver.find_element(*element_locator).text
@@ -116,7 +117,7 @@ class Page(object):
                 self.wait_until_element_visible(element_locator)
                 retries_left -= 1
                 time.sleep(2)
-        raise WebDriverException("Element is not found or text is not found")
+        raise NoSuchElementException("Element is not found or text is not found")
 
     def get_element_attribute(self, element_locator, attribute):
         """
@@ -143,7 +144,7 @@ class Page(object):
                 self.wait_until_element_visible(element_locator)
                 retries_left -= 1
                 time.sleep(2)
-        raise WebDriverException("Element is not found or text is not found")
+        raise NoSuchElementException("Element is not found or text is not found")
 
     def hover_over_element(self, element_locator):
         retries_left = 2
@@ -157,7 +158,7 @@ class Page(object):
             except (AssertionError, WebDriverException) as e:
                 retries_left -= 1
                 time.sleep(1)
-        raise WebDriverException("Element is not found or text is empty")
+        raise NoSuchElementException("Element is not found or text is empty")
 
     def hover_and_click(self, element_locator):
 
@@ -180,7 +181,7 @@ class Page(object):
                 self.wait_until_element_visible(element_locator)
                 retries_left -= 1
                 time.sleep(1)
-        raise WebDriverException("Element is not found or text is empty")
+        raise ValueError("Element is not found or text is empty")
 
     def assert_element_text_is_not_equal(self, element_locator, value):
         """
@@ -197,7 +198,7 @@ class Page(object):
                 self.wait_until_element_visible(element_locator)
                 retries_left -= 1
                 time.sleep(1)
-        raise WebDriverException("Element is not found or text equal to value")
+        raise ValueError("Element is not found or text equal to value")
 
     def navigate_to_link(self, link):
         """

@@ -45,7 +45,7 @@ class LimitModal:
     amount = (By.NAME, "value")
     per24h = (By.XPATH, "//label[//input[@value='1']]")
     perWeek = (By.XPATH, "//label[//input[@value='7']]")
-    setLimit = (By.XPATH, "//button[@type='submit' and text()='Set limit']")
+    setLimit = (By.XPATH, ".//button[@type='submit' and text()='Set limit']")
     cancel = (By.XPATH, ".//button[contains(@class, 'button__button--2ccS0') and text()='Cancel']")
     set = (By.XPATH, ".//button[contains(@class, 'button__button--2ccS0') and text()='Set']")
     activeLimit = (By.XPATH, "//div[contains(@class, 'detail__activeValue--1zKef')]")
@@ -57,11 +57,13 @@ class LimitModal:
     changeLimitConfirm = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Change']")
     overlay = (By.XPATH, ".//div[contains(@class, 'pp__popup--2rStv')]")
     BTCLimitPercent = (By.XPATH, "//div[text()='Bitcoin wallet']/following-sibling::div//span[contains(@class, 'item__percentLeft--2jVK3')]")
+    stats = (By.XPATH, "//div[contains(@class, 'security-stats__wrapper--eKhVI')]")
 
 class Multisig:
     email1 = (By.XPATH, "//input[contains(@class, 'input__input--1lDmD tab-multisig__input--1ITcj')][1]")
     tooltip = (By.XPATH, "//div[contains(@class, 'simple-tooltip__tooltip--umHW1 simple-tooltip__error--1zX2v simple-tooltip__visible--2BGlS tab-multisig__tooltip--2gsKq')]")
-    gotIt = (By.XPATH, "//a[contains(@class, 'tab-multisig__tooltipAction---Ts24')]")
+    gotIt = (By.XPATH, "//a[text()='Got it']")
+    stats = (By.XPATH, "//div[contains(@class, 'security-stats__wrapper--eKhVI')]")
     continueButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 tab-multisig__saveButton--128q7')]")
     disclaimer = (By.XPATH, "//div[contains(@class, 'tab-multisig__disclaimerWithChild--2DkfO')]")
     disclaimerDiscard = (By.XPATH, "//a[contains(@class, 'tab-multisig__disclaimerCancelPending--2a7Ip')]")

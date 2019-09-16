@@ -16,10 +16,10 @@ def data_logout(driver):
 @pytest.mark.usefixtures("data_logout")
 class TestClass:
 
-    @pytest.mark.skip("пока изучаю хрей")
+    @xray("QA-720")
     def test_IncorrectPasswordLogin(self, driver):
         loginPage = LoginPage(driver)
-        loginPage.login_as_basic_user("test@test.test", "12345678")
+        loginPage.login_as_basic_user(ExistingBasicUser.email, "12345678")
         loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Incorrect password")
         loginPage.get_base_url()
 

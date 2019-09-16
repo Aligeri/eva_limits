@@ -132,7 +132,7 @@ class DashboardPage(Page):
         self.wait_and_click(Filters.filtersButton)
         self.wait_and_click(FILTER_APPLY[history_filter])
         self.wait_and_click(Filters.applyFilters)
-        self.wait_until_element_visible(FILTER_BUTTON[history_filter])
+        #self.wait_until_element_visible(FILTER_BUTTON[history_filter])
 
     def remove_filter(self, history_filter):
         """

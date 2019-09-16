@@ -63,7 +63,7 @@ def get_xray_keys(items):
 
 
 class PytestXrayPlugin(object):
-    def __init__(self, username, password, testplan):
+    def __init__(self, username, password, testplan, test_execution):
         self.options = {
             'server': 'https://jira.adam.loc',
             'verify': False,  # SSL validation off because Jira use self signed certificate
@@ -72,15 +72,17 @@ class PytestXrayPlugin(object):
         self.password = password
         self.testplan = testplan
         self.atlassian_jira = JIRA(options=self.options, basic_auth=(self.username, self.password))
-        self.test_execution = None
+        self.test_execution = test_execution
 
 
     # pytest hooks
 
     @pytest.hookimpl(trylast=True)
     def pytest_collection_modifyitems(self, session, config, items):
-        self.test_execution = self.create_test_execution()
-        self.create_execution_for_smoke()
+        if self.test_execution is None:
+            self.test_execution = self.create_test_execution()
+            self.create_execution_for_smoke()
+
 
     def create_test_execution(self):
         test_execution_title = 'Web smoke execution ' + str(time.time())
@@ -180,11 +182,12 @@ class PytestXrayPlugin(object):
             jsontest = {
                 "status": status
             }
-
-        a = requests.get("https://jira.adam.loc/rest/raven/1.0/api/testrun/?testExecIssueKey=%s&testIssueKey=%s" % (test_execution, issue_key),
-                         auth=HTTPBasicAuth(self.username, self.password), verify=False)
-        b = a.json()
-        c = b.get("id")
-        d = requests.put(("https://jira.adam.loc/rest/raven/1.0/api/testrun/%s/" % c), json=jsontest,
-                         auth=HTTPBasicAuth(self.username, self.password), verify=False)
-
+        try:
+            a = requests.get("https://jira.adam.loc/rest/raven/1.0/api/testrun/?testExecIssueKey=%s&testIssueKey=%s" % (test_execution, issue_key),
+                             auth=HTTPBasicAuth(self.username, self.password), verify=False)
+            b = a.json()
+            c = b.get("id")
+            d = requests.put(("https://jira.adam.loc/rest/raven/1.0/api/testrun/%s/" % c), json=jsontest,
+                             auth=HTTPBasicAuth(self.username, self.password), verify=False)
+        except:
+            print("there is no %s test in %s execution" % (issue_key, test_execution))

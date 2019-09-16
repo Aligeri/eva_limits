@@ -1,5 +1,6 @@
 class ExistingBasicUser:
     email = "vasiliyautomation@gmail.com"
+    highEmail = "Vasiliyautomation@gmail.com"
     password = "qAwSeD123"
     pincode = "1234"
     changedPincode = "9876"
@@ -26,6 +27,7 @@ class NewBasicUser:
 
 class ExistingGoogleUser:
     email = "automationoleg@gmail.com"
+    highEmail = "Automationoleg@gmail.com"
     password = "qAwSeD123"
     pincode = "4321"
     userName = "Oleg Automation"

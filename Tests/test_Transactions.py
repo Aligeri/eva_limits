@@ -227,3 +227,14 @@ class TestClass:
         transactionsPage.send_transaction_step_3("0.000006")
         transactionsPage.send_transaction_step_4(comment)
         transactionsPage.cancel_first_transaction_without_hash(comment)
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-741")
+    def test_checkMinimumAmount(self, driver):
+        comment = str(time.time())
+        transactionsPage = TransactionsPage(driver)
+        loginPage = LoginPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("BTC")
+        transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
+        transactionsPage.check_minimum_amount("0")

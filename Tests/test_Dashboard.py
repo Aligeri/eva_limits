@@ -36,6 +36,7 @@ def language_change(driver):
 class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @pytest.mark.smoke
     @xray("QA-1047")
     def test_CheckFiatCurrency(self, driver):
         dashboardPage = DashboardPage(driver)
@@ -54,6 +55,7 @@ class TestClass:
         settingsPage.change_fiat_currency("usd")
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @pytest.mark.smoke
     @xray("QA-991")
     def test_ApplyFilters(self, driver):
         dashboardPage = DashboardPage(driver)
@@ -67,6 +69,7 @@ class TestClass:
         dashboardPage.remove_filter("Failed")
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @pytest.mark.smoke
     @xray("QA-844", "QA-832")
     def test_buyWithACard(self, driver):
         dashboardPage = DashboardPage(driver)
@@ -76,7 +79,8 @@ class TestClass:
         dashboardPage.select_buy_currency("BTC")
 
     @pytest.mark.usefixtures("login_as_basic_user")
-    @xray("QA-1178")
+    @pytest.mark.smoke
+    @xray("QA-834")
     def test_ChangeGraphs(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.wait_and_click(WalletActionsButtons.firstWallet)
@@ -85,15 +89,12 @@ class TestClass:
         dashboardPage.select_graph_period("month")
 
     @pytest.mark.usefixtures("language_change")
-    @xray("QA-834")
+    @pytest.mark.smoke
+    @xray("QA-1178")
     def test_ChangeLanguage(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.select_language("ja")
         dashboardPage.wait_and_assert_element_text(NavigationButtons.dashboard, "ダッシュボード")
         dashboardPage.wait_and_assert_element_text(NavigationButtons.settings, "設定")
         dashboardPage.wait_and_assert_element_text(NavigationButtons.security, "セキュリティ")
-        dashboardPage.select_language("en")
-        dashboardPage.wait_and_assert_element_text(NavigationButtons.dashboard, "Dashboard")
-        dashboardPage.wait_and_assert_element_text(NavigationButtons.settings, "Settings")
-        dashboardPage.wait_and_assert_element_text(NavigationButtons.security, "Security")
 

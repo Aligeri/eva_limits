@@ -88,4 +88,38 @@ class TestClass:
         loginPage.input_pincode_repeat(NewFacebookUser.pincode)
         loginPage.wait_until_element_visible(DashboardLocators.logout)
 
+    @xray("QA-802")
+    def test_ExistingBasicUserRegistration(self, driver):
+        loginPage = LoginPage(driver)
+        loginPage.input_basic_user_registration_data(ExistingBasicUser.email, ExistingBasicUser.password, ExistingBasicUser.password)
+        loginPage.wait_and_click(LoginPageLocators.termsCheckbox)
+        loginPage.assert_signup_button_state("enabled")
+        loginPage.wait_and_click(LoginPageLocators.signUpButton)
+        loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Something went wrong. Try again later.")
 
+    @xray("QA-799")
+    def test_ExistingBasicUserRegistrationHigh(self, driver):
+        loginPage = LoginPage(driver)
+        loginPage.input_basic_user_registration_data(ExistingBasicUser.highEmail, ExistingBasicUser.password, ExistingBasicUser.password)
+        loginPage.wait_and_click(LoginPageLocators.termsCheckbox)
+        loginPage.assert_signup_button_state("enabled")
+        loginPage.wait_and_click(LoginPageLocators.signUpButton)
+        loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Something went wrong. Try again later.")
+
+    @xray("QA-803")
+    def test_ExistingGoogleUserRegistration(self, driver):
+        loginPage = LoginPage(driver)
+        loginPage.input_basic_user_registration_data(ExistingGoogleUser.email, ExistingGoogleUser.password, ExistingGoogleUser.password)
+        loginPage.wait_and_click(LoginPageLocators.termsCheckbox)
+        loginPage.assert_signup_button_state("enabled")
+        loginPage.wait_and_click(LoginPageLocators.signUpButton)
+        loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Something went wrong. Try again later.")
+
+    @xray("QA-800")
+    def test_ExistingGoogleUserRegistrationHigh(self, driver):
+        loginPage = LoginPage(driver)
+        loginPage.input_basic_user_registration_data(ExistingGoogleUser.highEmail, ExistingGoogleUser.password, ExistingGoogleUser.password)
+        loginPage.wait_and_click(LoginPageLocators.termsCheckbox)
+        loginPage.assert_signup_button_state("enabled")
+        loginPage.wait_and_click(LoginPageLocators.signUpButton)
+        loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Something went wrong. Try again later.")

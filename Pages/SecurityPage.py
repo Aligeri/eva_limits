@@ -65,7 +65,8 @@ class SecurityPage(Page):
         self.wait_and_input_text(LimitModal.amount, amount)
         self.wait_and_click(LimitModal.perWeek)
         self.wait_and_click(LimitModal.setLimit)
-        time.sleep(2)
+        self.wait_until_element_invisible(LimitModal.setLimit, 1)
+        self.wait_to_be_clickable(LimitModal.set)
         self.wait_and_click(LimitModal.set)
         active_limit = "%s %s / 24h" % (amount, currency)
         self.wait_and_assert_element_text(LimitModal.activeLimit, active_limit)
@@ -136,8 +137,8 @@ class SecurityPage(Page):
         :param email: емейл который добавляется в качестве multisig
         :return:
         """
+        self.wait_until_element_visible(Multisig.stats)
         self.assert_element_attirbute_value(Multisig.continueButton, "disabled", "true")
-        time.sleep(1)
         self.wait_and_input_text(Multisig.email1, email)
         self.wait_and_click(Multisig.gotIt)
         self.wait_and_click(Multisig.continueButton)

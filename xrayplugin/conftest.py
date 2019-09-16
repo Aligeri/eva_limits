@@ -16,38 +16,36 @@ def pytest_addoption(parser):
     group.addoption(
         '--xray',
         action='store_true',
-        default=False,
-        help='Create and update testruns with TestRail')
+        default=False)
     group.addoption(
         '--username',
-        action='store',
-        help='Path to the config file containing information about the TestRail server (defaults to testrail.cfg)')
+        action='store')
     group.addoption(
         '--password',
-        action='store',
-        help='TestRail address you use to access TestRail with your web browser (config file: url in API section)')
+        action='store')
     group.addoption(
         '--testplan',
+        action='store')
+    group.addoption(
+        '--test_execution',
         action='store',
-        help='Email for the account on the TestRail server (config file: email in API section)')
+        default=None,)
     group.addoption(
         '--xray-config',
         default='xray.cfg',
-        action='store',
-        help='Email for the account on the TestRail server (config file: email in API section)')
+        action='store',)
 
 
 def pytest_configure(config):
     if config.getoption('--xray'):
         cfg_file_path = config.getoption('--xray-config')
         config_manager = ConfigManager(cfg_file_path, config)
-        print("username" + config_manager.getoption('username', 'username', 'XRAY'))
         config.pluginmanager.register(
             PytestXrayPlugin(
-
                 username=config_manager.getoption('username', 'username', 'XRAY'),
                 password=config_manager.getoption('password', 'password', 'XRAY'),
                 testplan=config_manager.getoption('testplan', 'testplan', 'XRAY'),
+                test_execution=config_manager.getoption('test_execution', 'test_execution', 'XRAY'),
             ),
             # Name of plugin instance (allow to be used by other plugins)
             name="pytest-xray-instance"

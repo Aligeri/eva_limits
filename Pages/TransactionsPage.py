@@ -38,6 +38,10 @@ class TransactionsPage(Page):
         self.wait_to_be_clickable(Send.continueButton3)
         self.wait_and_click(Send.continueButton3)
 
+    def check_minimum_amount(self, amount):
+        self.wait_and_input_text(Send.amount, amount)
+        self.wait_and_assert_element_text(Send.limitExceededTooltip, "Minimum amount 0.00000001 BTC")
+
     def send_transaction_step_4(self, comment):
         self.wait_and_input_text(Send.comment, comment)
         self.wait_and_click(Send.withdraw)
@@ -63,6 +67,7 @@ class TransactionsPage(Page):
         self.wait_and_click(DESTINATION_WALLET[currency])
         self.wait_and_input_text(Send.destinationTag, wallet_tag)
         self.wait_to_be_clickable(Send.continueButton2)
+        self.wait_and_click(Send.continueButton2)
 
 
     def send_transaction_to_user_id(self, currency, amount, userID, comment):
@@ -249,10 +254,19 @@ class TransactionsPage(Page):
         """
         transaction_title = "+%s %s" % (amount, currency)
         comment_formatted = 'Comment "%s"' % comment
-        self.navigate_to_send()
-        self.navigate_to_history()
-        self.wait_and_assert_element_text(Send.firstTransactionAmount, transaction_title)
-        self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
+        retries_left = 10
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible(Send.firstTransaction)
+                self.navigate_to_send()
+                self.navigate_to_history()
+                time.sleep(2)
+                self.assert_element_text(Send.firstTransactionAmount, transaction_title)
+                self.assert_element_text(Send.firstTransactionComment, comment_formatted)
+                return
+            except:
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
 
     def check_first_transaction_comment(self, comment):
         """
