@@ -7,38 +7,34 @@ from Helpers.SQLHelper import *
 from xrayplugin.plugin import xray
 
 
-@pytest.fixture(scope='class')
-def data_fixture():
-    yield
+sql = SQLHelper()
+
 
 @pytest.fixture(scope="function")
 def login_as_basic_user(driver):
     loginPage = LoginPage(driver)
-    sql = SQLHelper()
     sql.set_local_currency(ExistingBasicUser.email, "usd")
-    loginPage.reset_session()
     loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
     yield
+
 
 @pytest.fixture(scope="function")
 def language_change(driver):
     loginPage = LoginPage(driver)
-    sql = SQLHelper()
-    sql.set_user_language(ExistingBasicUser.email, "en")
-    loginPage.reset_session()
-    loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
+    sql.set_user_language(ExistingBasicUser.email1178, "en")
+    loginPage.login_as_basic_user(ExistingBasicUser.email1178, ExistingBasicUser.password)
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
     yield
-    sql.set_user_language(ExistingBasicUser.email, "en")
+    sql.set_user_language(ExistingBasicUser.email1178, "en")
 
-@pytest.mark.usefixtures("data_fixture")
+
 class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @pytest.mark.smoke
     @xray("QA-1047")
-    def test_CheckFiatCurrency(self, driver):
+    def test_check_fiat_currency(self, driver):
         dashboardPage = DashboardPage(driver)
         settingsPage = SettingsPage(driver)
         loginPage = LoginPage(driver)
@@ -57,7 +53,7 @@ class TestClass:
     @pytest.mark.usefixtures("login_as_basic_user")
     @pytest.mark.smoke
     @xray("QA-991")
-    def test_ApplyFilters(self, driver):
+    def test_apply_filters(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.apply_filter("Exchange")
         dashboardPage.apply_filter("Pay Out")
@@ -71,7 +67,7 @@ class TestClass:
     @pytest.mark.usefixtures("login_as_basic_user")
     @pytest.mark.smoke
     @xray("QA-844", "QA-832")
-    def test_buyWithACard(self, driver):
+    def test_buy_with_a_card(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_buy_with_a_card()
         dashboardPage.select_buy_currency("ETH")
@@ -81,7 +77,7 @@ class TestClass:
     @pytest.mark.usefixtures("login_as_basic_user")
     @pytest.mark.smoke
     @xray("QA-834")
-    def test_ChangeGraphs(self, driver):
+    def test_change_graphs(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.wait_and_click(WalletActionsButtons.firstWallet)
         dashboardPage.select_graph_period("day")
@@ -91,7 +87,7 @@ class TestClass:
     @pytest.mark.usefixtures("language_change")
     @pytest.mark.smoke
     @xray("QA-1178")
-    def test_ChangeLanguage(self, driver):
+    def test_change_language(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.select_language("ja")
         dashboardPage.wait_and_assert_element_text(NavigationButtons.dashboard, "ダッシュボード")

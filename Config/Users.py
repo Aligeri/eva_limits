@@ -1,6 +1,5 @@
 class ExistingBasicUser:
     email = "vasiliyautomation@gmail.com"
-    highEmail = "Vasiliyautomation@gmail.com"
     password = "qAwSeD123"
     pincode = "1234"
     changedPincode = "9876"
@@ -8,6 +7,23 @@ class ExistingBasicUser:
     userID = "5d97f3d6"
     ethWallet = "0x5cc7d8dd2fa7be1c2d9e6f88a5125937767fcf4e"
     btcWallet = "3NMcXFk5PoCYquUa9qwU2bbhkm5x4KzimU"
+    """Емейлы пустых юзеров для безопасного распараллеливания тестов где не требутся транзакции"""
+    email695 = "vasiliyautomation+695@gmail.com"
+    email837 = "vasiliyautomation+837@gmail.com"
+    email1037 = "vasiliyautomation+1037@gmail.com"
+    email1085 = "vasiliyautomation+1085@gmail.com"
+    email954 = "vasiliyautomation+954@gmail.com"
+    email1178 = "vasiliyautomation+1178@gmail.com"
+    email664 = "vasiliyautomation+664@gmail.com"
+    email666 = "vasiliyautomation+666@gmail.com"
+    email698 = "vasiliyautomation+698@gmail.com"
+    email699 = "vasiliyautomation+699@gmail.com"
+    email700 = "vasiliyautomation+700@gmail.com"
+    email701 = "vasiliyautomation+701@gmail.com"
+    email702 = "vasiliyautomation+702@gmail.com"
+    email700_secret = "PFTEY33SHQTHI3ZTOVJFIZ2NMN6VALZT"
+    email933 = "vasiliyautomation+933@gmail.com"
+    highEmail = "Vasiliyautomation@gmail.com"
 
 
 class ExistingBasicVerifiedUser:
@@ -47,7 +63,7 @@ class NewGoogleUser:
     pincode = "4321"
 
 
-class ExistingFacebookUser:
+class ExistingBasicUser2:
     email = "automationandrew6@gmail.com"
     password = "qAwSeD123"
     pincode = "5454"
@@ -67,3 +83,4 @@ class UnregisteredBasicUser:
 
 class CommonData:
     unsupportedEthToken = "0xB8c77482e45F1F44dE1745F52C74426C631bDD52"
+    blocked_gorgona_io = "0xb2816223fddc21aca553ba208c7b7a13b27c207c"

@@ -9,6 +9,28 @@ class NavigationLinks:
     activeSessions = (By.XPATH, "//li[contains(@class, 'security__tab--3spdg') and text()='Active sessions']")  # Вкладка active sessions на странице Security
     limits = (By.XPATH, "//li[contains(@class, 'security__tab--3spdg') and text()='Limits']")  # Вкладка limits на странице Security
 
+class TwoFactorAuth:
+    continueButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 tab-two-fa__button--kwMkp')]")
+    activationCode = (By.XPATH, "//p[@class='two-fa-activation__code--32OU4']")
+
+    code1 = (By.XPATH, "//input[contains(@class, 'code-input__inputCode--eXUsf')][1]")
+    code2 = (By.XPATH, "//input[contains(@class, 'code-input__inputCode--eXUsf')][2]")
+    code3 = (By.XPATH, "//input[contains(@class, 'code-input__inputCode--eXUsf')][3]")
+    code4 = (By.XPATH, "//input[contains(@class, 'code-input__inputCode--eXUsf')][4]")
+    code5 = (By.XPATH, "//input[contains(@class, 'code-input__inputCode--eXUsf')][5]")
+    code6 = (By.XPATH, "//input[contains(@class, 'code-input__inputCode--eXUsf')][6]")
+
+    closeButton = (By.XPATH, '//button[contains(@class, "button__button--2ccS0 tab-two-fa__closeButton--26DpQ button__type-link--2CM99")]')
+    disable2fa = (By.XPATH, '//button[contains(@class, "button__button--2ccS0 tab-two-fa__button--kwMkp button__type-inline--3PR1T button__color-full-red--1bKJL")]')
+    disableModal = (By.XPATH, '//button[contains(@class, "button__button--2ccS0 button__type-inline--3PR1T button__color-full-red--1bKJL")]')
+
+    loginCheckboxState = (By.XPATH, "//div[@data-option='login']//input")
+    payoutCheckboxState = (By.XPATH, "//div[@data-option='payout']//input")
+    exportCheckboxState = (By.XPATH, "//div[@data-option='export']//input")
+
+    loginCheckbox = (By.XPATH, "//div[@data-option='login']//label")
+    payoutCheckbox = (By.XPATH, "//div[@data-option='payout']//label")
+    exportCheckbox = (By.XPATH, "//div[@data-option='export']//label")
 
 class SecurityPincode:
     current1 = (

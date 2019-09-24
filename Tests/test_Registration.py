@@ -7,37 +7,28 @@ import time
 import requests
 from xrayplugin.plugin import xray
 
-@pytest.fixture(scope='function', autouse=True)
-def data_logout(driver):
-    loginPage = LoginPage(driver)
-    loginPage.reset_session()
-    yield print
-
-
+sql = SQLHelper()
 
 
 @pytest.fixture(scope='function')
 def data_basic_registration():
-    sql = SQLHelper()
     yield
     sql.delete_user_from_database(NewBasicUser.email)
 
 
 @pytest.fixture(scope='function')
 def data_google_registration():
-    sql = SQLHelper()
     yield
     sql.delete_user_from_database(NewGoogleUser.email)
 
 
 @pytest.fixture(scope='class')
 def data_facebook_registration():
-    sql = SQLHelper()
     yield
     sql.delete_user_from_database(NewFacebookUser.email)
 
 
-@pytest.mark.usefixtures("data_logout")
+
 class TestClass:
 
     def test_PasswordsDoNotMatch(self, driver):
@@ -55,6 +46,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("data_basic_registration")
     @xray("QA-709", "QA-798")
+    @pytest.mark.smoke
     def test_BasicUserRegistration(self, driver):
         loginPage = LoginPage(driver)
         loginPage.input_basic_user_registration_data(NewBasicUser.email, NewBasicUser.password, NewBasicUser.password)
@@ -68,6 +60,7 @@ class TestClass:
     @pytest.mark.google
     @pytest.mark.usefixtures("data_google_registration")
     @xray("QA-727", "QA-693")
+    @pytest.mark.smoke
     def test_GoogleUserRegistration(self, driver):
         loginPage = LoginPage(driver)
         loginPage.navigate_to_signup_page()

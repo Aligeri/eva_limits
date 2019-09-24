@@ -1,12 +1,7 @@
 # -*- coding: UTF-8 -*-
 import os
 import sys
-if sys.version_info.major == 2:
-    # python2
-    import ConfigParser as configparser
-else:
-    # python3
-    import configparser
+import configparser
 
 from .plugin import PytestXrayPlugin
 
@@ -32,7 +27,7 @@ def pytest_addoption(parser):
         default=None,)
     group.addoption(
         '--xray-config',
-        default='xray.cfg',
+        default=None,
         action='store',)
 
 
@@ -40,23 +35,25 @@ def pytest_configure(config):
     if config.getoption('--xray'):
         cfg_file_path = config.getoption('--xray-config')
         config_manager = ConfigManager(cfg_file_path, config)
+
         config.pluginmanager.register(
             PytestXrayPlugin(
-                username=config_manager.getoption('username', 'username', 'XRAY'),
-                password=config_manager.getoption('password', 'password', 'XRAY'),
-                testplan=config_manager.getoption('testplan', 'testplan', 'XRAY'),
-                test_execution=config_manager.getoption('test_execution', 'test_execution', 'XRAY'),
+                username=config_manager.getoption('username', 'username'),
+                password=config_manager.getoption('password', 'password'),
+                testplan=config_manager.getoption('testplan', 'testplan'),
+                test_execution=config_manager.getoption('test_execution', 'test_execution'),
             ),
             # Name of plugin instance (allow to be used by other plugins)
             name="pytest-xray-instance"
         )
 
 
+
 class ConfigManager(object):
     def __init__(self, cfg_file_path, config):
         '''
         Handles retrieving configuration values. Config options set in flags are given preferance over options set in the
-        config file.
+        config file
 
         :param cfg_file_path: Path to the config file containing information about the TestRail server.
         :type cfg_file_path: str or None
@@ -88,3 +85,4 @@ class ConfigManager(object):
         else:
             # 4. if entry not found in config file
             return default
+

@@ -11,14 +11,13 @@ class SMTPHelper():
         self.__smtp_ssl_host ='smtp.gmail.com'
         self.__smtp_ssl_port = 465
 
-    def __getEmailFromGmail(self, address, password, email_from, email_subject):
+    def __getEmailFromGmail(self, address, password, email_from, email_subject=''):
         mail = imaplib.IMAP4_SSL('imap.gmail.com', "993")
         retries_left = 30
         mail.login(address, password)
         mail.list()
         mail.select('"INBOX"')
-        search = ("(FROM '%s')" % email_from)
-        result, data = mail.search(None, search)
+        result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
         ids = data[0]
         id_list = ids.split()
         while retries_left >= 0:
@@ -26,7 +25,6 @@ class SMTPHelper():
                 if data[0] == b'':
                     time.sleep(3)
                     mail.select('"INBOX"')
-                    search = ("(FROM '%s' SUBJECT '%s')" % (email_from, email_subject))
                     result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
                     ids = data[0]
                     id_list = ids.split()
@@ -77,11 +75,19 @@ class SMTPHelper():
         registration_link = re.search(pattern, email_string).group(1)
         return (registration_link)
 
-    def delete_emails_from_gmail(self, address, password):
+    def get_session_drop_link_from_email(self, address, password, email_from, email_subject=''):
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+        pattern = "https:\/\/\w*?\.?freewallet\.org(\/auth\/session-drop\/.*?)]"
+        session_link = re.search(pattern, email_string).group(1)
+        fixed_link = re.sub("(=3D=3D)", "==", session_link)
+        domain_link = email_url + fixed_link
+        return (domain_link)
+
+    def delete_emails_from_gmail(self, address, password, email_from, email_subject):
         mail = imaplib.IMAP4_SSL('imap.gmail.com', "993")
         mail.login(address, password)
         mail.select('INBOX')
-        result, data = mail.search(None, "(FROM 'Freewallet')")
+        result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
         for num in data[0].split():
             mail.store(num, '+FLAGS', '(\Deleted)')
         mail.expunge()

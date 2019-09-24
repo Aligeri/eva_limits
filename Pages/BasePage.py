@@ -5,13 +5,17 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from Locators.DashboardLocators import *
+from selenium.webdriver.common.keys import Keys
 import time
 import conftest
+import pytest
+
 
 class Page(object):
     def __init__(self, driver):
         self.driver = driver
         self.url = conftest.url + '/'
+
 
     def get_base_url(self):
         """
@@ -45,12 +49,12 @@ class Page(object):
         retries_left = 2
         while retries_left > 0:
             try:
+                WebDriverWait(self.driver, 3).until(EC.visibility_of_element_located(element_locator))
                 element = self.driver.find_element(*element_locator)
                 element.clear()
                 element.send_keys(value)
                 return element
             except WebDriverException:
-                self.wait_until_element_visible(element_locator, 1)
                 retries_left -= 1
         raise NoSuchElementException("Error occurred during text input")
 
@@ -82,24 +86,26 @@ class Page(object):
         element = WebDriverWait(self.driver, timeout).until(
             EC.invisibility_of_element_located(element_locator))
 
+
     def wait_and_click(self, element_locator):
         """
         Ожидает элемент и кликает по нему
         :param element_locator: локатор элемента из Locators/*
         """
-        retries_left = 10
+        retries_left = 2
         while retries_left > 0:
             try:
+                WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(element_locator))
                 self.driver.find_element(*element_locator).click()
                 return
             except (WebDriverException, TimeoutError) as e:
-                time.sleep(1)
                 retries_left -= 1
         raise NoSuchElementException("Element is not clickable or not present on page")
 
-    def assert_element_text(self, element_locator, value):
-        text = self.driver.find_element(*element_locator).text
-        assert (text == value)
+    def assert_element_text(self, element_locator, value, timeout=10):
+        element = WebDriverWait(self.driver, timeout).until(
+            EC.text_to_be_present_in_element(element_locator, value))
+
 
     def wait_and_assert_element_text(self, element_locator, value):
         """
@@ -107,9 +113,10 @@ class Page(object):
         :param element_locator: локатор элемента из Locators/*
         :param value: Значение с которым сравнивается текст элемента
         """
-        retries_left = 20
+        retries_left = 3
         while retries_left > 0:
             try:
+                WebDriverWait(self.driver, 3).until(EC.visibility_of_element_located(element_locator))
                 text = self.driver.find_element(*element_locator).text
                 assert (text == value)
                 return
@@ -135,15 +142,14 @@ class Page(object):
         :param element_locator: локатор элемента из Locators/*
         :return: текст элемента
         """
-        retries_left = 4
+        retries_left = 3
         while retries_left > 0:
             try:
+                WebDriverWait(self.driver, 3).until(EC.visibility_of_element_located(element_locator))
                 text = self.driver.find_element(*element_locator).text
                 return text
             except (AssertionError, WebDriverException) as e:
-                self.wait_until_element_visible(element_locator)
                 retries_left -= 1
-                time.sleep(2)
         raise NoSuchElementException("Element is not found or text is not found")
 
     def hover_over_element(self, element_locator):
@@ -166,6 +172,14 @@ class Page(object):
         action = ActionChains(self.driver)
         click = action.move_to_element_with_offset(element, -50, -50).click().perform()
 
+    def send_escape(self):
+        action = ActionChains(self.driver)
+        action.send_keys(Keys.ESCAPE).perform()
+
+    def close_alert(self):
+        alert = self.driver.switch_to.alert
+        alert.accept()
+
 
     def assert_element_text_is_not_empty(self, element_locator):
         """
@@ -175,12 +189,12 @@ class Page(object):
         retries_left = 2
         while retries_left > 0:
             try:
+                WebDriverWait(self.driver, 3).until(EC.visibility_of_element_located(element_locator))
                 assert (self.driver.find_element(*element_locator).text is not None or '')
                 return
             except (AssertionError, WebDriverException) as e:
                 self.wait_until_element_visible(element_locator)
                 retries_left -= 1
-                time.sleep(1)
         raise ValueError("Element is not found or text is empty")
 
     def assert_element_text_is_not_equal(self, element_locator, value):
@@ -192,12 +206,11 @@ class Page(object):
         retries_left = 2
         while retries_left > 0:
             try:
+                WebDriverWait(self.driver, 3).until(EC.visibility_of_element_located(element_locator))
                 assert (self.driver.find_element(*element_locator).text != value)
                 return
             except (AssertionError, WebDriverException) as e:
-                self.wait_until_element_visible(element_locator)
                 retries_left -= 1
-                time.sleep(1)
         raise ValueError("Element is not found or text equal to value")
 
     def navigate_to_link(self, link):
@@ -218,15 +231,18 @@ class Page(object):
         """
         self.driver.execute_script("window.localStorage.clear();")
         self.driver.execute_script("window.sessionStorage.clear();")
+        time.sleep(0.5)
         self.get_base_url()
+        time.sleep(0.5)
 
-        retries_left = 2
+        retries_left = 4
         while retries_left > 0:
             if not (self.driver.current_url == self.url or self.driver.current_url == ("%sauth/login" % self.url)):
                 self.driver.execute_script("window.localStorage.clear();")
                 self.driver.execute_script("window.sessionStorage.clear();")
-                self.driver.delete_all_cookies()
+                time.sleep(0.5)
                 self.get_base_url()
+                time.sleep(0.5)
                 retries_left -= 1
             else:
                 return
@@ -268,5 +284,11 @@ class Page(object):
 
 
     def navigate_to_dashboard(self):
+        self.wait_to_be_clickable(NavigationButtons.dashboard)
         self.wait_and_click(NavigationButtons.dashboard)
+
+    def move_mouse_in_element(self, element_locator):
+        element = self.driver.find_element(*element_locator)
+        action = ActionChains(self.driver)
+        move = action.move_to_element_with_offset(element, 150, 150).perform()
 

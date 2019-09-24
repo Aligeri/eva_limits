@@ -5,20 +5,6 @@ from Config.Users import *
 from Helpers.SQLHelper import *
 from xrayplugin.plugin import xray
 
-@pytest.fixture(scope='function', autouse=True)
-def data_logout(driver):
-    loginPage = LoginPage(driver)
-    loginPage.reset_session()
-    yield print
-
-
-@pytest.fixture(scope='class')
-def data_fixture():
-    sql = SQLHelper()
-    print("setup fixture")  # тут создаем дату
-    yield print("data from fixture")  # тут магия (если нужны будут какие-то ресурсы)
-    print("teardown")
-
 
 @pytest.fixture(scope="function", autouse=True)
 def loginAsBasicUser(driver):
@@ -27,11 +13,11 @@ def loginAsBasicUser(driver):
     loginPage.input_pincode_login(ExistingBasicVerifiedUser.pincode)
 
 
-@pytest.mark.usefixtures("data_fixture")
 class TestClass:
 
     # QA-842
     @xray("QA-842")
+    @pytest.mark.smoke
     def test_CheckBTCSmartAddressExist(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_receive()
@@ -40,6 +26,7 @@ class TestClass:
 
     # QA-841, QA-840
     @xray("QA-841", "QA-840")
+    @pytest.mark.smoke
     def test_GenerateBTCSmartAddress(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_receive()

@@ -1,18 +1,13 @@
 # -*- coding: UTF-8 -*-
 from datetime import datetime
-from operator import itemgetter
 import requests
 from requests.auth import HTTPBasicAuth
 import pytest
-import re
-import warnings
 from jira import JIRA
 import time
 import os
 import base64
-from json import dumps
 
-# Reference: http://docs.gurock.com/testrail-api2/reference-statuses
 
 PYTEST_TO_XRAY = {
     "passed": "PASS",
@@ -23,6 +18,7 @@ PYTEST_TO_XRAY = {
 DT_FORMAT = '%d-%m-%Y %H:%M:%S'
 
 XRAY_PREFIX = 'xray'
+
 
 
 def xray(*ids):
@@ -77,15 +73,27 @@ class PytestXrayPlugin(object):
 
     # pytest hooks
 
-    @pytest.hookimpl(trylast=True)
-    def pytest_collection_modifyitems(self, session, config, items):
-        if self.test_execution is None:
-            self.test_execution = self.create_test_execution()
-            self.create_execution_for_smoke()
+    def pytest_configure(self, config):
+        if self.is_master(config):
+            if self.test_execution is None:
+                self.test_execution = self.create_test_execution()
+                config.test_exec = self.test_execution
+                self.create_execution_for_smoke()
+            else:
+                config.test_exec = self.test_execution
 
+    def pytest_configure_node(self, node):
+        """xdist hook"""
+        node.slaveinput['test_e'] = node.config.test_exec
+
+    def is_master(self, config):
+        """True if the code running the given pytest.config object is running in a xdist master
+        node or not running xdist at all.
+        """
+        return not hasattr(config, 'slaveinput')
 
     def create_test_execution(self):
-        test_execution_title = 'Web smoke execution ' + str(time.time())
+        test_execution_title = 'Backend smoke execution ' + str(time.time())
         fields = {
             'project':
             {
@@ -105,23 +113,26 @@ class PytestXrayPlugin(object):
             ]
         }
         execution_id = requests.post(("https://jira.adam.loc/rest/raven/1.0/api/testexec/%s/test" % self.test_execution), json=add_tests, auth=HTTPBasicAuth("solinichenko", "madokaqWeaSd123"), verify=False)
+        return execution_id
 
     def create_execution_and_associate_with_smoke(self):
-        self.create_test_execution()
-        self.create_execution_for_smoke()
+        if self.test_execution is None:
+            self.create_test_execution()
+            id = self.create_execution_for_smoke()
+            return id
+
+
 
     @pytest.hookimpl(trylast=True, hookwrapper=True)
     def pytest_runtest_makereport(self, item, call):
         outcome = yield
         rep = outcome.get_result()
-
-
+        if not self.is_master(item.config):
+            self.test_execution = item.config.slaveinput['test_e']
 
         if item.get_closest_marker(XRAY_PREFIX):
             testcaseids = item.get_closest_marker(XRAY_PREFIX).kwargs.get('ids')
             if rep.when == 'call' and testcaseids:
-
-
                 for testcase in testcaseids:
                     if rep.outcome == "failed":
 

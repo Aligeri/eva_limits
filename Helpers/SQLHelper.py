@@ -92,3 +92,16 @@ class SQLHelper():
         user_id = self.__get_user_from_database(email)
         cursor.execute("UPDATE public.user_settings SET local_currency = (%s) WHERE user_id = (%s)", (currency, user_id,))
         connection.commit()
+
+    def get_otp_secret_by_email(self, email):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("SELECT secret FROM public.user_otp_secrets WHERE user_id = (%s)", (user_id,))
+        return cursor.fetchone()
+
+    def change_2fa_parameters_by_email(self, email, login="true", payout="true", export="true"):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("UPDATE public.user_otp_secrets SET is_login_enabled = (%s), is_payout_enabled = (%s), "
+                       "is_export_enabled = (%s) WHERE user_id = (%s)", (login, payout, export, user_id,))
+        connection.commit()

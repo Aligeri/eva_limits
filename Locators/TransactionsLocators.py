@@ -2,13 +2,15 @@ from selenium.webdriver.common.by import By
 
 
 class Send:
-    btcWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[contains(text(), 'BTC')]]")
-    ethWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[contains(text(), 'ETH')]]")
-    xrpWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[contains(text(), 'XRP')]]")
+    btcWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'BTC')]]")
+    ethWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'ETH')]]")
+    xrpWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'XRP')]]")
+    dogeWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'DOGE')]]")
 
     xrpRecieverWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[contains(text(), 'Ripple')]]")
     ethRecieverWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[text()='Ethereum']]")
     btcRecieverWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[text()='Bitcoin']]")
+    dogeRecieverWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[text()='Dogecoin']]")
 
     userIdOrEmail = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[contains(text(), 'User ID or email')]]")
     userWalletAddress = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[contains(text(), 'Wallet address')]]")
@@ -24,6 +26,8 @@ class Send:
     destinationTag = (By.XPATH, "//input[contains(@class, 'input__input--1lDmD') and @placeholder='Enter destination tag']")
     limitExceededTooltip = (By.CLASS_NAME, 'tippy-tooltip-content')
     tokenError = (By.XPATH, "//div[@class='send__tokenError--7Q4J_']")
+    changeToFiat = (By.XPATH, "//span[contains(@class, 'svg-icon__svgIcon--216sc send__switchToFiatIcon--H1xig')]")
+    fiatAmount = (By.XPATH, "//div[contains(@class, 'send__transactionAmountInFiat--1cKZg send__fiatAmount--2FKe5')]")
 
     networkFee = (By.XPATH, ".//div[@class='send__feeBlock--3EjJC']/div[1]")
     arrivalAmount = (By.XPATH, ".//h4[contains(text(), 'Arrival amount')]")
@@ -48,6 +52,10 @@ class Send:
     cancelButtonInTransaction = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Cancel']")
 
     newEmailTransferPassword = (By.XPATH, "//h1/span[@style='color: #000;']")
+
+    confirm2fa = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 button__type-inline--3PR1T button__color-full-red--1bKJL')]")
+    twoFaTransactionError = (By.XPATH, "//div[@class='pop-ups__error--2VlGh']")
+
 
 class TopUpPhone:
     mobileNumber = (By.XPATH, "//input[contains(@class, 'mobile-pay-section__input--bGf8n')]")
