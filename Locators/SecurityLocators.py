@@ -20,8 +20,8 @@ class TwoFactorAuth:
     code5 = (By.XPATH, "//input[contains(@class, 'code-input__inputCode--eXUsf')][5]")
     code6 = (By.XPATH, "//input[contains(@class, 'code-input__inputCode--eXUsf')][6]")
 
-    closeButton = (By.XPATH, '//button[contains(@class, "button__button--2ccS0 tab-two-fa__closeButton--26DpQ button__type-link--2CM99")]')
-    disable2fa = (By.XPATH, '//button[contains(@class, "button__button--2ccS0 tab-two-fa__button--kwMkp button__type-inline--3PR1T button__color-full-red--1bKJL")]')
+    closeButton = (By.XPATH, "//button[contains(@class, 'tab-two-fa__closeButton--26DpQ')]")
+    disable2fa = (By.XPATH, "//button[contains(@class, 'tab-two-fa__button--kwMkp')]")
     disableModal = (By.XPATH, '//button[contains(@class, "button__button--2ccS0 button__type-inline--3PR1T button__color-full-red--1bKJL")]')
 
     loginCheckboxState = (By.XPATH, "//div[@data-option='login']//input")

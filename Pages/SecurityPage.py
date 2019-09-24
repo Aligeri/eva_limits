@@ -127,6 +127,7 @@ class SecurityPage(Page):
         self.wait_and_assert_element_text(LimitModal.pendingChange, "Limit settings will be changed in in 2 days")
 
     def close_limit_modal(self):
+        self.wait_until_element_visible(LimitModal.overlay)
         self.hover_and_click(LimitModal.overlay)
 
     def check_BTC_limit_percent(self, percent):

@@ -2,7 +2,6 @@ import pytest
 from selenium import webdriver
 import os
 import platform
-from Helpers.XrayHelper import *
 from Pages.BasePage import Page
 
 global driver_screenshots
@@ -15,7 +14,6 @@ xrayconf = None
 server = "sanitarium"
 url = r"https://app.%s.freewallet.org" % server
 email_url = r"https://%s.freewallet.org" % server
-xrayhelper = XrayHelper()
 
 pytest_plugins = "xrayplugin.conftest"
 

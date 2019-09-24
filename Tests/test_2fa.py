@@ -15,6 +15,7 @@ sql = SQLHelper()
 
 @pytest.fixture(scope="function")
 def data_665():
+    sql.change_2fa_parameters_by_email(ExistingBasicUser.email695, "false", "false", "false")
     yield
 
 @pytest.fixture(scope="function")
@@ -45,6 +46,7 @@ def data_664():
 class TestClass:
 
     @xray("QA-665", "QA-705")
+    @pytest.mark.usefixtures("data_665")
     @pytest.mark.smoke
     def test_add_2fa(self, driver):
         loginPage = LoginPage(driver)
@@ -55,6 +57,7 @@ class TestClass:
         activation_code = securityPage.get_2fa_activation_code()
         auth = TOTP(activation_code)
         securityPage.input_2fa(auth.now())
+        securityPage.wait_and_click(TwoFactorAuth.closeButton)
         securityPage.wait_and_click(TwoFactorAuth.disable2fa)
         securityPage.input_2fa(auth.now())
         securityPage.wait_and_click(TwoFactorAuth.disableModal)

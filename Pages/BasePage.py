@@ -95,10 +95,11 @@ class Page(object):
         retries_left = 2
         while retries_left > 0:
             try:
-                WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(element_locator))
+                WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable(element_locator))
                 self.driver.find_element(*element_locator).click()
                 return
             except (WebDriverException, TimeoutError) as e:
+                time.sleep(0.5)
                 retries_left -= 1
         raise NoSuchElementException("Element is not clickable or not present on page")
 
