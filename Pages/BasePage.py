@@ -232,18 +232,22 @@ class Page(object):
         """
         self.driver.execute_script("window.localStorage.clear();")
         self.driver.execute_script("window.sessionStorage.clear();")
-        time.sleep(0.5)
         self.get_base_url()
-        time.sleep(0.5)
 
         retries_left = 4
         while retries_left > 0:
+            time.sleep(0.5)
+            try:
+                if (self.driver.current_url == ("%sauth/pin-check" % self.url)):
+                    cancel = self.driver.find_element(By.XPATH,
+                                                      "//div[contains(@class, 'auth__authCodeActions--3iRx1 auth__formActions--17Eei')]")
+                    cancel.click()
+            except:
+                pass
             if not (self.driver.current_url == self.url or self.driver.current_url == ("%sauth/login" % self.url)):
                 self.driver.execute_script("window.localStorage.clear();")
                 self.driver.execute_script("window.sessionStorage.clear();")
-                time.sleep(0.5)
                 self.get_base_url()
-                time.sleep(0.5)
                 retries_left -= 1
             else:
                 return

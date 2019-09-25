@@ -47,7 +47,6 @@ class TestClass:
 
     @xray("QA-665", "QA-705")
     @pytest.mark.usefixtures("data_665")
-    @pytest.mark.smoke
     def test_add_2fa(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -63,7 +62,7 @@ class TestClass:
         securityPage.wait_and_click(TwoFactorAuth.disableModal)
 
     @xray("QA-700")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_2fa_transfer(self, driver):
         loginPage = LoginPage(driver)
         transactionsPage = TransactionsPage(driver)
@@ -78,10 +77,10 @@ class TestClass:
         transactionsPage.send_transaction_step_4(comment)
         code = auth.now()
         transactionsPage.input_2fa_and_send_transaction(code)
-        transactionsPage.find_transaction_by_comment("DOGE", "1", comment)
+        transactionsPage.assert_transactions_page_displayed()
 
     @xray("QA-699")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     @pytest.mark.usefixtures("data_699")
     def test_add_2fa_to_transactions(self, driver):
         loginPage = LoginPage(driver)
@@ -102,7 +101,6 @@ class TestClass:
         transactionsPage.wait_until_element_visible(TwoFactorAuth.code1)
 
     @xray("QA-698")
-    @pytest.mark.smoke
     @pytest.mark.usefixtures("data_698")
     def test_disable_2fa_from_transactions(self, driver):
         loginPage = LoginPage(driver)
@@ -123,10 +121,9 @@ class TestClass:
         transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
         transactionsPage.send_transaction_step_3("1")
         transactionsPage.send_transaction_step_4(comment)
-        transactionsPage.find_transaction_by_comment("DOGE", "1", comment)
+        transactionsPage.assert_transactions_page_displayed()
 
     @xray("QA-701")
-    @pytest.mark.smoke
     def test_incorrect_2fa(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -141,9 +138,8 @@ class TestClass:
         securityPage.input_2fa(authcode)
         loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "5 attempts left")
 
-    @xray("QA-702")
-    @pytest.mark.usefixtures("data_702", "QA-659")
-    @pytest.mark.smoke
+    @xray("QA-702", "QA-659")
+    @pytest.mark.usefixtures("data_702")
     def test_enable_login_2fa(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -162,7 +158,6 @@ class TestClass:
 
     @xray("QA-666")
     @pytest.mark.usefixtures("data_666")
-    @pytest.mark.smoke
     def test_disable_login_2fa(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -183,7 +178,6 @@ class TestClass:
 
     @xray("QA-664")
     @pytest.mark.usefixtures("data_664")
-    @pytest.mark.smoke
     def test_disable_all_2fa_and_send_transaction(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -210,10 +204,9 @@ class TestClass:
         transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
         transactionsPage.send_transaction_step_3("1")
         transactionsPage.send_transaction_step_4(comment)
-        transactionsPage.find_transaction_by_comment("DOGE", "1", comment)
+        transactionsPage.assert_transactions_page_displayed()
 
     @xray("QA-933", "QA-934")
-    @pytest.mark.smoke
     def test_long_time_2fa_codes(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -238,10 +231,9 @@ class TestClass:
         transactionsPage.send_transaction_step_3("1")
         transactionsPage.send_transaction_step_4(comment)
         transactionsPage.input_2fa_and_send_transaction(long_code)
-        transactionsPage.find_transaction_by_comment("DOGE", "1", comment)
+        transactionsPage.assert_transactions_page_displayed()
 
     @xray("QA-938")
-    @pytest.mark.smoke
     def test_long_time_2fa_export_mnemonic(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -272,7 +264,6 @@ class TestClass:
         securityPage.input_2fa(long_code)
 
     @xray("QA-932")
-    @pytest.mark.smoke
     def test_add_2fa_to_transactions(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)

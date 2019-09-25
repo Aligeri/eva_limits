@@ -281,6 +281,9 @@ class TransactionsPage(Page):
                 retries_left -= 1
         raise NoSuchElementException("transaction is not found")
 
+    def assert_transactions_page_displayed(self):
+        self.wait_until_element_visible(Send.firstTransaction)
+
     def find_transaction_by_comment(self, currency, amount, comment):
         """
         Проверяет данные самой верхней транзакции в history
@@ -356,6 +359,14 @@ class TransactionsPage(Page):
 
         self.wait_and_click(Send.firstErrorTransaction)
         self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Cannot send eth to yourself pay in address")
+
+    def check_frozen_transaction(self):
+        """
+        Проверяет данные внутри упавшей транзакции в history
+        """
+
+        self.wait_and_click(Send.firstErrorTransaction)
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "After changing your password, you must wait 24 hours to start making transactions again.")
 
     def check_unconfirmed_transaction(self, comment):
         """

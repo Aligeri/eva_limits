@@ -16,7 +16,7 @@ class TestClass:
         loginPage.get_base_url()
 
     @xray("QA-690", "QA-671")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_LoginAsBasicUser(self, driver):
         loginPage = LoginPage(driver)
         loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
@@ -26,7 +26,7 @@ class TestClass:
 
     @pytest.mark.google
     @xray("QA-683", "QA-658")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_LoginAsGoogleUser(self, driver):
         loginPage = LoginPage(driver)
         loginPage.clear_google_cookies()

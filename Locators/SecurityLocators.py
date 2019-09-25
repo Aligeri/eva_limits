@@ -92,3 +92,9 @@ class Multisig:
     disclaimerDisable = (By.XPATH, "//a[contains(@class, 'tab-multisig__disclaimerDisableAll--2RjWV')]")
 
     confirmedAddressFirst = (By.XPATH, "//div[contains(@class, 'tab-multisig__confirmedEmailItem--3LH85')]")
+
+class Password:
+    password = (By.XPATH, "//input[@name='password']")
+    newPassword = (By.XPATH, "//input[@name='newPassword']")
+    newPasswordRepeat = (By.XPATH, "//input[@name='newPasswordRepeat']")
+    savePassword = (By.XPATH, "//button[contains(@class, 'security__saveButton--1NeUP')]")

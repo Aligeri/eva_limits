@@ -46,7 +46,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("data_basic_registration")
     @xray("QA-709", "QA-798")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_BasicUserRegistration(self, driver):
         loginPage = LoginPage(driver)
         loginPage.input_basic_user_registration_data(NewBasicUser.email, NewBasicUser.password, NewBasicUser.password)

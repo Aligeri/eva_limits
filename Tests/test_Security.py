@@ -31,6 +31,18 @@ def data_1037():
     yield
     sql.delete_limits_by_email_from_database(ExistingBasicUser.email1037)
 
+@pytest.fixture(scope="function")
+def data_718():
+    sql.change_password_by_email(ExistingBasicUser.email718, ExistingBasicUser.email718_password)
+    yield
+    sql.change_password_by_email(ExistingBasicUser.email718, ExistingBasicUser.email718_password)
+
+@pytest.fixture(scope="function")
+def data_717():
+    sql.change_password_by_email(ExistingBasicUser.email717, ExistingBasicUser.email717_password)
+    sql.remove_freeze_by_email(ExistingBasicUser.email717)
+    yield
+
 
 class TestClass:
 
@@ -107,3 +119,39 @@ class TestClass:
         transactionsPage.check_limit_exceeded_transaction("BTC", "0.00000001", ExistingGoogleUser.userID)
         securityPage.navigate_to_limits()
         securityPage.check_BTC_limit_percent("0%")
+
+
+    @pytest.mark.usefixtures("data_718")
+    @xray("QA-718")
+    def test_change_password(self, driver):
+        login_page = LoginPage(driver)
+        security_page = SecurityPage(driver)
+        login_page.login_as_basic_user(ExistingBasicUser.email718, ExistingBasicUser.password)
+        login_page.input_pincode_login(ExistingBasicUser.pincode)
+        security_page.navigate_to_security()
+        security_page.wait_until_element_visible(Password.password)
+        security_page.change_password(ExistingBasicUser.password, ExistingBasicUser.changedPassword)
+        login_page.login_as_basic_user(ExistingBasicUser.email718, ExistingBasicUser.changedPassword)
+        login_page.input_pincode_login(ExistingBasicUser.pincode)
+
+    @pytest.mark.usefixtures("data_717")
+    @xray("QA-717")
+    def test_transaction_after_changing_password(self, driver):
+        login_page = LoginPage(driver)
+        security_page = SecurityPage(driver)
+        transactions_page = TransactionsPage(driver)
+        comment = str(time.time())
+        login_page.login_as_basic_user(ExistingBasicUser.email717, ExistingBasicUser.password)
+        login_page.input_pincode_login(ExistingBasicUser.pincode)
+        security_page.navigate_to_security()
+        security_page.wait_until_element_visible(Password.password)
+        security_page.change_password(ExistingBasicUser.password, ExistingBasicUser.changedPassword)
+        login_page.login_as_basic_user(ExistingBasicUser.email717, ExistingBasicUser.changedPassword)
+        login_page.input_pincode_login(ExistingBasicUser.pincode)
+        transactions_page.navigate_to_send()
+        transactions_page.send_transaction_step_1_user_id("DOGE")
+        transactions_page.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
+        transactions_page.send_transaction_step_3("1")
+        transactions_page.send_transaction_step_4(comment)
+        transactions_page.find_transaction_by_comment("DOGE", "1", comment)
+        transactions_page.check_frozen_transaction()

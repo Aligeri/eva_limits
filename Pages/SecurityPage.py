@@ -13,6 +13,9 @@ class SecurityPage(Page):
         self.wait_and_click(NavigationButtons.security)
         self.wait_and_click(NavigationLinks.twoFactorAuthentication)
 
+    def navigate_to_security(self):
+        self.wait_and_click(NavigationButtons.security)
+
 
     def input_security_pincode_current(self, pincode):
         """
@@ -231,3 +234,12 @@ class SecurityPage(Page):
             self.wait_and_click(TwoFactorAuth.disableModal)
         if checkboxState is None:
             return
+
+
+    def change_password(self, password, new_password):
+        self.wait_to_be_clickable(Password.password)
+        self.wait_and_click(Password.password)
+        self.wait_and_input_text(Password.password, password)
+        self.wait_and_input_text(Password.newPassword, new_password)
+        self.wait_and_input_text(Password.newPasswordRepeat, new_password)
+        self.wait_and_click(Password.savePassword)

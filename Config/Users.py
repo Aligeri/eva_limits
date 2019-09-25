@@ -1,6 +1,7 @@
 class ExistingBasicUser:
     email = "vasiliyautomation@gmail.com"
     password = "qAwSeD123"
+    changedPassword = "qweqwe123"
     pincode = "1234"
     changedPincode = "9876"
     userName = "Existing Basic User"
@@ -22,6 +23,10 @@ class ExistingBasicUser:
     email701 = "vasiliyautomation+701@gmail.com"
     email702 = "vasiliyautomation+702@gmail.com"
     email700_secret = "PFTEY33SHQTHI3ZTOVJFIZ2NMN6VALZT"
+    email717 = "vasiliyautomation+717@gmail.com"
+    email717_password = "$2y$10$scX/CLr0kEHcHvpj.WHUoOfTA1PLDeZpU3oWu6tXTsUTtqDqbZDKa"
+    email718 = "vasiliyautomation+718@gmail.com"
+    email718_password = "$2a$10$3.S0O3eb2uvTeCchjATvDOHtjy50zNxt1CH30jLta5H0ubWMn8jK6"
     email933 = "vasiliyautomation+933@gmail.com"
     highEmail = "Vasiliyautomation@gmail.com"
 
