@@ -38,11 +38,13 @@ class TestClass:
         loginPage.assert_signup_button_state("disabled")
         loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Passwords don't match")
 
+
     def test_PasswordMustBe8Characters(self, driver):
         loginPage = LoginPage(driver)
         loginPage.input_basic_user_registration_data('test1@test.test', '1234')
         loginPage.assert_signup_button_state("disabled")
         loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Password must be at least 8 characters")
+
 
     @pytest.mark.usefixtures("data_basic_registration")
     @xray("QA-709", "QA-798")
@@ -60,7 +62,7 @@ class TestClass:
     @pytest.mark.google
     @pytest.mark.usefixtures("data_google_registration")
     @xray("QA-727", "QA-693")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_GoogleUserRegistration(self, driver):
         loginPage = LoginPage(driver)
         loginPage.navigate_to_signup_page()

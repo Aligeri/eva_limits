@@ -18,6 +18,10 @@ def login_as_basic_user(driver):
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
     yield
 
+@pytest.fixture(scope='class')
+def data_new_user():
+    yield
+    sql.delete_user_from_database(NewBasicUser.email_848)
 
 @pytest.fixture(scope="function")
 def language_change(driver):
@@ -32,7 +36,6 @@ def language_change(driver):
 class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
-    @pytest.mark.smoke
     @xray("QA-1047")
     def test_check_fiat_currency(self, driver):
         dashboardPage = DashboardPage(driver)
@@ -51,7 +54,7 @@ class TestClass:
         settingsPage.change_fiat_currency("usd")
 
     @pytest.mark.usefixtures("login_as_basic_user")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     @xray("QA-991")
     def test_apply_filters(self, driver):
         dashboardPage = DashboardPage(driver)
@@ -65,7 +68,6 @@ class TestClass:
         dashboardPage.remove_filter("Failed")
 
     @pytest.mark.usefixtures("login_as_basic_user")
-    @pytest.mark.smoke
     @xray("QA-844", "QA-832")
     def test_buy_with_a_card(self, driver):
         dashboardPage = DashboardPage(driver)
@@ -75,7 +77,7 @@ class TestClass:
         dashboardPage.select_buy_currency("BTC")
 
     @pytest.mark.usefixtures("login_as_basic_user")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     @xray("QA-834")
     def test_change_graphs(self, driver):
         dashboardPage = DashboardPage(driver)
@@ -85,7 +87,7 @@ class TestClass:
         dashboardPage.select_graph_period("month")
 
     @pytest.mark.usefixtures("language_change")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     @xray("QA-1178")
     def test_change_language(self, driver):
         dashboardPage = DashboardPage(driver)
@@ -94,3 +96,19 @@ class TestClass:
         dashboardPage.wait_and_assert_element_text(NavigationButtons.settings, "設定")
         dashboardPage.wait_and_assert_element_text(NavigationButtons.security, "セキュリティ")
 
+    @pytest.mark.usefixtures("data_new_user")
+    @xray("QA-848")
+    @pytest.mark.websmoke
+    def test_new_user_receive(self, driver):
+        login_page = LoginPage(driver)
+        dashboard_page = DashboardPage(driver)
+        login_page.input_basic_user_registration_data(NewBasicUser.email_848, NewBasicUser.password, NewBasicUser.password)
+        login_page.wait_and_click(LoginPageLocators.termsCheckbox)
+        login_page.assert_signup_button_state("enabled")
+        login_page.wait_and_click(LoginPageLocators.signUpButton)
+        login_page.input_pincode_create(NewBasicUser.pincode)
+        login_page.input_pincode_repeat(NewBasicUser.pincode)
+        dashboard_page.navigate_to_receive()
+        dashboard_page.check_receive_wallet("Bitcoin", False)
+        dashboard_page.check_receive_wallet("Ethereum", False)
+        dashboard_page.check_receive_wallet("EOS", True)

@@ -42,6 +42,7 @@ class ExistingBasicVerifiedUser:
 
 class NewBasicUser:
     email = "petrautomation@gmail.com"
+    email_848 = "petrautomation+848@gmail.com"
     password = "qAwSeD123"
     pincode = "1234"
 
@@ -87,5 +88,7 @@ class UnregisteredBasicUser:
 
 
 class CommonData:
+    FWTContract = "0xf966bc1e1ab786830fd98a3f8f978940f8e5c13e"
+    unsupportedSmartContract = "0x8b40761142b9aa6dc8964e61d0585995425c3d94"
     unsupportedEthToken = "0xB8c77482e45F1F44dE1745F52C74426C631bDD52"
     blocked_gorgona_io = "0xb2816223fddc21aca553ba208c7b7a13b27c207c"

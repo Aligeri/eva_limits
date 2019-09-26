@@ -44,6 +44,17 @@ class DashboardPage(Page):
     def navigate_to_receive(self):
         self.wait_and_click(WalletActionsButtons.receive)
 
+    def check_receive_wallet(self, currency, extra_id=False):
+        self.select_wallet(currency)
+        assert self.get_element_text(DepositAddress.depositAddress) is not None
+        assert self.get_element_text(DepositAddress.userId) is not None
+        assert self.get_element_text(DepositAddress.link) is not None
+        if extra_id:
+            assert self.get_element_text(DepositAddress.memo) is not None
+        self.select_wallet(currency)
+        time.sleep(0.5)
+
+
     def navigate_to_send(self):
         self.wait_and_click(WalletActionsButtons.send)
 
@@ -65,6 +76,8 @@ class DashboardPage(Page):
             "Ardor": ReceiveWallets.ardr,
             "Bitcoin": ReceiveWallets.btc,
             "Bitcoin Cash": ReceiveWallets.bcc,
+            "Ethereum": ReceiveWallets.eth,
+            "EOS": ReceiveWallets.eos
         }
         self.wait_and_click(WALLET[wallet])
 

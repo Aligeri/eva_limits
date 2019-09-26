@@ -42,8 +42,8 @@ def login_as_google_user(driver):
 class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
-    @xray("QA-746")
-    @pytest.mark.smoke
+    @xray("QA-746", "QA-740")
+    @pytest.mark.websmoke
     def test_send_transaction_to_user_ID(self, driver):
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
@@ -66,7 +66,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-745")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_send_complex_transaction_to_user_ID(self, driver):
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
@@ -79,7 +79,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-783")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_send_failing_ETH_transaction_to_yourself(self, driver):
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
@@ -93,7 +93,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-749")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_check_BTC_fees_displayed(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
@@ -107,7 +107,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-756")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_check_ETH_fees_not_displayed(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
@@ -118,7 +118,6 @@ class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-757")
-    @pytest.mark.smoke
     def test_check_include_exclude_fee(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
@@ -132,7 +131,6 @@ class TestClass:
 
     @pytest.mark.usefixtures("login_as_google_user")
     @xray("QA-721")
-    @pytest.mark.smoke
     def test_send_transaction_with_not_verified_email(self, driver):
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
@@ -145,6 +143,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-976")
+    @pytest.mark.websmoke
     @pytest.mark.skip("Пуши в битрефиле не работают")
     def test_send_bitrefill_transaction(self, driver):
         transactionsPage = TransactionsPage(driver)
@@ -155,15 +154,31 @@ class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-779")
-    @pytest.mark.smoke
     def test_check_ETH_token_transaction_failing(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
         transactionsPage.send_transaction_to_blocked_address("ETH", CommonData.unsupportedEthToken)
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-778")
+    @pytest.mark.websmoke
+    def test_check_smart_contract_transaction_failing(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_to_blocked_address("ETH", CommonData.unsupportedSmartContract)
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-777")
+    @pytest.mark.websmoke
+    def test_check_fwt_contract_transaction_failing(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_to_blocked_address("ETH", CommonData.FWTContract)
+
+
+    @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-782")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_check_blocked_address_transaction_failing(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
@@ -171,7 +186,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("new_email_transaction")
     @xray("QA-743", "QA-763", "QA-796", "QA-742")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_transaction_to_new_address(self, driver):
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
@@ -189,25 +204,10 @@ class TestClass:
         loginPage.input_pincode_repeat(UnregisteredBasicUser.pincode)
         transactionsPage.check_first_transaction_receive("XRP", "0.000001", comment)
 
-    @pytest.mark.usefixtures("login_as_basic_user")
-    def test_send_complex_transaction_to_user_id(self, driver):
-        transactionsPage = TransactionsPage(driver)
-        loginPage = LoginPage(driver)
-        comment = str(time.time())
-        transactionsPage.navigate_to_send()
-        transactionsPage.send_transaction_step_1_user_id("XRP")
-        transactionsPage.send_transaction_step_2_user_id(ExistingBasicVerifiedUser.userID)
-        transactionsPage.send_transaction_step_3("0.00001")
-        transactionsPage.send_transaction_step_4(comment)
-        transactionsPage.wait_until_element_visible(Send.firstTransaction)
-        loginPage.reset_session()
-        loginPage.login_as_basic_user(ExistingBasicVerifiedUser.email, ExistingBasicVerifiedUser.password)
-        loginPage.input_pincode_login(ExistingBasicVerifiedUser.pincode)
-        transactionsPage.check_first_transaction_receive("XRP", "0.00001", comment)
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-744")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_send_complex_transaction_to_user_email(self, driver):
         transactionsPage = TransactionsPage(driver)
         loginPage = LoginPage(driver)
@@ -224,8 +224,9 @@ class TestClass:
         transactionsPage.check_first_transaction_receive("XRP", "0.00001", comment)
 
     @pytest.mark.usefixtures("login_as_basic_user")
+    @pytest.mark.skip("пуши не работают")
     @xray("QA-781")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_cancel_transaction_without_hash(self, driver):
         transactionsPage = TransactionsPage(driver)
         comment = str(time.time())
@@ -238,6 +239,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-741")
+    @pytest.mark.websmoke
     def test_check_minimum_amount(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()

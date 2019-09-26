@@ -46,6 +46,7 @@ def data_664():
 class TestClass:
 
     @xray("QA-665", "QA-705")
+    @pytest.mark.websmoke
     @pytest.mark.usefixtures("data_665")
     def test_add_2fa(self, driver):
         loginPage = LoginPage(driver)
@@ -101,6 +102,7 @@ class TestClass:
         transactionsPage.wait_until_element_visible(TwoFactorAuth.code1)
 
     @xray("QA-698")
+    @pytest.mark.websmoke
     @pytest.mark.usefixtures("data_698")
     def test_disable_2fa_from_transactions(self, driver):
         loginPage = LoginPage(driver)
@@ -124,6 +126,7 @@ class TestClass:
         transactionsPage.assert_transactions_page_displayed()
 
     @xray("QA-701")
+    @pytest.mark.websmoke
     def test_incorrect_2fa(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -139,6 +142,7 @@ class TestClass:
         loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "5 attempts left")
 
     @xray("QA-702", "QA-659")
+    @pytest.mark.websmoke
     @pytest.mark.usefixtures("data_702")
     def test_enable_login_2fa(self, driver):
         loginPage = LoginPage(driver)
@@ -177,6 +181,7 @@ class TestClass:
 
 
     @xray("QA-664")
+    @pytest.mark.websmoke
     @pytest.mark.usefixtures("data_664")
     def test_disable_all_2fa_and_send_transaction(self, driver):
         loginPage = LoginPage(driver)

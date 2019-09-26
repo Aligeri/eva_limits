@@ -17,7 +17,7 @@ class TestClass:
 
     # QA-842
     @xray("QA-842")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_CheckBTCSmartAddressExist(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_receive()
@@ -26,7 +26,7 @@ class TestClass:
 
     # QA-841, QA-840
     @xray("QA-841", "QA-840")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_GenerateBTCSmartAddress(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_receive()

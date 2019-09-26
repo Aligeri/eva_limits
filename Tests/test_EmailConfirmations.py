@@ -24,12 +24,12 @@ def data_google_user():
     sql.delete_user_from_database(NewGoogleUser.email)
     email.delete_emails_from_gmail(NewGoogleUser.email, NewGoogleUser.password, "Freewallet", "Verify your email address")
 
+
 class TestClass:
 
-    #@pytest.mark.skip("Пока не разберусь с временем отправки емейлов")
-    @pytest.mark.usefixtures("data_basic_user")
     @xray("QA-797", "QA-795")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
+    @pytest.mark.usefixtures("data_basic_user")
     def test_BasicUserEmailVerification(self, driver):
         loginPage = LoginPage(driver)
         settingsPage = SettingsPage(driver)
@@ -45,10 +45,9 @@ class TestClass:
         loginPage.input_pincode_login(NewBasicUser.pincode)
         settingsPage.check_email_is_verified(NewBasicUser.email)
 
-    #@pytest.mark.skip("Пока не разберусь с временем отправки емейлов")
-    @pytest.mark.usefixtures("data_google_user")
     @xray("QA-725", "QA-724")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
+    @pytest.mark.usefixtures("data_google_user")
     def test_GoogleUserEmailVerification(self, driver):
         loginPage = LoginPage(driver)
         settingsPage = SettingsPage(driver)

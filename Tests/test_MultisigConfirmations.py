@@ -69,7 +69,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("data_google_user")
     @xray("QA-814")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_EnableMultisigConfirmation(self, driver):
         securityPage = SecurityPage(driver)
         loginPage = LoginPage(driver)
@@ -84,7 +84,6 @@ class TestClass:
 
     @pytest.mark.usefixtures("disable_multisig")
     @xray("QA-815")
-    @pytest.mark.smoke
     def test_DisableMultisigConfirmation(self, driver):
         securityPage = SecurityPage(driver)
         loginPage = LoginPage(driver)
@@ -97,10 +96,8 @@ class TestClass:
         securityPage.wait_and_assert_element_text(Multisig.email1, '')
 
 
-    #@pytest.mark.skip("Опять емейлы")
     @pytest.mark.usefixtures("existing_multisig")
     @xray("QA-766")
-    @pytest.mark.smoke
     def test_CancelMultisigTransaction(self, driver):
         transactionsPage = TransactionsPage(driver)
         comment = str(time.time())

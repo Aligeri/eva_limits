@@ -5,7 +5,8 @@ class ReceiveWallets:
     btc = (By.XPATH, "//div[@data-currency='btc']//span")
     ardr = (By.XPATH, "//div[@data-currency='ardr']//span")
     bcc = (By.XPATH, "//div[@data-currency='bcc']//span")
-
+    eth = (By.XPATH, "//div[@data-currency='eth']//span")
+    eos = (By.XPATH, "//div[@data-currency='eos']//span")
 
 class DepositAddress:
     currentAddress = (By.XPATH, "//div[contains(@class, 'receive__addressText--38aaT')]")
@@ -13,3 +14,9 @@ class DepositAddress:
     showAll = (By.XPATH, "//div[contains(@class, 'previews-address__showAll--1TynH')]")
     previousAddress1 = (By.XPATH, "//div[contains(@class, 'previews-address__wrapAddress--1lYXN')][1]")
     previousAddress2 = (By.XPATH, "//div[contains(@class, 'previews-address__wrapAddress--1lYXN')][2]")
+
+    depositAddress = (By.XPATH, "//h3[text()='My deposit  address']/following-sibling::div[contains(@class, 'receive__addressText--38aaT')]")
+    memo = (By.XPATH,
+                      "//h3[text()='Memo']/following-sibling::div[contains(@class, 'receive__addressText--38aaT')]")
+    userId = (By.XPATH, "//div[contains(@class, 'receive__userId--3hHHB')]")
+    link = (By.XPATH, "//a[@target='_blank']/b")

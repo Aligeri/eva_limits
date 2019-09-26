@@ -21,8 +21,9 @@ def data_892():
 
 class TestClass:
 
-    @xray("QA-826", "QA-892")
+    @xray("QA-826", "QA-892", "QA-691")
     @pytest.mark.usefixtures("data_892")
+    @pytest.mark.websmoke
     def test_drop_session_from_email(self, driver):
         loginPage = LoginPage(driver)
         loginPage.login_as_basic_user(ExistingBasicUser2.email, ExistingBasicUser2.password)

@@ -48,6 +48,7 @@ class TestClass:
 
     @xray("QA-954", "QA-713")
     @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_change_pincode(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -67,7 +68,6 @@ class TestClass:
 
     @xray("QA-837", "QA-838")
     @pytest.mark.usefixtures("data_837")
-    @pytest.mark.smoke
     def test_add_and_change_limit(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -81,7 +81,6 @@ class TestClass:
         securityPage.check_limit_buttons_are_not_displayed("FWH")
 
     @xray("QA-1037")
-    @pytest.mark.smoke
     @pytest.mark.usefixtures("data_1037")
     def test_add_and_disable_limit(self, driver):
         loginPage = LoginPage(driver)
@@ -97,7 +96,7 @@ class TestClass:
 
     @xray("QA-1034")
     @pytest.mark.usefixtures("data_1034")
-    @pytest.mark.smoke
+    @pytest.mark.websmoke
     def test_add_and_spend_limit(self, driver):
         transactionsPage = TransactionsPage(driver)
         loginPage = LoginPage(driver)
@@ -123,6 +122,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("data_718")
     @xray("QA-718")
+    @pytest.mark.websmoke
     def test_change_password(self, driver):
         login_page = LoginPage(driver)
         security_page = SecurityPage(driver)
@@ -136,6 +136,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("data_717")
     @xray("QA-717")
+    @pytest.mark.websmoke
     def test_transaction_after_changing_password(self, driver):
         login_page = LoginPage(driver)
         security_page = SecurityPage(driver)
