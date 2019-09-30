@@ -3,25 +3,20 @@ from Pages.LoginPage import *
 from Config.Users import *
 from Locators.DashboardLocators import DashboardLocators
 from selenium.common.exceptions import WebDriverException
-
-@pytest.fixture(scope='function', autouse=True)
-@pytest.mark.usefixtures("driver")
-def data_logout(driver):
-    loginPage = LoginPage(driver)
-    loginPage.reset_session()
-    yield
+from xrayplugin.plugin import xray
 
 
-@pytest.mark.usefixtures("driver", "data_logout")
 class TestClass:
 
-
+    @xray("QA-720")
     def test_IncorrectPasswordLogin(self, driver):
         loginPage = LoginPage(driver)
-        loginPage.login_as_basic_user("test@test.test", "12345678")
+        loginPage.login_as_basic_user(ExistingBasicUser.email, "12345678")
         loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Incorrect password")
         loginPage.get_base_url()
 
+    @xray("QA-690", "QA-671")
+    @pytest.mark.websmoke
     def test_LoginAsBasicUser(self, driver):
         loginPage = LoginPage(driver)
         loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
@@ -30,6 +25,8 @@ class TestClass:
         loginPage.wait_and_assert_element_text(DashboardLocators.userName, ExistingBasicUser.userName)
 
     @pytest.mark.google
+    @xray("QA-683", "QA-658")
+    @pytest.mark.websmoke
     def test_LoginAsGoogleUser(self, driver):
         loginPage = LoginPage(driver)
         loginPage.clear_google_cookies()

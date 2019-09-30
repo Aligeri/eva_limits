@@ -1,13 +1,17 @@
 from Pages.BasePage import Page
 from Locators.DashboardLocators import *
 from Locators.TransactionsLocators import *
+from Locators.SecurityLocators import *
 import re
 import time
+from selenium.common.exceptions import NoSuchElementException
+import websocket
 
 WALLETFROM = {
     "BTC": Send.btcWallet,
     "ETH": Send.ethWallet,
-    "XRP": Send.xrpWallet
+    "XRP": Send.xrpWallet,
+    "DOGE": Send.dogeWallet,
 }
 
 COMPLEX_WALLET = {
@@ -18,6 +22,7 @@ DESTINATION_WALLET = {
     "XRP": Send.xrpRecieverWallet,
     "ETH": Send.ethRecieverWallet,
     "BTC": Send.btcRecieverWallet,
+    "DOGE": Send.dogeWallet,
 }
 
 
@@ -36,6 +41,10 @@ class TransactionsPage(Page):
         self.wait_and_input_text(Send.amount, amount)
         self.wait_to_be_clickable(Send.continueButton3)
         self.wait_and_click(Send.continueButton3)
+
+    def check_minimum_amount(self, amount):
+        self.wait_and_input_text(Send.amount, amount)
+        self.wait_and_assert_element_text(Send.limitExceededTooltip, "Minimum amount 0.00000001 BTC")
 
     def send_transaction_step_4(self, comment):
         self.wait_and_input_text(Send.comment, comment)
@@ -62,7 +71,18 @@ class TransactionsPage(Page):
         self.wait_and_click(DESTINATION_WALLET[currency])
         self.wait_and_input_text(Send.destinationTag, wallet_tag)
         self.wait_to_be_clickable(Send.continueButton2)
+        self.wait_and_click(Send.continueButton2)
 
+    def send_fiat_transaction_step_3(self, amount):
+        self.wait_and_click(Send.changeToFiat)
+        self.wait_and_input_text(Send.amount, amount)
+        self.wait_to_be_clickable(Send.continueButton3)
+        self.wait_and_click(Send.continueButton3)
+
+    def check_fiat_transaction_step_4(self, amount):
+        amountfix = "≈ $" + amount
+        value = self.get_element_text(Send.fiatAmount)
+        assert amountfix == value
 
     def send_transaction_to_user_id(self, currency, amount, userID, comment):
         """
@@ -107,7 +127,7 @@ class TransactionsPage(Page):
         self.wait_and_input_text(Send.comment, comment)
         self.wait_and_click(Send.withdraw)
 
-    def send_transaction_to_ETH_token(self, currency, wallet_address):
+    def send_transaction_to_blocked_address(self, currency, wallet_address):
         """
         Отправляет трансфер на адрес запрещенного токена ETH
         :param currency: кошелек с которого отправляется трансфер ETH
@@ -142,19 +162,43 @@ class TransactionsPage(Page):
         self.wait_and_input_text(Send.amount, amount)
 
     def __get_network_fee(self):
-        text = self.get_element_text(Send.networkFee)
-        number = re.search("\d\.\d*", text).group(0)
-        return number
+        retries = 2
+        while retries > 0:
+            try:
+                text = self.get_element_text(Send.networkFee)
+                number = re.search("\d\.\d*", text).group(0)
+                return number
+            except:
+                time.sleep(0.5)
+                retries -= 1
+        raise ValueError("Network fee is not found")
+
 
     def __get_arrival_amount(self):
-        text = self.get_element_text(Send.arrivalAmount)
-        number = re.search("\d\.\d*", text).group(0)
-        return number
+        retries = 2
+        while retries > 0:
+            try:
+                text = self.get_element_text(Send.arrivalAmount)
+                number = re.search("\d\.\d*", text).group(0)
+                return number
+            except:
+                time.sleep(0.5)
+                retries -= 1
+        raise ValueError("Arrival amount is not found")
+
 
     def __get_total_amount(self):
-        text = self.get_element_text(Send.totalWithFee)
-        number = re.search("\d\.\d*", text).group(0)
-        return number
+        retries = 2
+        while retries > 0:
+            try:
+                text = self.get_element_text(Send.totalWithFee)
+                number = re.search("\d\.\d*", text).group(0)
+                return number
+            except:
+                time.sleep(0.5)
+                retries -= 1
+        raise ValueError("Total amount is not found")
+
 
     def check_BTC_Fee(self, fee_type, amount):
         FEE_TYPE = {
@@ -218,16 +262,53 @@ class TransactionsPage(Page):
     def check_first_transaction(self, currency, amount, comment):
         """
         Проверяет данные самой верхней транзакции в history
-        :param currency: валюта транзакции, BTC/ETH
+        :param currency: валюта транзакции, BTC/ETH/DOGE
         :param amount: string с количеством валюты
         :param comment: комментарий к транзакции
         """
         transaction_title = "–%s %s" % (amount, currency)
         comment_formatted = 'Comment "%s"' % comment
-        self.navigate_to_send()
-        self.navigate_to_history()
-        self.wait_and_assert_element_text(Send.firstTransactionAmount, transaction_title)
-        self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
+        retries_left = 5
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible(Send.firstTransaction)
+                self.assert_element_text(Send.firstTransactionComment, comment_formatted)
+                self.assert_element_text(Send.firstTransactionAmount, transaction_title)
+                return
+            except:
+                self.navigate_to_send()
+                self.navigate_to_history()
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
+
+    def assert_transactions_page_displayed(self):
+        self.wait_until_element_visible(Send.firstTransaction)
+
+    def find_transaction_by_comment(self, currency, amount, comment):
+        """
+        Проверяет данные самой верхней транзакции в history
+        :param currency: валюта транзакции, BTC/ETH/DOGE
+        :param amount: string с количеством валюты
+        :param comment: комментарий к транзакции
+        """
+        transaction_title = "–%s %s" % (amount, currency)
+        comment_formatted = 'Comment "%s"' % comment
+        retries_left = 5
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible((By.XPATH, (
+                        ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment_formatted)),
+                                                10)
+                self.wait_until_element_visible((By.XPATH, (
+                        ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % transaction_title)),
+                                                10)
+                return
+            except:
+                self.navigate_to_send()
+                self.navigate_to_history()
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
+
 
     def check_first_transaction_receive(self, currency, amount, comment):
         """
@@ -238,26 +319,54 @@ class TransactionsPage(Page):
         """
         transaction_title = "+%s %s" % (amount, currency)
         comment_formatted = 'Comment "%s"' % comment
-        self.navigate_to_send()
-        self.navigate_to_history()
-        self.wait_and_assert_element_text(Send.firstTransactionAmount, transaction_title)
-        self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
+        retries_left = 5
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible((By.XPATH, (
+                        ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment_formatted)),
+                                                10)
+                self.wait_until_element_visible((By.XPATH, (
+                        ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % transaction_title)),
+                                                10)
+                return
+            except:
+                self.navigate_to_send()
+                self.navigate_to_history()
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
 
     def check_first_transaction_comment(self, comment):
         """
         Проверяет комментарий самой верхней транзакции в history
         :param comment: комментарий к транзакции
         """
-        self.wait_and_assert_element_text(Send.firstTransactionComment, comment)
+        retries_left = 5
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible(Send.firstTransaction)
+                self.assert_element_text(Send.firstTransactionComment, comment)
+                return
+            except:
+                self.navigate_to_send()
+                self.navigate_to_history()
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
 
     def check_failed_transaction(self):
         """
         Проверяет данные внутри упавшей транзакции в history
         """
-        self.navigate_to_send()
-        self.navigate_to_history()
+
         self.wait_and_click(Send.firstErrorTransaction)
         self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Cannot send eth to yourself pay in address")
+
+    def check_frozen_transaction(self):
+        """
+        Проверяет данные внутри упавшей транзакции в history
+        """
+
+        self.wait_and_click(Send.firstErrorTransaction)
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "After changing your password, you must wait 24 hours to start making transactions again.")
 
     def check_unconfirmed_transaction(self, comment):
         """
@@ -278,14 +387,34 @@ class TransactionsPage(Page):
 
 
     def open_transaction_by_comment(self, comment):
-        self.navigate_to_send()
-        self.navigate_to_history()
-        self.wait_and_click((By.XPATH, (".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment)))
+        retries_left = 5
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible((By.XPATH, (
+                            ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment)),
+                                                10)
+                self.wait_and_click((By.XPATH, (
+                            ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment)))
+                return
+            except:
+                self.navigate_to_send()
+                self.navigate_to_history()
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
+
 
     def open_failed_transaction_by_comment(self, comment):
-        #self.navigate_to_send()
-        #self.navigate_to_history()
-        self.wait_and_click((By.XPATH, (".//a[contains(@class, 'item__wrapper__failed--16kTs')][.//div[contains(text(), '%s')]]" % comment)))
+        retries_left = 5
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible((By.XPATH, (".//a[contains(@class, 'item__wrapper__failed--16kTs')][.//div[contains(text(), '%s')]]" % comment)), 10)
+                self.wait_and_click((By.XPATH, (".//a[contains(@class, 'item__wrapper__failed--16kTs')][.//div[contains(text(), '%s')]]" % comment)))
+                return
+            except:
+                self.navigate_to_send()
+                self.navigate_to_history()
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
 
     def cancel_first_transaction_without_hash(self, comment):
         self.open_transaction_by_comment(comment)
@@ -350,3 +479,13 @@ class TransactionsPage(Page):
         self.driver.get(create_password_link)
         password = self.get_element_text(Send.newEmailTransferPassword)
         return password
+
+    def input_2fa_and_send_transaction(self, code):
+        code_by_char = list(code)
+        self.wait_and_input_text(TwoFactorAuth.code1, code_by_char[0])
+        self.wait_and_input_text(TwoFactorAuth.code2, code_by_char[1])
+        self.wait_and_input_text(TwoFactorAuth.code3, code_by_char[2])
+        self.wait_and_input_text(TwoFactorAuth.code4, code_by_char[3])
+        self.wait_and_input_text(TwoFactorAuth.code5, code_by_char[4])
+        self.wait_and_input_text(TwoFactorAuth.code6, code_by_char[5])
+        self.wait_and_click(Send.confirm2fa)
