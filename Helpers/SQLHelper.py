@@ -122,3 +122,28 @@ class SQLHelper():
         connection.commit()
 
 
+
+
+    def get_otp_secret_by_email(self, email):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("SELECT secret FROM public.user_otp_secrets WHERE user_id = (%s)", (user_id,))
+        return cursor.fetchone()
+
+    def change_2fa_parameters_by_email(self, email, login="true", payout="true", export="true"):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("UPDATE public.user_otp_secrets SET is_login_enabled = (%s), is_payout_enabled = (%s), "
+                       "is_export_enabled = (%s) WHERE user_id = (%s)", (login, payout, export, user_id,))
+        connection.commit()
+
+    def change_password_by_email(self, email, password):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("UPDATE public.user_social SET password = (%s) WHERE user_id = (%s)", (password, user_id,))
+        connection.commit()
+
+    def remove_freeze_by_email(self, email):
+        cursor, connection = self.connect_to_database()
+        cursor.execute("UPDATE public.user SET freeze_till = (%s), freeze_reason = (%s) WHERE email = (%s)", (None, None, email,))
+        connection.commit()
