@@ -54,6 +54,17 @@ class DashboardPage(Page):
         self.select_wallet(currency)
         time.sleep(0.5)
 
+    def check_top_up_wallet(self, currency, minimum=False):
+        self.select_top_up_wallet(currency)
+        assert self.get_element_text(TopUpWallets.depositAddress) is not None
+        if minimum:
+            self.wait_until_element_visible(DepositAddress.minimumBlock)
+            amount = self.get_element_text(DepositAddress.minimumAmount)
+            list = amount.split(" ")
+            assert list[0] is not None
+            assert list[0] != "NaN"
+        self.select_top_up_wallet(currency)
+        time.sleep(0.5)
 
     def navigate_to_send(self):
         self.wait_and_click(WalletActionsButtons.send)
@@ -78,6 +89,21 @@ class DashboardPage(Page):
             "Bitcoin Cash": ReceiveWallets.bcc,
             "Ethereum": ReceiveWallets.eth,
             "EOS": ReceiveWallets.eos
+        }
+        self.wait_and_click(WALLET[wallet])
+
+    def select_top_up_wallet(self, wallet):
+        """
+        Выбор кошелька в receive
+        :param wallet: валюта кошелька, Ardor/Bitcoin/Bitcoin Cash
+        """
+        WALLET = {
+            "Ardor": TopUpWallets.ardr,
+            "Bitcoin": TopUpWallets.btc,
+            "Bitcoin Cash": TopUpWallets.bcc,
+            "Ethereum": TopUpWallets.eth,
+            "Doge": TopUpWallets.doge,
+            "EOS": TopUpWallets.eos
         }
         self.wait_and_click(WALLET[wallet])
 

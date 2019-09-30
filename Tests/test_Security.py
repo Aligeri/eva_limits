@@ -32,6 +32,13 @@ def data_1037():
     sql.delete_limits_by_email_from_database(ExistingBasicUser.email1037)
 
 @pytest.fixture(scope="function")
+def data_839():
+    sql.delete_limits_by_email_from_database(ExistingBasicUser.email839)
+    yield
+    sql.delete_limits_by_email_from_database(ExistingBasicUser.email839)
+
+
+@pytest.fixture(scope="function")
 def data_718():
     sql.change_password_by_email(ExistingBasicUser.email718, ExistingBasicUser.email718_password)
     yield
@@ -97,7 +104,7 @@ class TestClass:
     @xray("QA-1034")
     @pytest.mark.usefixtures("data_1034")
     @pytest.mark.websmoke
-    def test_add_and_spend_limit(self, driver):
+    def test_add_and_spend_all_limit(self, driver):
         transactionsPage = TransactionsPage(driver)
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -118,6 +125,27 @@ class TestClass:
         transactionsPage.check_limit_exceeded_transaction("BTC", "0.00000001", ExistingGoogleUser.userID)
         securityPage.navigate_to_limits()
         securityPage.check_BTC_limit_percent("0%")
+
+    @xray("QA-839")
+    @pytest.mark.usefixtures("data_839")
+    @pytest.mark.websmoke
+    def test_add_and_spend_part_limit(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        loginPage = LoginPage(driver)
+        securityPage = SecurityPage(driver)
+        loginPage.login_as_basic_user(ExistingBasicUser.email839, ExistingBasicUser.password)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        comment = str(time.time())
+        securityPage.navigate_to_limits()
+        securityPage.create_new_weekly_limit("DOGE", "2")
+        securityPage.close_limit_modal()
+        securityPage.check_DOGE_limit_percent("100%")
+        securityPage.navigate_to_dashboard()
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_to_user_id("DOGE", "1", ExistingGoogleUser.userID, comment)
+        transactionsPage.find_transaction_by_comment("DOGE", "1", comment)
+        securityPage.navigate_to_limits()
+        securityPage.check_DOGE_limit_percent("50%")
 
 
     @pytest.mark.usefixtures("data_718")

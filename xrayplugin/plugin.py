@@ -93,7 +93,7 @@ class PytestXrayPlugin(object):
         return not hasattr(config, 'slaveinput')
 
     def create_test_execution(self):
-        test_execution_title = 'Backend smoke execution ' + str(time.time())
+        test_execution_title = 'test execution ' + str(time.time())
         fields = {
             'project':
             {

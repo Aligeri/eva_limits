@@ -23,6 +23,11 @@ def data_new_user():
     yield
     sql.delete_user_from_database(NewBasicUser.email_848)
 
+@pytest.fixture(scope='class')
+def data_752():
+    yield
+    sql.delete_user_from_database(NewBasicUser.email_752)
+
 @pytest.fixture(scope="function")
 def language_change(driver):
     loginPage = LoginPage(driver)
@@ -112,3 +117,21 @@ class TestClass:
         dashboard_page.check_receive_wallet("Bitcoin", False)
         dashboard_page.check_receive_wallet("Ethereum", False)
         dashboard_page.check_receive_wallet("EOS", True)
+
+    @pytest.mark.usefixtures("data_752")
+    @xray("QA-752")
+    @pytest.mark.websmoke
+    def test_new_user_receive_minimum(self, driver):
+        login_page = LoginPage(driver)
+        dashboard_page = DashboardPage(driver)
+        login_page.input_basic_user_registration_data(NewBasicUser.email_752, NewBasicUser.password, NewBasicUser.password)
+        login_page.wait_and_click(LoginPageLocators.termsCheckbox)
+        login_page.assert_signup_button_state("enabled")
+        login_page.wait_and_click(LoginPageLocators.signUpButton)
+        login_page.input_pincode_create(NewBasicUser.pincode)
+        login_page.input_pincode_repeat(NewBasicUser.pincode)
+        dashboard_page.navigate_to_receive()
+        dashboard_page.select_wallet("Bitcoin")
+        dashboard_page.check_top_up_wallet("Ethereum", True)
+        dashboard_page.check_top_up_wallet("Doge", True)
+        dashboard_page.check_top_up_wallet("EOS", True)

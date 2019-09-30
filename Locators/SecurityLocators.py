@@ -62,6 +62,7 @@ class LimitWallets:
     fwt = (By.XPATH, "//div[@class='item__limit--DH9Jj' and descendant::div[text()='FWT wallet']]")
     ardr = (By.XPATH, "//div[@class='item__limit--DH9Jj' and descendant::div[text()='Ardor wallet']]")
     btc = (By.XPATH, "//div[@class='item__limit--DH9Jj' and descendant::div[text()='Bitcoin wallet']]")
+    doge = (By.XPATH, "//div[@class='item__limit--DH9Jj' and descendant::div[text()='Dogecoin wallet']]")
 
 class LimitModal:
     amount = (By.NAME, "value")
@@ -79,6 +80,9 @@ class LimitModal:
     changeLimitConfirm = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Change']")
     overlay = (By.XPATH, ".//div[contains(@class, 'pp__popup--2rStv')]")
     BTCLimitPercent = (By.XPATH, "//div[text()='Bitcoin wallet']/following-sibling::div//span[contains(@class, 'item__percentLeft--2jVK3')]")
+    DOGELimitPercent = (By.XPATH,
+                       "//div[text()='Dogecoin wallet']/following-sibling::div//span[contains(@class, 'item__percentLeft--2jVK3')]")
+
     stats = (By.XPATH, "//div[contains(@class, 'security-stats__wrapper--eKhVI')]")
 
 class Multisig:

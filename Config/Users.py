@@ -27,6 +27,8 @@ class ExistingBasicUser:
     email717_password = "$2y$10$scX/CLr0kEHcHvpj.WHUoOfTA1PLDeZpU3oWu6tXTsUTtqDqbZDKa"
     email718 = "vasiliyautomation+718@gmail.com"
     email718_password = "$2a$10$3.S0O3eb2uvTeCchjATvDOHtjy50zNxt1CH30jLta5H0ubWMn8jK6"
+    email_780 = "vasiliyautomation+780@gmail.com"
+    email839 = "vasiliyautomation+839@gmail.com"
     email933 = "vasiliyautomation+933@gmail.com"
     highEmail = "Vasiliyautomation@gmail.com"
 
@@ -43,6 +45,7 @@ class ExistingBasicVerifiedUser:
 class NewBasicUser:
     email = "petrautomation@gmail.com"
     email_848 = "petrautomation+848@gmail.com"
+    email_752 = "petrautomation+752@gmail.com"
     password = "qAwSeD123"
     pincode = "1234"
 

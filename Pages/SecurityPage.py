@@ -68,6 +68,7 @@ class SecurityPage(Page):
             "FWH": LimitWallets.fwt,
             "BTC": LimitWallets.btc,
             "ARDR": LimitWallets.ardr,
+            "DOGE": LimitWallets.doge,
         }
         self.wait_and_click(WALLET[currency])
         self.wait_and_input_text(LimitModal.amount, amount)
@@ -135,6 +136,9 @@ class SecurityPage(Page):
 
     def check_BTC_limit_percent(self, percent):
         self.wait_and_assert_element_text(LimitModal.BTCLimitPercent, percent)
+
+    def check_DOGE_limit_percent(self, percent):
+        self.wait_and_assert_element_text(LimitModal.DOGELimitPercent, percent)
 
     def navigate_to_email_confirmation(self):
         self.wait_and_click(NavigationButtons.security)
