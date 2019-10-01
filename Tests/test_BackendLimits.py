@@ -78,6 +78,13 @@ def register_as_basic_user(driver):
     loginPage.input_pincode_login(NewBasicUser.pincode)
     yield
 
+@pytest.fixture(scope="function")
+def verify_user_by_email(driver):
+    yield
+    sql = SQLHelper()
+    sql.verify_user_by_email(ExistingBasicUser.email)
+
+
 
 @pytest.mark.usefixtures("driver")
 class TestClass:
@@ -206,6 +213,24 @@ class TestClass:
         transactionsPage.send_transaction_step_3(999)
         transactionsPage.send_transaction_step_4(comment)
         hostel.check_status_transaction_by_email(NewBasicLimitBackend.email, date)
+
+
+    @pytest.mark.usefixtures("login_as_basic_user", "email_unverified", "verify_user_by_email")
+    def test_emailUnverified(self, driver):
+        sql = SQLHelper()
+        hostel = HostelHelper()
+        comment = str(time.time())
+        sql.set_settings_payouts_limits("user_email_unverified", 0.00000001)
+        transactionsPage = TransactionsPage(driver)
+        dashboardPage = DashboardPage(driver)
+        date = dashboardPage.get_current_time()
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("DOGE")
+        transactionsPage.send_transaction_step_2_user_id("dwarf91111@gmail.com")
+        transactionsPage.send_transaction_step_3(1)
+        sql.verify_user_by_email(ExistingBasicUser.email, "false")
+        transactionsPage.send_transaction_step_4(comment)
+        transactionsPage.check_canceled_transaction(comment, "Failed by exceeding of daily limits (strengthen security please)")
 
 
 

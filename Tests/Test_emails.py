@@ -44,9 +44,13 @@ class TestClass():
         print(a)
 
     def test_hostel2(self):
-        helper = HostelHelper()
-        a = helper.send_transaction("doge", "d2000d0b-010e-4308-b2a3-0f38b444f8bf", "2")
+        sql = SQLHelper()
+        sql.delete_user_kyc("dwarf91111@gmail.com")
+
+
 
     def test_get_exec(self):
         helper = XrayHelper()
         helper.update_test_status()
+
+
