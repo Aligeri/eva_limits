@@ -5,6 +5,7 @@ from Pages.DashboardPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from Helpers.SMTPHelper import *
+from Helpers.HostelHelper import *
 from Pages.Admin_Pages.AdminMainPage import *
 from Pages.Admin_Pages.AdminTransactionsPage import *
 
@@ -22,7 +23,7 @@ def user_email_verified_only():
     sql.set_settings_payouts_limits("user_email_verified_only", 1.00000001)
 
 @pytest.fixture(scope='function')
-def amount_too_big():
+def user_amount_too_big():
     yield
     sql = SQLHelper()
     sql.set_settings_payouts_limits("user_amount_too_big", 1.00000001)
@@ -34,16 +35,22 @@ def user_laundering():
     sql.set_settings_payouts_limits("user_laundering", 1)
 
 @pytest.fixture(scope='function')
-def amount_too_big_transfer():
+def user_amount_too_big_transfer():
     yield
     sql = SQLHelper()
     sql.set_settings_payouts_limits("user_amount_too_big_transfer", 1.00000001)
 
 @pytest.fixture(scope='function')
-def laundering_transfer():
+def user_laundering_transfer():
     yield
     sql = SQLHelper()
     sql.set_settings_payouts_limits("user_laundering_transfer", 1.00000001)
+
+@pytest.fixture(scope='function')
+def delete_user():
+    yield
+    sql = SQLHelper()
+    sql.delete_user_from_database(NewBasicLimitBackend.email)
 
 
 @pytest.fixture(scope="function")
@@ -55,20 +62,43 @@ def login_as_basic_user(driver):
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
     yield
 
+@pytest.fixture(scope="function")
+def register_as_basic_user(driver):
+    sql = SQLHelper()
+    loginPage = LoginPage(driver)
+    loginPage.input_basic_user_registration_data(NewBasicLimitBackend.email, NewBasicLimitBackend.password, NewBasicLimitBackend.password)
+    loginPage.wait_and_click(LoginPageLocators.termsCheckbox)
+    loginPage.assert_signup_button_state("enabled")
+    loginPage.wait_and_click(LoginPageLocators.signUpButton)
+    loginPage.input_pincode_create(NewBasicUser.pincode)
+    loginPage.input_pincode_repeat(NewBasicUser.pincode)
+    loginPage.wait_until_element_visible(DashboardLocators.logout)
+    sql.verify_user_by_email(NewBasicLimitBackend.email)
+    loginPage.refresh_page()
+    loginPage.input_pincode_login(NewBasicUser.pincode)
+    yield
+
+
 @pytest.mark.usefixtures("driver")
 class TestClass:
 
-    @pytest.mark.usefixtures("login_as_basic_user", "amount_too_big")
-    def test_amountTooBig(self, driver):
+    @pytest.mark.parametrize("limitName, values", [
+        ("user_amount_too_big", 0.000001),
+    ])
+    @pytest.mark.usefixtures("login_as_basic_user", "user_amount_too_big")
+    def test_amountTooBig(self, driver, limitName, values):
         """
         Тест на превышение лимита отправки суммы на новый адрес
         :param driver:
         :return:
         """
         sql = SQLHelper()
-        sql.set_settings_payouts_limits("user_amount_too_big", 0.000001)
+        hostel = HostelHelper()
+
+        sql.set_settings_payouts_limits(limitName, values)
         transactionsPage = TransactionsPage(driver)
         dashboardPage = DashboardPage(driver)
+        date = dashboardPage.get_current_time()
         comment = str(time.time())
         dashboardPage.navigate_to_receive()
         dashboardPage.select_wallet("Dogecoin")
@@ -79,26 +109,18 @@ class TestClass:
         transactionsPage.send_transaction_step_2_wallet_address(currentAdresss, "DOGE")
         transactionsPage.send_transaction_step_3(1)
         transactionsPage.send_transaction_step_4(comment)
-        transaction_id = transactionsPage.get_transaction_ID_by_comment(comment)
-        current_window = driver.current_window_handle
-        admin_window = None
-        driver.execute_script("window.open('https://board.cain.loc')")
-        while admin_window is None:
-            for handle in driver.window_handles:
-                if handle != current_window:
-                    admin_window = handle
-        driver.switch_to.window(admin_window)
-        adminMainPage = AdminMainPage(driver)
-        adminTransactionsPage = AdminTransactionsPage(driver)
-        adminMainPage.login_as_admin_user("dwarf911@protonmail.com", "Kuzya910")
-        adminMainPage.go_to_search_transaction()
-        adminTransactionsPage.find_transaction_by_id(transaction_id)
-        adminTransactionsPage.assert_manual_approve_transaction()
+        hostel.check_status_transaction_by_email(ExistingBasicUser.email, date)
 
+
+
+
+    @pytest.mark.parametrize("limitName, values", [
+        ("user_email_verified_only", 0.000001),
+    ])
     @pytest.mark.usefixtures("login_as_basic_user", "user_email_verified_only")
-    def test_emailVerifiedOnlyConfirm(self, driver):
+    def test_emailVerifiedOnlyConfirm(self, driver, limitName, values):
         sql = SQLHelper()
-        sql.set_settings_payouts_limits("user_email_verified_only", 0.000001)
+        sql.set_settings_payouts_limits(limitName, values)
         transactionsPage = TransactionsPage(driver)
         dashboardPage = DashboardPage(driver)
         comment = str(time.time())
@@ -128,7 +150,66 @@ class TestClass:
         transactionsPage.send_transaction_step_3(1)
         transactionsPage.send_transaction_step_4(comment)
         transactionsPage.cancel_transaction_by_email()
-        
+
+    @pytest.mark.usefixtures("login_as_basic_user", "user_amount_too_big_transfer")
+    def test_ammountTooBigTransfer(self, driver):
+        sql = SQLHelper()
+        hostel = HostelHelper()
+        comment = str(time.time())
+        sql.set_settings_payouts_limits("user_amount_too_big_transfer", 0.000001)
+        transactionsPage = TransactionsPage(driver)
+        dashboardPage = DashboardPage(driver)
+        date = dashboardPage.get_current_time()
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("DOGE")
+        transactionsPage.send_transaction_step_2_user_id("dwarf91111@gmail.com")
+        transactionsPage.send_transaction_step_3(1)
+        transactionsPage.send_transaction_step_4(comment)
+        hostel.check_status_transaction_by_email(ExistingBasicUser.email, date)
+
+    @pytest.mark.usefixtures("register_as_basic_user", "user_laundering", "delete_user")
+    def test_userLaundering(self, driver):
+        sql = SQLHelper()
+        hostel = HostelHelper()
+        comment = str(time.time())
+        sql.set_settings_payouts_limits("user_laundering", 0.00000001)
+        hostel.send_transaction("doge", sql.get_user_account_id(NewBasicLimitBackend.email)[0], "1000")
+        transactionsPage = TransactionsPage(driver)
+        dashboardPage = DashboardPage(driver)
+        date = dashboardPage.get_current_time()
+        comment = str(time.time())
+        dashboardPage.navigate_to_receive()
+        dashboardPage.select_wallet("Dogecoin")
+        dashboardPage.generate_new_deposit_address()
+        currentAdresss = dashboardPage.get_current_deposit_address()
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_wallet_address("DOGE")
+        transactionsPage.send_transaction_step_2_wallet_address(currentAdresss, "DOGE")
+        transactionsPage.send_transaction_step_3(999)
+        transactionsPage.send_transaction_step_4(comment)
+        hostel.check_status_transaction_by_email(NewBasicLimitBackend.email, date)
+
+    @pytest.mark.usefixtures("register_as_basic_user", "user_laundering_transfer", "delete_user")
+    def test_userLaunderingTransfer(self, driver):
+        sql = SQLHelper()
+        hostel = HostelHelper()
+        comment = str(time.time())
+        sql.set_settings_payouts_limits("user_laundering_transfer", 0.00000001)
+        hostel.send_transaction("doge", sql.get_user_account_id(NewBasicLimitBackend.email)[0], "1000")
+        transactionsPage = TransactionsPage(driver)
+        dashboardPage = DashboardPage(driver)
+        date = dashboardPage.get_current_time()
+        comment = str(time.time())
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("DOGE")
+        transactionsPage.send_transaction_step_2_user_id("dwarf91111@gmail.com")
+        transactionsPage.send_transaction_step_3(999)
+        transactionsPage.send_transaction_step_4(comment)
+        hostel.check_status_transaction_by_email(NewBasicLimitBackend.email, date)
+
+
+
+
 
 
 

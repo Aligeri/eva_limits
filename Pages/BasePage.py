@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from Locators.DashboardLocators import *
 from selenium.webdriver.common.keys import Keys
+from datetime import datetime
 import time
 import conftest
 import pytest
@@ -299,4 +300,10 @@ class Page(object):
         element = self.driver.find_element(*element_locator)
         action = ActionChains(self.driver)
         move = action.move_to_element_with_offset(element, 150, 150).perform()
+
+    def get_current_time(self):
+        DT_FORMAT = '%Y-%m-%d %H:%M:%S'
+        now = datetime.utcnow()
+        return now.strftime(DT_FORMAT)
+
 

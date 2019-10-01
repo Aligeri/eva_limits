@@ -1,5 +1,7 @@
 import requests
 import json
+from Helpers.SQLHelper import *
+import time
 
 class HostelHelper:
     def get_transaction_details(self, parameter, transaction_id):
@@ -41,4 +43,29 @@ class HostelHelper:
         transaction_id = response.json().get("data").get("transaction_id")
         response_put = requests.put("http://hostel.cain.loc:80/v1/transactions/%s" % transaction_id)
         assert response_put.status_code == 200
+
+
+    def check_status_transaction_by_email(self, email, date, waiting_approval=True):
+        sql = SQLHelper()
+        accountId = sql.get_user_account_id(email)
+
+        retries_left = 4
+        while retries_left > 0:
+            try:
+                response = requests.get(
+                    "http://hostel.cain.loc:80/v1/transactions?account=%s&&&&&from=%s&&&&sort_by=first_timestamp&sort=DESC&&&&&&&&&" % (
+                    accountId[0], date))
+                status = response.json().get("data")[0].get("status")
+                if waiting_approval:
+                    assert status == ("waiting_approval")
+                else:
+                    assert status != "waiting_approval"
+                return
+            except:
+
+                time.sleep(2)
+                retries_left -= 1
+        raise Exception("poshev naher")
+
+
 

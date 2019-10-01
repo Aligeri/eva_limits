@@ -481,13 +481,25 @@ class TransactionsPage(Page):
         return password
 
     def get_transaction_ID_by_comment(self, comment):
+
         comment_formatted = 'Comment "%s"' % comment
-        self.wait_and_assert_element_text(Send.firstTransactionComment, comment_formatted)
-        link = self.get_element_attribute(
-            (By.XPATH, (".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment)),
-            "href")
-        transaction_id = re.search("transaction\/(.*)", link).group(1)
-        return transaction_id
+        retries_left = 5
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible((By.XPATH, (
+                        ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment_formatted)),
+                                                10)
+                link = self.get_element_attribute(
+                    (By.XPATH,
+                     (".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment)),
+                    "href")
+                transaction_id = re.search("transaction\/(.*)", link).group(1)
+                return transaction_id
+            except:
+                self.navigate_to_send()
+                self.navigate_to_history()
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
 
     def confirm_transaction_by_email(self):
         self.wait_to_be_clickable(Send.confirmTheTransactionReceive)
