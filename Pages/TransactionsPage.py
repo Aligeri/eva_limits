@@ -293,7 +293,7 @@ class TransactionsPage(Page):
         """
         transaction_title = "–%s %s" % (amount, currency)
         comment_formatted = 'Comment "%s"' % comment
-        retries_left = 5
+        retries_left = 10
         while retries_left > 0:
             try:
                 self.wait_until_element_visible((By.XPATH, (
@@ -359,6 +359,16 @@ class TransactionsPage(Page):
 
         self.wait_and_click(Send.firstErrorTransaction)
         self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Cannot send eth to yourself pay in address")
+
+    def check_doublespending_transaction(self, comment):
+        """
+        Проверяет данные внутри упавшей транзакции даблспендинга в history
+        """
+        comment_formatted = 'Comment "%s"' % comment
+        self.wait_and_click((By.XPATH, (
+                ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment_formatted)))
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Transaction processing error")
+
 
     def check_frozen_transaction(self):
         """
