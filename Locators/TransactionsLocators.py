@@ -28,6 +28,7 @@ class Send:
     tokenError = (By.XPATH, "//div[@class='send__tokenError--7Q4J_']")
     changeToFiat = (By.XPATH, "//span[contains(@class, 'svg-icon__svgIcon--216sc send__switchToFiatIcon--H1xig')]")
     fiatAmount = (By.XPATH, "//div[contains(@class, 'send__transactionAmountInFiat--1cKZg send__fiatAmount--2FKe5')]")
+    sendAll = (By.XPATH, "//span[contains(@class, 'send__sendAllButton--3kNGM')]")
 
     networkFee = (By.XPATH, ".//div[@class='send__feeBlock--3EjJC']/div[1]")
     arrivalAmount = (By.XPATH, ".//h4[contains(text(), 'Arrival amount')]")
@@ -64,3 +65,5 @@ class TopUpPhone:
     sendCoinsButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Send coins']")
     successModal = (By.XPATH, "//div[contains(@class, 'mobile-pay-section__header--b5oUb')]")
     historyButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='History']")
+    errorMessage = (By.XPATH, "//div[contains(@class, 'mobile-pay-section__incorrectNumberErrorBlock--L_KSu')]")
+    logo = (By.XPATH, "//img[contains(@class, 'mobile-pay-section__logoImage--2jkiD')]")

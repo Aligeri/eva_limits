@@ -131,7 +131,13 @@ class DashboardPage(Page):
         """
         return self.get_element_attribute(DepositAddress.currentAddress, "text()")
 
-    def generate_new_deposit_address(self, current_address):
+    def check_value_in_deposit_address(self, value):
+        self.assert_element_text_contains_value(DepositAddress.currentAddress, value)
+
+    def check_value_not_in_deposit_address(self, value):
+        self.assert_element_text_not_contains_value(DepositAddress.currentAddress, value)
+
+    def check_new_deposit_address(self, current_address):
         """
         Генерирует новый deposit address у текущего выбранного кошелька
         Проверяет что новый deposit address не равен старому

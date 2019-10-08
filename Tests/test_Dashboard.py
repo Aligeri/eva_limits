@@ -135,3 +135,25 @@ class TestClass:
         dashboard_page.check_top_up_wallet("Ethereum", True)
         dashboard_page.check_top_up_wallet("Doge", True)
         dashboard_page.check_top_up_wallet("EOS", True)
+
+    @xray("QA-983")
+    @pytest.mark.websmoke
+    def test_bitcoincash_ticker_in_receive(self, driver):
+        login_page = LoginPage(driver)
+        dashboard_page = DashboardPage(driver)
+        login_page.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
+        login_page.input_pincode_login(ExistingBasicUser.pincode)
+        dashboard_page.navigate_to_receive()
+        dashboard_page.select_wallet("Bitcoin Cash")
+        dashboard_page.check_value_in_deposit_address("bitcoincash:")
+
+    @xray("QA-982")
+    @pytest.mark.websmoke
+    def test_doge_ticker_in_receive_not_displayed(self, driver):
+        login_page = LoginPage(driver)
+        dashboard_page = DashboardPage(driver)
+        login_page.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
+        login_page.input_pincode_login(ExistingBasicUser.pincode)
+        dashboard_page.navigate_to_receive()
+        dashboard_page.select_wallet("Dogecoin")
+        dashboard_page.check_value_not_in_deposit_address("doge")

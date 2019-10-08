@@ -107,6 +107,14 @@ class Page(object):
         element = WebDriverWait(self.driver, timeout).until(
             EC.text_to_be_present_in_element(element_locator, value))
 
+    def assert_element_text_contains_value(self, element_locator, value):
+        text = self.get_element_text(element_locator)
+        assert value in text\
+
+    def assert_element_text_not_contains_value(self, element_locator, value):
+        text = self.get_element_text(element_locator)
+        assert value not in text
+
 
     def wait_and_assert_element_text(self, element_locator, value):
         """

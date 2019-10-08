@@ -128,6 +128,17 @@ class TestClass:
         transactionsPage.wait_and_click(Send.includeExcludeSwitch)
         transactionsPage.check_include_fee()
 
+    @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-1142")
+    def test_check_send_all_fee(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_wallet_address("BTC")
+        transactionsPage.send_transaction_step_2_wallet_address(ExistingBasicUser.btcWallet, "BTC")
+        time.sleep(2)
+        transactionsPage.wait_and_click(Send.sendAll)
+        transactionsPage.check_include_fee()
+
 
     @pytest.mark.usefixtures("login_as_google_user")
     @xray("QA-721")

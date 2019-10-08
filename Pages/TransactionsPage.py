@@ -445,6 +445,34 @@ class TransactionsPage(Page):
         self.wait_and_click(TopUpPhone.sendCoinsButton)
         self.wait_until_element_visible(TopUpPhone.successModal)
 
+    def check_top_up_phone_validation(self, phone, validation, validation_message=''):
+        self.wait_and_input_text(TopUpPhone.mobileNumber, phone)
+        if validation:
+            button_state = self.get_element_attribute(TopUpPhone.continueButton, "disabled")
+            print(button_state)
+            assert button_state == "true"
+        else:
+            self.wait_to_be_clickable(TopUpPhone.continueButton)
+        if validation_message is not '':
+            self.wait_until_element_visible(TopUpPhone.errorMessage)
+            text = self.get_element_text(TopUpPhone.errorMessage)
+            assert text == validation_message
+
+    def check_bitrefill_operator(self, operator):
+        self.wait_until_element_visible(TopUpPhone.logo)
+        alt = self.get_element_attribute(TopUpPhone.logo, "alt")
+        url = self.get_element_attribute(TopUpPhone.logo, "src")
+        if operator == "MTS":
+            assert alt == "MTS Russia"
+            assert url == "https://www.bitrefill.com/content/cn/d_operator.png/mts-russia"
+        if operator == "Tele2":
+            assert alt == "Tele2 Russia"
+            assert url == "https://www.bitrefill.com/content/cn/d_operator.png/tele2-russia"
+
+
+
+
+
     def navigate_to_send(self):
         """
         Переходит на страницу send с dashboard
