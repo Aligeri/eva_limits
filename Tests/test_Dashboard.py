@@ -101,6 +101,7 @@ class TestClass:
         loginPage.input_pincode_login(UserforChangeName.pincode)
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_settings()
+        self.wait_and_input_text(userDetails.Name, '222')
         time.sleep(5)
 
 
