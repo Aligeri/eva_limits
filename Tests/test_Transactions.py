@@ -34,7 +34,7 @@ def new_email_transaction(driver):
 def login_as_google_user(driver):
     loginPage = LoginPage(driver)
     loginPage.clear_google_cookies()
-    loginPage.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password)
+    loginPage.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password, ExistingGoogleUser.otp_secret)
     loginPage.input_pincode_login(ExistingGoogleUser.pincode)
     yield
 
@@ -259,6 +259,7 @@ class TestClass:
         transactionsPage.check_minimum_amount("0")
 
     @xray("QA-780")
+    @pytest.mark.skip("Пуши для фейлов не работают")
     def test_send_double_spending_transaction(self, driver):
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
@@ -270,6 +271,7 @@ class TestClass:
         transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
         transactionsPage.send_transaction_step_3("1")
         transactionsPage.send_transaction_step_4(comment)
+        transactionsPage.find_transaction_by_comment("DOGE", "1", comment)
         transactionsPage.navigate_to_send()
         comment_2 = str(time.time())
         transactionsPage.send_transaction_step_1_user_id("DOGE")

@@ -43,6 +43,12 @@ def data_664():
     sql.change_2fa_parameters_by_email(ExistingBasicUser.email664, "true", "true", "true")
     yield
 
+@pytest.fixture(scope="function")
+def data_1525():
+    sql.change_2fa_parameters_by_email(ExistingBasicUser.email1525, "true", "true", "true")
+    yield
+
+
 class TestClass:
 
     @xray("QA-665", "QA-705")
@@ -58,9 +64,11 @@ class TestClass:
         auth = TOTP(activation_code)
         securityPage.input_2fa(auth.now())
         securityPage.wait_and_click(TwoFactorAuth.closeButton)
+        time.sleep(30)
         securityPage.wait_and_click(TwoFactorAuth.disable2fa)
         securityPage.input_2fa(auth.now())
         securityPage.wait_and_click(TwoFactorAuth.disableModal)
+
 
     @xray("QA-700")
     @pytest.mark.websmoke
@@ -125,7 +133,7 @@ class TestClass:
         transactionsPage.send_transaction_step_4(comment)
         transactionsPage.assert_transactions_page_displayed()
 
-    @xray("QA-701")
+    @xray("QA-701", "QA-931")
     @pytest.mark.websmoke
     def test_incorrect_2fa(self, driver):
         loginPage = LoginPage(driver)
@@ -172,6 +180,7 @@ class TestClass:
         loginPage.wait_until_element_visible(Pincode.title)
         loginPage.input_pincode_login(ExistingBasicUser.pincode)
         securityPage.navigate_to_2fa()
+        time.sleep(30)
         securityPage.check_2fa_checkbox_state("login", "enabled")
         securityPage.disable_2fa_checkbox("login", (auth.now()))
         loginPage.reset_session()
@@ -195,6 +204,7 @@ class TestClass:
         loginPage.wait_until_element_visible(Pincode.title)
         loginPage.input_pincode_login(ExistingBasicUser.pincode)
         securityPage.navigate_to_2fa()
+        time.sleep(30)
         securityPage.check_2fa_checkbox_state("login", "enabled")
         securityPage.check_2fa_checkbox_state("payout", "enabled")
         securityPage.check_2fa_checkbox_state("export", "enabled")
@@ -211,7 +221,26 @@ class TestClass:
         transactionsPage.send_transaction_step_4(comment)
         transactionsPage.assert_transactions_page_displayed()
 
-    @xray("QA-933", "QA-934")
+    @xray("QA-933")
+    def test_long_time_2fa_codes(self, driver):
+        loginPage = LoginPage(driver)
+        securityPage = SecurityPage(driver)
+        secret = sql.get_otp_secret_by_email(ExistingBasicUser.email933)
+        auth = TOTP(secret[0])
+        loginPage.login_as_basic_user(ExistingBasicUser.email933, ExistingBasicUser.password)
+        first_code = auth.now()
+        time.sleep(30)
+        second_code = auth.now()
+        securityPage.input_2fa(first_code)
+        loginPage.wait_until_element_visible(Pincode.title)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(ExistingBasicUser.email933, ExistingBasicUser.password)
+        securityPage.input_2fa(second_code)
+        loginPage.wait_until_element_visible(Pincode.title)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+
+    @xray("QA-934")
     def test_long_time_2fa_codes(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
@@ -220,14 +249,10 @@ class TestClass:
         secret = sql.get_otp_secret_by_email(ExistingBasicUser.email933)
         auth = TOTP(secret[0])
         loginPage.login_as_basic_user(ExistingBasicUser.email933, ExistingBasicUser.password)
-        long_code = auth.now()
-        securityPage.input_2fa(long_code)
-        loginPage.wait_until_element_visible(Pincode.title)
-        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        first_code = auth.now()
         time.sleep(30)
-        loginPage.reset_session()
-        loginPage.login_as_basic_user(ExistingBasicUser.email933, ExistingBasicUser.password)
-        securityPage.input_2fa(long_code)
+        second_code = auth.now()
+        securityPage.input_2fa(first_code)
         loginPage.wait_until_element_visible(Pincode.title)
         loginPage.input_pincode_login(ExistingBasicUser.pincode)
         transactionsPage.navigate_to_send()
@@ -235,7 +260,7 @@ class TestClass:
         transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
         transactionsPage.send_transaction_step_3("1")
         transactionsPage.send_transaction_step_4(comment)
-        transactionsPage.input_2fa_and_send_transaction(long_code)
+        transactionsPage.input_2fa_and_send_transaction(second_code)
         transactionsPage.assert_transactions_page_displayed()
 
     @xray("QA-938")
@@ -246,11 +271,12 @@ class TestClass:
         secret = sql.get_otp_secret_by_email(ExistingBasicUser.email933)
         auth = TOTP(secret[0])
         loginPage.login_as_basic_user(ExistingBasicUser.email933, ExistingBasicUser.password)
-        long_code = auth.now()
-        securityPage.input_2fa(long_code)
+        first_code = auth.now()
+        time.sleep(30)
+        second_code = auth.now()
+        securityPage.input_2fa(first_code)
         loginPage.wait_until_element_visible(Pincode.title)
         loginPage.input_pincode_login(ExistingBasicUser.pincode)
-        #time.sleep(30)
         settings_page.check_email_is_loaded(ExistingBasicUser.email933)
         settings_page.navigate_to_export_wallet()
         settings_page.navigate_to_mnemonic()
@@ -266,10 +292,10 @@ class TestClass:
         settings_page.wait_and_input_text(Mnemonic.thirdWordInput, list[2])
         settings_page.wait_to_be_clickable(Mnemonic.finishButton)
         settings_page.wait_and_click(Mnemonic.finishButton)
-        securityPage.input_2fa(long_code)
+        securityPage.input_2fa(second_code)
 
     @xray("QA-932")
-    def test_add_2fa_to_transactions(self, driver):
+    def test_incorrect_2fa_in_transactions(self, driver):
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
         transactionsPage = TransactionsPage(driver)
@@ -292,3 +318,59 @@ class TestClass:
             transactionsPage.input_2fa_and_send_transaction("010101")
         transactionsPage.wait_until_element_visible(Send.twoFaTransactionError)
         transactionsPage.assert_element_text(Send.twoFaTransactionError, "Incorrect code")
+
+    @xray("QA-1524")
+    def test_same_2fa_not_allowed_login(self, driver):
+        loginPage = LoginPage(driver)
+        securityPage = SecurityPage(driver)
+        secret = sql.get_otp_secret_by_email(ExistingBasicUser.email1524)
+        auth = TOTP(secret[0])
+        loginPage.login_as_basic_user(ExistingBasicUser.email1524, ExistingBasicUser.password)
+        auth_code = auth.now()
+        securityPage.input_2fa(auth_code)
+        loginPage.wait_until_element_visible(Pincode.title)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(ExistingBasicUser.email1524, ExistingBasicUser.password)
+        securityPage.input_2fa(auth_code)
+        loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "5 attempts left")
+
+    @xray("QA-1523")
+    @pytest.mark.websmoke
+    def test_same_2fa_not_allowed_transactions(self, driver):
+        loginPage = LoginPage(driver)
+        securityPage = SecurityPage(driver)
+        transactionsPage = TransactionsPage(driver)
+        comment = str(time.time())
+        secret = sql.get_otp_secret_by_email(ExistingBasicUser.email1523)
+        auth = TOTP(secret[0])
+        loginPage.login_as_basic_user(ExistingBasicUser.email1523, ExistingBasicUser.password)
+        code = auth.now()
+        securityPage.input_2fa(code)
+        loginPage.wait_until_element_visible(Pincode.title)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        transactionsPage.navigate_to_dashboard()
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("DOGE")
+        transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
+        transactionsPage.send_transaction_step_3("1")
+        transactionsPage.send_transaction_step_4(comment)
+        transactionsPage.input_2fa_and_send_transaction(code)
+        transactionsPage.wait_until_element_visible(Send.twoFaTransactionError)
+        transactionsPage.assert_element_text(Send.twoFaTransactionError, "Incorrect code")
+
+    @xray("QA-1525")
+    def test_same_2fa_not_allowed_disable_2fa(self, driver):
+        loginPage = LoginPage(driver)
+        securityPage = SecurityPage(driver)
+        secret = sql.get_otp_secret_by_email(ExistingBasicUser.email1525)
+        auth = TOTP(secret[0])
+        loginPage.login_as_basic_user(ExistingBasicUser.email1525, ExistingBasicUser.password)
+        auth_code = auth.now()
+        securityPage.input_2fa(auth_code)
+        loginPage.wait_until_element_visible(Pincode.title)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        securityPage.navigate_to_2fa()
+        securityPage.wait_and_click(TwoFactorAuth.disable2fa)
+        securityPage.input_2fa(auth_code)
+        securityPage.wait_and_click(TwoFactorAuth.disableModal)

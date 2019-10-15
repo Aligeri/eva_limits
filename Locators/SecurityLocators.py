@@ -102,3 +102,4 @@ class Password:
     newPassword = (By.XPATH, "//input[@name='newPassword']")
     newPasswordRepeat = (By.XPATH, "//input[@name='newPasswordRepeat']")
     savePassword = (By.XPATH, "//button[contains(@class, 'security__saveButton--1NeUP')]")
+    tooltip = (By.XPATH, "//div[@data-original-title='Password changed successfully!']")

@@ -67,13 +67,13 @@ class Page(object):
             return False
 
 
-    def wait_until_element_visible(self, element_locator, timeout=3):
+    def wait_until_element_visible(self, element_locator, timeout=3, polling=0.5):
         """
         Ожидает пока элемент не станет видимым
         :param element_locator: локатор элемента из Locators/*
         :param timeout: таймаут, по умолчанию 3 секунды
         """
-        element = WebDriverWait(self.driver, timeout).until(
+        element = WebDriverWait(self.driver, timeout, polling).until(
             EC.visibility_of_element_located(element_locator))
 
     def wait_until_element_invisible(self, element_locator, timeout=0):

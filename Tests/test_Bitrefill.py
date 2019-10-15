@@ -45,6 +45,5 @@ class TestClass:
     def test_operator_in_bitrefill(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_top_up_phone()
-        transactionsPage.check_top_up_phone_validation(
-            "+78005553535", False)
+        transactionsPage.check_top_up_phone_validation("+78005553535", False)
         transactionsPage.check_bitrefill_operator("Tele2")

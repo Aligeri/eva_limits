@@ -16,6 +16,10 @@ class SecurityPage(Page):
     def navigate_to_security(self):
         self.wait_and_click(NavigationButtons.security)
 
+    def navigate_to_active_sessions(self):
+        self.wait_and_click(NavigationButtons.security)
+        self.wait_and_click(NavigationLinks.activeSessions)
+
 
     def input_security_pincode_current(self, pincode):
         """
@@ -236,6 +240,7 @@ class SecurityPage(Page):
             self.wait_and_click(CHECKBOX[checkbox])
             self.input_2fa(code)
             self.wait_and_click(TwoFactorAuth.disableModal)
+            self.wait_until_element_invisible(TwoFactorAuth.disableModal, 2)
         if checkboxState is None:
             return
 
@@ -247,3 +252,6 @@ class SecurityPage(Page):
         self.wait_and_input_text(Password.newPassword, new_password)
         self.wait_and_input_text(Password.newPasswordRepeat, new_password)
         self.wait_and_click(Password.savePassword)
+
+    def get_current_sessions_count(self):
+        self

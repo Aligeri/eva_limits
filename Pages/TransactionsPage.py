@@ -452,7 +452,7 @@ class TransactionsPage(Page):
             print(button_state)
             assert button_state == "true"
         else:
-            self.wait_to_be_clickable(TopUpPhone.continueButton)
+            self.wait_to_be_clickable(TopUpPhone.continueButton, 20)
         if validation_message is not '':
             self.wait_until_element_visible(TopUpPhone.errorMessage)
             text = self.get_element_text(TopUpPhone.errorMessage)

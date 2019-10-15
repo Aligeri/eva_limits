@@ -67,7 +67,7 @@ class TestClass:
         loginPage = LoginPage(driver)
         loginPage.navigate_to_signup_page()
         loginPage.clear_google_cookies()
-        loginPage.login_as_google_user(NewGoogleUser.email, NewGoogleUser.password)
+        loginPage.login_as_google_user(NewGoogleUser.email, NewGoogleUser.password, NewGoogleUser.otp_code)
         loginPage.input_pincode_create(NewGoogleUser.pincode)
         loginPage.input_pincode_repeat(NewGoogleUser.pincode)
         loginPage.wait_until_element_visible(DashboardLocators.logout)

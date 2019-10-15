@@ -1,4 +1,5 @@
 import psycopg2
+import uuid
 
 class SQLHelper():
     # тут создавать коннекшен стринг
@@ -116,3 +117,22 @@ class SQLHelper():
         cursor, connection = self.connect_to_database()
         cursor.execute("UPDATE public.user SET freeze_till = (%s), freeze_reason = (%s) WHERE email = (%s)", (None, None, email,))
         connection.commit()
+
+    def delete_sessions_by_email(self, email):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("DELETE FROM public.user_sessions WHERE user_id = (%s)", (user_id,))
+        connection.commit()
+
+    def get_deleted_sessions_by_email(self, email):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("SELECT id, model FROM public.user_sessions WHERE user_id = (%s)", (user_id, ))
+        return cursor.fetchall()
+
+    def insert_session(self, email, model):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("INSERT INTO public.user_sessions (user_id, model, platform, session_id, currency, ip) VALUES (%s, %s, %s, %s, %s, %s)", (user_id, model, "Web", str(uuid.uuid1()), "mw", '10.100.201.1',))
+        connection.commit()
+
