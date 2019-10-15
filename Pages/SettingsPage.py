@@ -9,8 +9,6 @@ class SettingsPage(Page):
 
     def navigate_to_account(self):
         self.wait_and_click(NavigationLinks.account)
-    def navigate_to_userDetails(self):
-        self.wait_and_click(NavigationLinks.userDetails)
 
     def check_email_is_not_verified(self, email):
         """
