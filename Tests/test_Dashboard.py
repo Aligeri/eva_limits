@@ -93,3 +93,8 @@ class TestClass:
         dashboardPage.wait_and_assert_element_text(NavigationButtons.settings, "Settings")
         dashboardPage.wait_and_assert_element_text(NavigationButtons.security, "Security")
 
+     def test_ChangeName(self, driver):
+         loginPage = LoginPage(driver)
+         loginPage.reset_session()
+         loginPage.login_as_basic_user(UserforChangeName.email, UserforChangeName.password)
+         loginPage.input_pincode_login(UserforChangeName.pincode)

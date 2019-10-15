@@ -62,6 +62,10 @@ class UnregisteredBasicUser:
     email = "kindlyfindattached0+99@gmail.com"
     pincode = "1234"
 
+class UserforChangeName:
+    email = "testermail35+820@gmail.com"
+    password = "12345678"
+    pincode = "7777"
 
 class CommonData:
     unsupportedEthToken = "0xB8c77482e45F1F44dE1745F52C74426C631bDD52"
