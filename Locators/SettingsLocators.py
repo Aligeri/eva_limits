@@ -18,3 +18,7 @@ class FiatCurrency:
     fiatEur = (By.XPATH, "//option[@value='eur']")
     fiatGbp = (By.XPATH, "//option[@value='gbp']")
     fiatRub = (By.XPATH, "//option[@value='rub']")
+
+class userDetails:
+    Name = (By.XPATH, "//input[@placeholder='Name']")
+    UserId = (By.XPATH, "//input[@placeholder='User ID']")
