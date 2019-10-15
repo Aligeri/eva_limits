@@ -99,8 +99,8 @@ class TestClass:
         loginPage.reset_session()
         loginPage.login_as_basic_user(UserforChangeName.email, UserforChangeName.password)
         loginPage.input_pincode_login(UserforChangeName.pincode)
-        settingsPage = SettingsPage(driver)
-        settingsPage.navigate_to_userDetails()
-
+        dashboardPage = DashboardPage(driver)
+        dashboardPage.navigate_to_settings()
+        time.sleep(5)
 
 
