@@ -1,9 +1,12 @@
 import pytest
+import time
 from Pages.LoginPage import *
 from Pages.SettingsPage import *
 from Pages.DashboardPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
+from datetime import datetime
+
 
 
 @pytest.fixture(scope='class')
@@ -101,7 +104,10 @@ class TestClass:
         loginPage.input_pincode_login(UserforChangeName.pincode)
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_settings()
-        self.wait_and_input_text(userDetails.Name, '222')
-        time.sleep(5)
+        new_name = str(datetime.now().timestamp())
+        dashboardPage.wait_and_input_text(userDetails.Name, new_name)
+        dashboardPage.wait_and_click(userDetails.SaveBtn)
+        dashboardPage.navigate_to_dashboard()
+        dashboardPage.wait_and_assert_element_text(DashboardLocators.userName, new_name)
 
 
