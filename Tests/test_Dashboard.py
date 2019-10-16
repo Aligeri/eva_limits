@@ -97,7 +97,7 @@ class TestClass:
         dashboardPage.wait_and_assert_element_text(NavigationButtons.security, "Security")
 
     def test_ChangeName(self, driver):
-        #проверка смены имени в настройках
+        #проверка смены имени в настройках QA-820
         loginPage = LoginPage(driver)
         loginPage.reset_session()
         loginPage.login_as_basic_user(UserforChangeName.email, UserforChangeName.password)
@@ -109,5 +109,6 @@ class TestClass:
         dashboardPage.wait_and_click(userDetails.SaveBtn)
         dashboardPage.navigate_to_dashboard()
         dashboardPage.wait_and_assert_element_text(DashboardLocators.userName, new_name)
+        
 
 

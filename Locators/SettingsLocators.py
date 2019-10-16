@@ -22,3 +22,4 @@ class FiatCurrency:
 class userDetails:
     Name = (By.XPATH, "//input[@placeholder='Name']")
     UserId = (By.XPATH, "//input[@placeholder='User ID']")
+    SaveBtn = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 settings__saveButton--1VzwW')]")
