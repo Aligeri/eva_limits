@@ -106,7 +106,6 @@ class TestClass:
         dashboardPage.navigate_to_settings()
         settingsPage = SettingsPage(driver)
         new_name = str(datetime.now().timestamp())
-        settingsPage.wait_until_element_visible(Identity.Badge)
         settingsPage.change_name(new_name)
         settingsPage.navigate_to_dashboard()
         dashboardPage.wait_and_assert_element_text(DashboardLocators.userName, new_name)

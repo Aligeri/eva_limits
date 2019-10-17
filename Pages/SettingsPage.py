@@ -56,5 +56,6 @@ class SettingsPage(Page):
         """""
         Меняет имя пользователя на вкладке UserDetails
         """""
+        self.wait_until_element_visible(Identity.Badge)
         self.wait_and_input_text(userDetails.Name, name)
         self.wait_and_click(userDetails.SaveBtn)
