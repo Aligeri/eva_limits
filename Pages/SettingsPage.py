@@ -51,3 +51,10 @@ class SettingsPage(Page):
         self.navigate_to_account()
         self.wait_and_click(FiatCurrency.fiatCurrencyDropdown)
         self.wait_and_click(CURRENCY[currency])
+
+    def change_name(self, name):
+        """""
+        Меняет имя пользователя на вкладке UserDetails
+        """""
+        self.wait_and_input_text(userDetails.Name, name)
+        self.wait_and_click(userDetails.SaveBtn)

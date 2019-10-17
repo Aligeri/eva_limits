@@ -23,3 +23,6 @@ class userDetails:
     Name = (By.XPATH, "//input[@placeholder='Name']")
     UserId = (By.XPATH, "//input[@placeholder='User ID']")
     SaveBtn = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 settings__saveButton--1VzwW')]")
+
+class Identity:
+    Badge = (By.XPATH, "//div[contains(@class, 'badge__badge--D7Fy- badge__red--zTfOo settings__badge--SmlrG')]")
