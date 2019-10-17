@@ -30,6 +30,8 @@ class ExistingBasicUser:
     email718 = "vasiliyautomation+718@gmail.com"
     email718_password = "$2a$10$3.S0O3eb2uvTeCchjATvDOHtjy50zNxt1CH30jLta5H0ubWMn8jK6"
     email_780 = "vasiliyautomation+780@gmail.com"
+    email_827 = "vasiliyautomation+827@gmail.com"
+    email_828 = "vasiliyautomation+828@gmail.com"
     email_829 = "vasiliyautomation+829@gmail.com"
     email839 = "vasiliyautomation+839@gmail.com"
     email933 = "vasiliyautomation+933@gmail.com"

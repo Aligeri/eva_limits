@@ -305,3 +305,8 @@ class Page(object):
         action = ActionChains(self.driver)
         move = action.move_to_element_with_offset(element, 150, 150).perform()
 
+    def get_elements_count(self, element_locator):
+        elements = self.driver.find_elements(*element_locator)
+        count = len(elements)
+        return count
+
