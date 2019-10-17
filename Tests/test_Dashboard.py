@@ -118,6 +118,9 @@ class TestClass:
         dashboard_page.check_receive_wallet("Bitcoin", False)
         dashboard_page.check_receive_wallet("Ethereum", False)
         dashboard_page.check_receive_wallet("EOS", True)
+
+    @xray("QA-820")
+    @pytest.mark.websmoke
     def test_ChangeName(self, driver):
         #проверка смены имени в настройках QA-820
         loginPage = LoginPage(driver)
