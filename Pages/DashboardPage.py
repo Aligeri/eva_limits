@@ -44,6 +44,29 @@ class DashboardPage(Page):
     def navigate_to_receive(self):
         self.wait_and_click(WalletActionsButtons.receive)
 
+    def check_receive_wallet(self, currency, extra_id=False):
+        self.select_wallet(currency)
+        self.wait_until_element_visible(DepositAddress.depositAddress)
+        assert self.get_element_text(DepositAddress.depositAddress) is not None
+        assert self.get_element_text(DepositAddress.userId) is not None
+        assert self.get_element_text(DepositAddress.link) is not None
+        if extra_id:
+            assert self.get_element_text(DepositAddress.memo) is not None
+        self.select_wallet(currency)
+        time.sleep(0.5)
+
+    def check_top_up_wallet(self, currency, minimum=False):
+        self.select_top_up_wallet(currency)
+        assert self.get_element_text(TopUpWallets.depositAddress) is not None
+        if minimum:
+            self.wait_until_element_visible(DepositAddress.minimumBlock)
+            amount = self.get_element_text(DepositAddress.minimumAmount)
+            list = amount.split(" ")
+            assert list[0] is not None
+            assert list[0] != "NaN"
+        self.select_top_up_wallet(currency)
+        time.sleep(0.5)
+
     def navigate_to_send(self):
         self.wait_and_click(WalletActionsButtons.send)
 
@@ -55,7 +78,7 @@ class DashboardPage(Page):
 
     def navigate_to_buy_with_a_card(self):
         self.wait_and_click(WalletActionsButtons.buy)
-
+        
     def select_wallet(self, wallet):
         """
         Выбор кошелька в receive
@@ -65,6 +88,24 @@ class DashboardPage(Page):
             "Ardor": ReceiveWallets.ardr,
             "Bitcoin": ReceiveWallets.btc,
             "Bitcoin Cash": ReceiveWallets.bcc,
+            "Dogecoin": ReceiveWallets.doge,
+            "Ethereum": ReceiveWallets.eth,
+            "EOS": ReceiveWallets.eos
+        }
+        self.wait_and_click(WALLET[wallet])
+
+    def select_top_up_wallet(self, wallet):
+        """
+        Выбор кошелька в receive
+        :param wallet: валюта кошелька, Ardor/Bitcoin/Bitcoin Cash
+        """
+        WALLET = {
+            "Ardor": TopUpWallets.ardr,
+            "Bitcoin": TopUpWallets.btc,
+            "Bitcoin Cash": TopUpWallets.bcc,
+            "Ethereum": TopUpWallets.eth,
+            "Doge": TopUpWallets.doge,
+            "EOS": TopUpWallets.eos
         }
         self.wait_and_click(WALLET[wallet])
 
@@ -92,7 +133,13 @@ class DashboardPage(Page):
         """
         return self.get_element_attribute(DepositAddress.currentAddress, "text()")
 
-    def generate_new_deposit_address(self, current_address):
+    def check_value_in_deposit_address(self, value):
+        self.assert_element_text_contains_value(DepositAddress.currentAddress, value)
+
+    def check_value_not_in_deposit_address(self, value):
+        self.assert_element_text_not_contains_value(DepositAddress.currentAddress, value)
+
+    def check_new_deposit_address(self, current_address):
         """
         Генерирует новый deposit address у текущего выбранного кошелька
         Проверяет что новый deposit address не равен старому
@@ -132,7 +179,7 @@ class DashboardPage(Page):
         self.wait_and_click(Filters.filtersButton)
         self.wait_and_click(FILTER_APPLY[history_filter])
         self.wait_and_click(Filters.applyFilters)
-        self.wait_until_element_visible(FILTER_BUTTON[history_filter])
+        #self.wait_until_element_visible(FILTER_BUTTON[history_filter])
 
     def remove_filter(self, history_filter):
         """

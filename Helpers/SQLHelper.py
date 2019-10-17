@@ -1,4 +1,5 @@
 import psycopg2
+import uuid
 
 class SQLHelper():
     # тут создавать коннекшен стринг
@@ -92,3 +93,46 @@ class SQLHelper():
         user_id = self.__get_user_from_database(email)
         cursor.execute("UPDATE public.user_settings SET local_currency = (%s) WHERE user_id = (%s)", (currency, user_id,))
         connection.commit()
+
+    def get_otp_secret_by_email(self, email):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("SELECT secret FROM public.user_otp_secrets WHERE user_id = (%s)", (user_id,))
+        return cursor.fetchone()
+
+    def change_2fa_parameters_by_email(self, email, login="true", payout="true", export="true"):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("UPDATE public.user_otp_secrets SET is_login_enabled = (%s), is_payout_enabled = (%s), "
+                       "is_export_enabled = (%s) WHERE user_id = (%s)", (login, payout, export, user_id,))
+        connection.commit()
+
+    def change_password_by_email(self, email, password):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("UPDATE public.user_social SET password = (%s) WHERE user_id = (%s)", (password, user_id,))
+        connection.commit()
+
+    def remove_freeze_by_email(self, email):
+        cursor, connection = self.connect_to_database()
+        cursor.execute("UPDATE public.user SET freeze_till = (%s), freeze_reason = (%s) WHERE email = (%s)", (None, None, email,))
+        connection.commit()
+
+    def delete_sessions_by_email(self, email):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("DELETE FROM public.user_sessions WHERE user_id = (%s)", (user_id,))
+        connection.commit()
+
+    def get_deleted_sessions_by_email(self, email):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("SELECT id, model FROM public.user_sessions WHERE user_id = (%s)", (user_id, ))
+        return cursor.fetchall()
+
+    def insert_session(self, email, model):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("INSERT INTO public.user_sessions (user_id, model, platform, session_id, currency, ip) VALUES (%s, %s, %s, %s, %s, %s)", (user_id, model, "Web", str(uuid.uuid1()), "mw", '10.100.201.1',))
+        connection.commit()
+

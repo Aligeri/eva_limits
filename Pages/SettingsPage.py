@@ -10,6 +10,29 @@ class SettingsPage(Page):
     def navigate_to_account(self):
         self.wait_and_click(NavigationLinks.account)
 
+    def navigate_to_export_wallet(self):
+        self.wait_and_click(NavigationButtons.settings)
+        self.wait_and_click(NavigationLinks.exportWallet)
+
+    def navigate_to_import_wallet(self):
+        self.wait_and_click(NavigationButtons.settings)
+        self.wait_and_click(NavigationLinks.importWallet)
+
+    def navigate_to_mnemonic(self):
+        self.wait_and_click(NavigationLinks.mnemonic)
+
+    def navigate_to_private_key(self):
+        self.wait_and_click(NavigationLinks.privateKey)
+
+    def generate_wallet_key(self):
+        while self.get_element_text(Mnemonic.percent) != "100%":
+            self.move_mouse_in_element(Mnemonic.mouseArea)
+
+    def select_mnemonic_words(self, list):
+        for word in list:
+            self.wait_and_click((By.XPATH, "//div[@class='mnemonic__mmTag--2T4CD' and text()='%s']" % word))
+
+
     def check_email_is_not_verified(self, email):
         """
         Проверяет что email не подтвержден со страницы dashboard
@@ -24,6 +47,20 @@ class SettingsPage(Page):
             current_email = self.get_element_attribute(Account.emailNotifications, "value")
         assert email == current_email
         self.wait_and_assert_element_text(Account.dangerText, "Verify email")
+
+    def check_email_is_loaded(self, email):
+        """
+        Проверяет что email не подтвержден со страницы dashboard
+        time.sleep(2) потому что после регистрации емейл в settings подтягивается не сразу
+        :param email: email пользователя
+        """
+        current_email = ''
+        while current_email == '':
+            self.wait_and_click(NavigationButtons.settings)
+            time.sleep(1)
+            self.wait_and_click(NavigationLinks.account)
+            current_email = self.get_element_attribute(Account.emailNotifications, "value")
+        assert email == current_email
 
     def check_email_is_verified(self, email):
         """
