@@ -2,6 +2,7 @@ import pytest
 from Pages.LoginPage import *
 from Pages.SecurityPage import *
 from Pages.TransactionsPage import *
+from Pages.SettingsPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from Locators.SecurityLocators import *
@@ -117,8 +118,11 @@ class TestClass:
         securityPage.check_BTC_limit_percent("100%")
         securityPage.navigate_to_dashboard()
         transactionsPage.navigate_to_send()
-        transactionsPage.send_transaction_to_user_id("BTC", "0.00000001", ExistingGoogleUser.userID, comment)
-        transactionsPage.wait_until_element_visible(Send.firstTransactionAmount)
+        transactionsPage.send_transaction_step_1_user_id("BTC")
+        transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
+        transactionsPage.send_transaction_step_3("0.00000001")
+        transactionsPage.send_transaction_step_4(comment)
+        transactionsPage.find_transaction_by_comment("BTC", "0.00000001", comment)
         transactionsPage.navigate_to_send()
         loginPage.refresh_page()
         loginPage.input_pincode_login(ExistingBasicUser.pincode)
@@ -154,11 +158,14 @@ class TestClass:
     def test_change_password(self, driver):
         login_page = LoginPage(driver)
         security_page = SecurityPage(driver)
+        settings_page = SettingsPage(driver)
         login_page.login_as_basic_user(ExistingBasicUser.email718, ExistingBasicUser.password)
         login_page.input_pincode_login(ExistingBasicUser.pincode)
+        settings_page.check_email_is_loaded(ExistingBasicUser.email718)
         security_page.navigate_to_security()
         security_page.wait_until_element_visible(Password.password)
         security_page.change_password(ExistingBasicUser.password, ExistingBasicUser.changedPassword)
+        login_page.reset_session()
         login_page.login_as_basic_user(ExistingBasicUser.email718, ExistingBasicUser.changedPassword)
         login_page.input_pincode_login(ExistingBasicUser.pincode)
 
@@ -175,6 +182,7 @@ class TestClass:
         security_page.navigate_to_security()
         security_page.wait_until_element_visible(Password.password)
         security_page.change_password(ExistingBasicUser.password, ExistingBasicUser.changedPassword)
+        login_page.reset_session()
         login_page.login_as_basic_user(ExistingBasicUser.email717, ExistingBasicUser.changedPassword)
         login_page.input_pincode_login(ExistingBasicUser.pincode)
         transactions_page.navigate_to_send()

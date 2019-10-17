@@ -19,10 +19,10 @@ def data_basic_user():
 
 @pytest.fixture(scope='function')
 def data_google_user():
-    email.delete_emails_from_gmail(NewGoogleUser.email, NewGoogleUser.password, "Freewallet", "Verify your email address")
+    email.delete_emails_from_gmail(NewGoogleUser.email, NewGoogleUser.imap_code, "Freewallet", "Verify your email address")
     yield
     sql.delete_user_from_database(NewGoogleUser.email)
-    email.delete_emails_from_gmail(NewGoogleUser.email, NewGoogleUser.password, "Freewallet", "Verify your email address")
+    email.delete_emails_from_gmail(NewGoogleUser.email, NewGoogleUser.imap_code, "Freewallet", "Verify your email address")
 
 
 class TestClass:
@@ -53,11 +53,11 @@ class TestClass:
         settingsPage = SettingsPage(driver)
         loginPage.clear_google_cookies()
         loginPage.navigate_to_signup_page()
-        loginPage.login_as_google_user(NewGoogleUser.email, NewGoogleUser.password)
+        loginPage.login_as_google_user(NewGoogleUser.email, NewGoogleUser.password, NewGoogleUser.otp_code)
         loginPage.input_pincode_create(NewGoogleUser.pincode)
         loginPage.input_pincode_repeat(NewGoogleUser.pincode)
         settingsPage.check_email_is_not_verified(NewGoogleUser.email)
-        verification_link = email.get_verification_link_from_email(NewGoogleUser.email, NewGoogleUser.password, "Freewallet", "Verify")
+        verification_link = email.get_verification_link_from_email(NewGoogleUser.email, NewGoogleUser.imap_code, "Freewallet", "Verify")
         settingsPage.navigate_to_link(verification_link)
         loginPage.input_pincode_login(NewGoogleUser.pincode)
         settingsPage.check_email_is_verified(NewGoogleUser.email)

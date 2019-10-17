@@ -46,6 +46,7 @@ class DashboardPage(Page):
 
     def check_receive_wallet(self, currency, extra_id=False):
         self.select_wallet(currency)
+        self.wait_until_element_visible(DepositAddress.depositAddress)
         assert self.get_element_text(DepositAddress.depositAddress) is not None
         assert self.get_element_text(DepositAddress.userId) is not None
         assert self.get_element_text(DepositAddress.link) is not None
@@ -77,7 +78,7 @@ class DashboardPage(Page):
 
     def navigate_to_buy_with_a_card(self):
         self.wait_and_click(WalletActionsButtons.buy)
-
+        
     def select_wallet(self, wallet):
         """
         Выбор кошелька в receive
@@ -87,6 +88,7 @@ class DashboardPage(Page):
             "Ardor": ReceiveWallets.ardr,
             "Bitcoin": ReceiveWallets.btc,
             "Bitcoin Cash": ReceiveWallets.bcc,
+            "Dogecoin": ReceiveWallets.doge,
             "Ethereum": ReceiveWallets.eth,
             "EOS": ReceiveWallets.eos
         }
@@ -131,7 +133,13 @@ class DashboardPage(Page):
         """
         return self.get_element_attribute(DepositAddress.currentAddress, "text()")
 
-    def generate_new_deposit_address(self, current_address):
+    def check_value_in_deposit_address(self, value):
+        self.assert_element_text_contains_value(DepositAddress.currentAddress, value)
+
+    def check_value_not_in_deposit_address(self, value):
+        self.assert_element_text_not_contains_value(DepositAddress.currentAddress, value)
+
+    def check_new_deposit_address(self, current_address):
         """
         Генерирует новый deposit address у текущего выбранного кошелька
         Проверяет что новый deposit address не равен старому

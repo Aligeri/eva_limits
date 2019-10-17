@@ -67,13 +67,13 @@ class Page(object):
             return False
 
 
-    def wait_until_element_visible(self, element_locator, timeout=3):
+    def wait_until_element_visible(self, element_locator, timeout=3, polling=0.5):
         """
         Ожидает пока элемент не станет видимым
         :param element_locator: локатор элемента из Locators/*
         :param timeout: таймаут, по умолчанию 3 секунды
         """
-        element = WebDriverWait(self.driver, timeout).until(
+        element = WebDriverWait(self.driver, timeout, polling).until(
             EC.visibility_of_element_located(element_locator))
 
     def wait_until_element_invisible(self, element_locator, timeout=0):
@@ -106,6 +106,14 @@ class Page(object):
     def assert_element_text(self, element_locator, value, timeout=10):
         element = WebDriverWait(self.driver, timeout).until(
             EC.text_to_be_present_in_element(element_locator, value))
+
+    def assert_element_text_contains_value(self, element_locator, value):
+        text = self.get_element_text(element_locator)
+        assert value in text\
+
+    def assert_element_text_not_contains_value(self, element_locator, value):
+        text = self.get_element_text(element_locator)
+        assert value not in text
 
 
     def wait_and_assert_element_text(self, element_locator, value):

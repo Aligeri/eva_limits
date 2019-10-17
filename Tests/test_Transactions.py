@@ -34,7 +34,7 @@ def new_email_transaction(driver):
 def login_as_google_user(driver):
     loginPage = LoginPage(driver)
     loginPage.clear_google_cookies()
-    loginPage.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password)
+    loginPage.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password, ExistingGoogleUser.otp_secret)
     loginPage.input_pincode_login(ExistingGoogleUser.pincode)
     yield
 
@@ -126,6 +126,17 @@ class TestClass:
         transactionsPage.wait_and_input_text(Send.amount, "0.001")
         transactionsPage.check_exclude_fee()
         transactionsPage.wait_and_click(Send.includeExcludeSwitch)
+        transactionsPage.check_include_fee()
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-1142")
+    def test_check_send_all_fee(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_wallet_address("BTC")
+        transactionsPage.send_transaction_step_2_wallet_address(ExistingBasicUser.btcWallet, "BTC")
+        time.sleep(2)
+        transactionsPage.wait_and_click(Send.sendAll)
         transactionsPage.check_include_fee()
 
 
@@ -246,3 +257,26 @@ class TestClass:
         transactionsPage.send_transaction_step_1_user_id("BTC")
         transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
         transactionsPage.check_minimum_amount("0")
+
+    @xray("QA-780")
+    @pytest.mark.skip("Пуши для фейлов не работают")
+    def test_send_double_spending_transaction(self, driver):
+        comment = str(time.time())
+        transactionsPage = TransactionsPage(driver)
+        loginPage = LoginPage(driver)
+        loginPage.login_as_basic_user(ExistingBasicUser.email_780, ExistingBasicUser.password)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("DOGE")
+        transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
+        transactionsPage.send_transaction_step_3("1")
+        transactionsPage.send_transaction_step_4(comment)
+        transactionsPage.find_transaction_by_comment("DOGE", "1", comment)
+        transactionsPage.navigate_to_send()
+        comment_2 = str(time.time())
+        transactionsPage.send_transaction_step_1_user_id("DOGE")
+        transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
+        transactionsPage.send_transaction_step_3("1")
+        transactionsPage.send_transaction_step_4(comment_2)
+        transactionsPage.find_transaction_by_comment("DOGE", "1", comment_2)
+        transactionsPage.check_doublespending_transaction(comment_2)

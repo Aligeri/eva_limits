@@ -27,7 +27,7 @@ def data_google_user(driver):
     sql.delete_multisig_emails(MultisigGoogleUser.email)
     loginPage = LoginPage(driver)
     loginPage.clear_google_cookies()
-    loginPage.login_as_google_user(MultisigGoogleUser.email, MultisigGoogleUser.password)
+    loginPage.login_as_google_user(MultisigGoogleUser.email, MultisigGoogleUser.password, MultisigGoogleUser.otp_code)
     loginPage.input_pincode_login(MultisigGoogleUser.pincode)
     yield
     email.delete_emails_from_gmail(ExistingBasicUser.email, ExistingBasicUser.password, "Freewallet", "Verify your multisig email")
@@ -40,7 +40,7 @@ def disable_multisig(driver):
     sql.add_multisig_email(MultisigGoogleUser.email, ExistingBasicUser.email)
     loginPage = LoginPage(driver)
     loginPage.clear_google_cookies()
-    loginPage.login_as_google_user(MultisigGoogleUser.email, MultisigGoogleUser.password)
+    loginPage.login_as_google_user(MultisigGoogleUser.email, MultisigGoogleUser.password, MultisigGoogleUser.otp_code)
     loginPage.input_pincode_login(MultisigGoogleUser.pincode)
     yield
     email.delete_emails_from_gmail(ExistingBasicUser.email, ExistingBasicUser.password, "Freewallet", "Verify removing your confirmation email")
@@ -52,7 +52,7 @@ def existing_multisig(driver):
     sql.add_multisig_email(MultisigGoogleUser.email, ExistingBasicUser.email)
     loginPage = LoginPage(driver)
     loginPage.clear_google_cookies()
-    loginPage.login_as_google_user(MultisigGoogleUser.email, MultisigGoogleUser.password)
+    loginPage.login_as_google_user(MultisigGoogleUser.email, MultisigGoogleUser.password, MultisigGoogleUser.otp_code)
     loginPage.input_pincode_login(MultisigGoogleUser.pincode)
     yield
     sql.delete_multisig_emails(MultisigGoogleUser.email)

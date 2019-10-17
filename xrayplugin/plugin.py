@@ -127,6 +127,8 @@ class PytestXrayPlugin(object):
     def pytest_runtest_makereport(self, item, call):
         outcome = yield
         rep = outcome.get_result()
+
+        a = item.execution_count
         if not self.is_master(item.config):
             self.test_execution = item.config.slaveinput['test_e']
 
@@ -135,22 +137,29 @@ class PytestXrayPlugin(object):
             if rep.when == 'call' and testcaseids:
                 for testcase in testcaseids:
                     if rep.outcome == "failed":
+                        execution = 1
+                        reruns = 0
+                        try:
+                            execution = item.execution_count
+                            reruns = item.config.getoption("--reruns")
+                        except:
+                            pass
+                        if execution >= reruns+1:
+                            feature_request = item.funcargs['request']
+                            driver = feature_request.getfixturevalue('driver')
+                            dirname = os.path.dirname(__file__)
+                            screenshot_file_path = "{}/../screenshots/{}.png".format(dirname, item.name)
+                            driver.save_screenshot(
+                                screenshot_file_path
+                            )
 
-                        feature_request = item.funcargs['request']
-                        driver = feature_request.getfixturevalue('driver')
-                        dirname = os.path.dirname(__file__)
-                        screenshot_file_path = "{}/../screenshots/{}.png".format(dirname, item.name)
-                        driver.save_screenshot(
-                            screenshot_file_path
-                        )
-
-                        self.update_test_status(
-                            testcase,
-                            self.test_execution,
-                            PYTEST_TO_XRAY[outcome.get_result().outcome],
-                            str(outcome.get_result().longrepr),
-                            self.get_screenshot(item.name)
-                        )
+                            self.update_test_status(
+                                testcase,
+                                self.test_execution,
+                                PYTEST_TO_XRAY[outcome.get_result().outcome],
+                                str(outcome.get_result().longrepr),
+                                self.get_screenshot(item.name)
+                            )
                     else:
                         self.update_test_status(
                             testcase,

@@ -293,7 +293,7 @@ class TransactionsPage(Page):
         """
         transaction_title = "–%s %s" % (amount, currency)
         comment_formatted = 'Comment "%s"' % comment
-        retries_left = 5
+        retries_left = 10
         while retries_left > 0:
             try:
                 self.wait_until_element_visible((By.XPATH, (
@@ -359,6 +359,16 @@ class TransactionsPage(Page):
 
         self.wait_and_click(Send.firstErrorTransaction)
         self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Cannot send eth to yourself pay in address")
+
+    def check_doublespending_transaction(self, comment):
+        """
+        Проверяет данные внутри упавшей транзакции даблспендинга в history
+        """
+        comment_formatted = 'Comment "%s"' % comment
+        self.wait_and_click((By.XPATH, (
+                ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment_formatted)))
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Transaction processing error")
+
 
     def check_frozen_transaction(self):
         """
@@ -434,6 +444,34 @@ class TransactionsPage(Page):
         self.wait_and_click(TopUpPhone.firstPaymentValue)
         self.wait_and_click(TopUpPhone.sendCoinsButton)
         self.wait_until_element_visible(TopUpPhone.successModal)
+
+    def check_top_up_phone_validation(self, phone, validation, validation_message=''):
+        self.wait_and_input_text(TopUpPhone.mobileNumber, phone)
+        if validation:
+            button_state = self.get_element_attribute(TopUpPhone.continueButton, "disabled")
+            print(button_state)
+            assert button_state == "true"
+        else:
+            self.wait_to_be_clickable(TopUpPhone.continueButton, 20)
+        if validation_message is not '':
+            self.wait_until_element_visible(TopUpPhone.errorMessage)
+            text = self.get_element_text(TopUpPhone.errorMessage)
+            assert text == validation_message
+
+    def check_bitrefill_operator(self, operator):
+        self.wait_until_element_visible(TopUpPhone.logo)
+        alt = self.get_element_attribute(TopUpPhone.logo, "alt")
+        url = self.get_element_attribute(TopUpPhone.logo, "src")
+        if operator == "MTS":
+            assert alt == "MTS Russia"
+            assert url == "https://www.bitrefill.com/content/cn/d_operator.png/mts-russia"
+        if operator == "Tele2":
+            assert alt == "Tele2 Russia"
+            assert url == "https://www.bitrefill.com/content/cn/d_operator.png/tele2-russia"
+
+
+
+
 
     def navigate_to_send(self):
         """

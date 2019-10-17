@@ -7,6 +7,7 @@ class ReceiveWallets:
     bcc = (By.XPATH, "//div[@data-currency='bcc']//span")
     eth = (By.XPATH, "//div[@data-currency='eth']//span")
     eos = (By.XPATH, "//div[@data-currency='eos']//span")
+    doge = (By.XPATH, "//div[@data-currency='doge']//span")
 
 class TopUpWallets:
     btc = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='btc']//span")

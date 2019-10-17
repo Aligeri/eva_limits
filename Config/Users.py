@@ -28,8 +28,12 @@ class ExistingBasicUser:
     email718 = "vasiliyautomation+718@gmail.com"
     email718_password = "$2a$10$3.S0O3eb2uvTeCchjATvDOHtjy50zNxt1CH30jLta5H0ubWMn8jK6"
     email_780 = "vasiliyautomation+780@gmail.com"
+    email_829 = "vasiliyautomation+829@gmail.com"
     email839 = "vasiliyautomation+839@gmail.com"
     email933 = "vasiliyautomation+933@gmail.com"
+    email1523 = "vasiliyautomation+1523@gmail.com"
+    email1524 = "vasiliyautomation+1524@gmail.com"
+    email1525 = "vasiliyautomation+1524@gmail.com"
     highEmail = "Vasiliyautomation@gmail.com"
 
 
@@ -59,17 +63,22 @@ class ExistingGoogleUser:
     userID = "567e6928"
     xrtWallet = "rMKqYAmXX21qsxGsJ4YtmpE5xPaDeoq6Me"
     xrtTag = "1065871430"
+    otp_secret = "gtcsl53kqtxpmv5gk5jp53j6bi7xd5ts"
 
 class MultisigGoogleUser:
     email = "kindlyfindattached0@gmail.com"
     password = "qWeaSd123"
     pincode = "1234"
+    otp_code = "mx7mru6qpkfrgvwdcvchobynorpacd2b"
 
 
 class NewGoogleUser:
     email = "automationivan@gmail.com"
     password = "qAwSeD123"
     pincode = "4321"
+    otp_code = "onaln3f6k4dktj23ytn6ac3icquu2dos"
+    imap_code = "weiiaqpgtytxscfn"
+    imap2 = "tygawlcusopdqhjc"
 
 
 class ExistingBasicUser2:

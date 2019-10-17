@@ -29,6 +29,8 @@ class LoginPageLocators:
     googlePassword = (By.NAME, "password")  # Поле пароля в поп-апе гугла
     googlePasswordSubmit = (By.ID, "passwordNext")  # Кнопка подтверждения пароля в поп-апе гугла
     googleChangeAddress = (By.CLASS_NAME, "BHzsHc")
+    totp = (By.ID, "totpPin")
+    totpSubmit = (By.XPATH, "//span[contains(@class, 'RveJvd snByac')]")
 
     mobile = (By.ID, "mobile-login")  # Кнопка mobile на страницах авторизации и регистрации
 

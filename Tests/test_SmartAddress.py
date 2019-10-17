@@ -32,5 +32,5 @@ class TestClass:
         dashboardPage.navigate_to_receive()
         dashboardPage.select_wallet("Bitcoin")
         currentAddress = dashboardPage.get_current_deposit_address()
-        dashboardPage.generate_new_deposit_address(currentAddress)
+        dashboardPage.check_new_deposit_address(currentAddress)
         dashboardPage.check_previous_address_in_list(currentAddress)
