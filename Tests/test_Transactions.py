@@ -24,7 +24,7 @@ def login_as_basic_user(driver):
 def new_email_transaction(driver):
     loginPage = LoginPage(driver)
     sql.delete_user_from_database(UnregisteredBasicUser.email)
-    email.delete_emails_from_gmail(MultisigGoogleUser.email, MultisigGoogleUser.password, "Freewallet", "You've received 0.000001 XRP")
+    email.delete_emails_from_gmail(MultisigGoogleUser.email, MultisigGoogleUser.imap_code, "Freewallet", "You've received 0.000001 XRP")
     loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
     yield
@@ -207,7 +207,7 @@ class TestClass:
         transactionsPage.send_transaction_step_2_user_id(UnregisteredBasicUser.email)
         transactionsPage.send_transaction_step_3("0.000001")
         transactionsPage.send_transaction_step_4(comment)
-        password_link = email.get_registration_link_from_email(MultisigGoogleUser.email, MultisigGoogleUser.password, "Freewallet", "You've received 0.000001 XRP")
+        password_link = email.get_registration_link_from_email(MultisigGoogleUser.email, MultisigGoogleUser.imap_code, "Freewallet", "You've received 0.000001 XRP")
         password = transactionsPage.get_new_email_transfer_password(password_link)
         loginPage.reset_session()
         loginPage.login_as_basic_user(UnregisteredBasicUser.email, password)

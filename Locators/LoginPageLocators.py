@@ -13,6 +13,7 @@ class LoginPageLocators:
     repeatPasswordField= (By.NAME, 'passwordRepeat')  # Поле повтора пароля на странице регистрации
     loginButton = (By.XPATH, '//button[contains(@class, "button__button--2ccS0 auth__button--1I_62")]')  # Кнопка логина на странице авторизации
     incorrectPasswordTooltip = (By.CLASS_NAME, 'tippy-tooltip-content')  # Тултип с предупреждением на странице авторизации
+    pincodeTooltip = (By.XPATH, "//div[contains(@class, 'auth__tooltip--3kgfI')]")
     signUpLink = (By.XPATH, "//a[text()='Sign up']")  # Кнопка sign up на странице авторизации
     termsCheckbox = (By.XPATH, '//div[contains(text(), "I have read and accept")]')  # Обязательный чекбокс на странице регистрации
     signUpButton = (By.XPATH, '//button[contains(@class, "button__button--2ccS0 auth__button--1I_62")]')  # Кнопка sign up на странице регистрации
@@ -36,6 +37,9 @@ class LoginPageLocators:
 
     logoutLink = (By.XPATH, "//a[contains(@class, 'header__logoutLink--uc90u header__link--1ckAu')]")
     logoutButton = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Logout']")
+
+    lockPopup = (By.XPATH, "//div[contains(@class, 'pp__popup--2rStv user-blocked-popup__popup--yksZo')]")
+    lockPopupBody = (By.XPATH, "//div[contains(@class, 'pp__body--3MhWo')]")
 
 class Pincode:  # трешачина с фиксед позициями в xpath потому что нет айдишников
     title = (By.XPATH, "//h1[contains(@class, 'auth__title--1GAPf') and text()='PIN code']")

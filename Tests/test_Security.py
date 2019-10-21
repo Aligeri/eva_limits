@@ -51,6 +51,17 @@ def data_717():
     sql.remove_freeze_by_email(ExistingBasicUser.email717)
     yield
 
+@pytest.fixture(scope='function')
+def data_714():
+    sql.delete_user_from_database(ExistingBasicUser.email714)
+    yield
+    sql.delete_user_from_database(ExistingBasicUser.email714)
+
+@pytest.fixture(scope='function')
+def data_711():
+    sql.delete_user_from_database(ExistingBasicUser.email711)
+    yield
+    sql.delete_user_from_database(ExistingBasicUser.email711)
 
 class TestClass:
 
@@ -153,7 +164,7 @@ class TestClass:
 
 
     @pytest.mark.usefixtures("data_718")
-    @xray("QA-718")
+    @xray("QA-718", "QA-679")
     @pytest.mark.websmoke
     def test_change_password(self, driver):
         login_page = LoginPage(driver)
@@ -165,6 +176,7 @@ class TestClass:
         security_page.navigate_to_security()
         security_page.wait_until_element_visible(Password.password)
         security_page.change_password(ExistingBasicUser.password, ExistingBasicUser.changedPassword)
+        time.sleep(2)
         login_page.reset_session()
         login_page.login_as_basic_user(ExistingBasicUser.email718, ExistingBasicUser.changedPassword)
         login_page.input_pincode_login(ExistingBasicUser.pincode)
@@ -182,6 +194,7 @@ class TestClass:
         security_page.navigate_to_security()
         security_page.wait_until_element_visible(Password.password)
         security_page.change_password(ExistingBasicUser.password, ExistingBasicUser.changedPassword)
+        time.sleep(2)
         login_page.reset_session()
         login_page.login_as_basic_user(ExistingBasicUser.email717, ExistingBasicUser.changedPassword)
         login_page.input_pincode_login(ExistingBasicUser.pincode)
@@ -192,3 +205,64 @@ class TestClass:
         transactions_page.send_transaction_step_4(comment)
         transactions_page.find_transaction_by_comment("DOGE", "1", comment)
         transactions_page.check_frozen_transaction()
+
+
+    @xray("QA-694")
+    @pytest.mark.websmoke
+    def test_change_password_is_not_displayed_for_social(self, driver):
+        login_page = LoginPage(driver)
+        security_page = SecurityPage(driver)
+        settings_page = SettingsPage(driver)
+        login_page.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password, ExistingGoogleUser.otp_secret)
+        login_page.input_pincode_login(ExistingGoogleUser.pincode)
+        settings_page.check_email_is_loaded(ExistingGoogleUser.email)
+        security_page.navigate_to_security()
+        security_page.wait_until_element_invisible(NavigationLinks.password)
+
+    @pytest.mark.usefixtures("data_714")
+    @xray("QA-714")
+    def test_pin_code_lock_after_5_tries(self, driver):
+        login_page = LoginPage(driver)
+        login_page.input_basic_user_registration_data(ExistingBasicUser.email714, ExistingBasicUser.password, ExistingBasicUser.password)
+        login_page.wait_and_click(LoginPageLocators.termsCheckbox)
+        login_page.assert_signup_button_state("enabled")
+        login_page.wait_and_click(LoginPageLocators.signUpButton)
+        login_page.input_pincode_create(ExistingBasicUser.pincode)
+        login_page.input_pincode_repeat(ExistingBasicUser.pincode)
+        login_page.reset_session()
+        login_page.login_as_basic_user(ExistingBasicUser.email714, ExistingBasicUser.password)
+        login_page.input_pincode_login(ExistingBasicUser.changedPincode)
+        time.sleep(0.5)
+        login_page.input_pincode_login(ExistingBasicUser.changedPincode)
+        time.sleep(0.5)
+        login_page.input_pincode_login(ExistingBasicUser.changedPincode)
+        time.sleep(0.5)
+        login_page.input_pincode_login(ExistingBasicUser.changedPincode)
+        time.sleep(0.5)
+        login_page.input_pincode_login(ExistingBasicUser.changedPincode)
+        login_page.wait_until_element_visible(LoginPageLocators.lockPopup)
+        login_page.wait_and_assert_element_text(LoginPageLocators.lockPopupBody, "You have entered incorrect pin code too many times. Please try again later or contact Support for access recovery.")
+
+    @pytest.mark.usefixtures("data_711")
+    @xray("QA-711")
+    def test_pin_code_lock_after_5_tries_in_security(self, driver):
+        login_page = LoginPage(driver)
+        security_page = SecurityPage(driver)
+        login_page.input_basic_user_registration_data(ExistingBasicUser.email711, ExistingBasicUser.password, ExistingBasicUser.password)
+        login_page.wait_and_click(LoginPageLocators.termsCheckbox)
+        login_page.assert_signup_button_state("enabled")
+        login_page.wait_and_click(LoginPageLocators.signUpButton)
+        login_page.input_pincode_create(ExistingBasicUser.pincode)
+        login_page.input_pincode_repeat(ExistingBasicUser.pincode)
+        security_page.navigate_to_pincode()
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(0.5)
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(0.5)
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(0.5)
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(0.5)
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        login_page.wait_until_element_visible(LoginPageLocators.lockPopup)
+        login_page.wait_and_assert_element_text(LoginPageLocators.lockPopupBody, "You have entered incorrect pin code too many times. Please try again later or contact Support for access recovery.")

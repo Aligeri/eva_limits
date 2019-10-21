@@ -23,6 +23,8 @@ class ExistingBasicUser:
     email701 = "vasiliyautomation+701@gmail.com"
     email702 = "vasiliyautomation+702@gmail.com"
     email700_secret = "PFTEY33SHQTHI3ZTOVJFIZ2NMN6VALZT"
+    email711 = "vasiliyautomation+711@gmail.com"
+    email714 = "vasiliyautomation+714@gmail.com"
     email717 = "vasiliyautomation+717@gmail.com"
     email717_password = "$2y$10$scX/CLr0kEHcHvpj.WHUoOfTA1PLDeZpU3oWu6tXTsUTtqDqbZDKa"
     email718 = "vasiliyautomation+718@gmail.com"
@@ -50,8 +52,10 @@ class NewBasicUser:
     email = "petrautomation@gmail.com"
     email_848 = "petrautomation+848@gmail.com"
     email_752 = "petrautomation+752@gmail.com"
+    email_1074 = "petrautomation+1074@gmail.com"
     password = "qAwSeD123"
     pincode = "1234"
+    wrong_pincode = "4321"
 
 
 class ExistingGoogleUser:
@@ -70,6 +74,7 @@ class MultisigGoogleUser:
     password = "qWeaSd123"
     pincode = "1234"
     otp_code = "mx7mru6qpkfrgvwdcvchobynorpacd2b"
+    imap_code = "nsbzgfpgiapxukxw"
 
 
 class NewGoogleUser:
