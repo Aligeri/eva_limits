@@ -280,3 +280,17 @@ class TestClass:
         transactionsPage.send_transaction_step_4(comment_2)
         transactionsPage.find_transaction_by_comment("DOGE", "1", comment_2)
         transactionsPage.check_doublespending_transaction(comment_2)
+
+    @xray("QA-751")
+    @pytest.mark.websmoke
+    def test_no_include_fee_for_smarts(self, driver):
+        # проверка что для смарт переводов нельзя переключать фи в инклюд состояние QA-751
+        loginPage = LoginPage(driver)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(RichUser.email, RichUser.password)
+        loginPage.input_pincode_login(RichUser.pincode)
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_wallet_address("BTC")
+        transactionsPage.send_transaction_step_2_wallet_address(RichUser.ethWallet, "ETH")
+        transactionsPage.wait_until_element_invisible(Send.includeExcludeSwitch,3)

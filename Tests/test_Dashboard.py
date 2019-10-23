@@ -192,4 +192,3 @@ class TestClass:
         settingsPage.navigate_to_dashboard()
         dashboardPage.navigate_to_receive()
         dashboardPage.check_receive_link('Dogecoin',new_user_id)
-
