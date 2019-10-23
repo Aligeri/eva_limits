@@ -282,7 +282,6 @@ class TestClass:
         transactionsPage.check_doublespending_transaction(comment_2)
 
     @xray("QA-751")
-    @pytest.mark.websmoke
     def test_no_include_fee_for_smarts(self, driver):
         # проверка что для смарт переводов нельзя переключать фи в инклюд состояние QA-751
         loginPage = LoginPage(driver)
