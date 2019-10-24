@@ -123,13 +123,13 @@ class SQLHelper():
         return cursor.fetchone()
 
     def set_user_kyc(self, email, kyc):
-        userid = self.get_user_account_id(email)[0]
+        userid = self.get_user_id(email)[0]
         cursor, connection = self.connect_to_database()
         cursor.execute("INSERT INTO public.user_kyc (user_id, level) VALUES (%s, %s)", (userid, kyc,))
         connection.commit()
 
     def delete_user_kyc(self, email):
-        userid = self.get_user_account_id(email)[0]
+        userid = self.get_user_id(email)[0]
         cursor, connection = self.connect_to_database()
         cursor.execute("DELETE FROM public.user_kyc WHERE user_id=(%s)", (userid,))
         connection.commit()

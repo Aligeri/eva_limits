@@ -78,12 +78,24 @@ def register_as_basic_user(driver):
 
 @pytest.fixture(scope="function")
 def verify_user_by_email(driver):
-    sql.verify_user_by_email(ExistingBasicUser.email)
     yield
+    sql.verify_user_by_email(ExistingBasicUser.email)
+
+@pytest.fixture(scope="function")
+def delete_kyc_basic_user(driver):
+    yield
+    sql.delete_user_kyc(ExistingBasicUser.email)
+
+@pytest.fixture(scope="function")
+def delete_kyc_new_user(driver):
+    yield
+    sql.delete_user_kyc(NewBasicLimitBackend.email)
 
 
 
-@pytest.mark.usefixtures("driver")
+
+
+
 class TestClass:
 
 
@@ -157,7 +169,6 @@ class TestClass:
 
     @pytest.mark.usefixtures("register_as_basic_user", "user_laundering")
     def test_userLaundering(self, driver):
-        comment = str(time.time())
         hostel.send_transaction("doge", sql.get_user_account_id(NewBasicLimitBackend.email)[0], "1000")
         transactionsPage = TransactionsPage(driver)
         dashboardPage = DashboardPage(driver)
@@ -176,7 +187,6 @@ class TestClass:
 
     @pytest.mark.usefixtures("register_as_basic_user", "user_laundering_transfer")
     def test_userLaunderingTransfer(self, driver):
-        comment = str(time.time())
         hostel.send_transaction("doge", sql.get_user_account_id(NewBasicLimitBackend.email)[0], "1000")
         transactionsPage = TransactionsPage(driver)
         dashboardPage = DashboardPage(driver)
@@ -204,7 +214,101 @@ class TestClass:
         transactionsPage.send_transaction_step_4(comment)
         transactionsPage.check_canceled_transaction(comment, "Failed by exceeding of daily limits (strengthen security please)")
 
+    @pytest.mark.parametrize("kyc, flag", [
+        (0, True),
+        (1, True),
+        (10, False),
+        (20, False)
+        ])
+    @pytest.mark.usefixtures("login_as_basic_user", "user_amount_too_big", "delete_kyc_basic_user")
+    def test_amountTooBig_and_kyc(self, driver, kyc, flag):
+        """
+        Тест на превышение лимита отправки суммы на новый адрес
+        :param driver:
+        :return:
+        """
 
+        transactionsPage = TransactionsPage(driver)
+        dashboardPage = DashboardPage(driver)
+        date = dashboardPage.get_current_time()
+        comment = str(time.time())
+        sql.set_user_kyc(ExistingBasicUser.email, kyc)
+        dashboardPage.navigate_to_receive()
+        dashboardPage.select_wallet("Dogecoin")
+        dashboardPage.generate_new_deposit_address()
+        currentAdresss = dashboardPage.get_current_deposit_address()
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_wallet_address("DOGE")
+        transactionsPage.send_transaction_step_2_wallet_address(currentAdresss, "DOGE")
+        transactionsPage.send_transaction_step_3(1)
+        transactionsPage.send_transaction_step_4(comment)
+        hostel.check_status_transaction_by_email(ExistingBasicUser.email, date, flag)
+
+    @pytest.mark.parametrize("kyc, flag", [
+        (0, True),
+        (1, True),
+        (10, False),
+        (20, False)
+    ])
+    @pytest.mark.usefixtures("login_as_basic_user", "user_amount_too_big_transfer", "delete_kyc_basic_user")
+    def test_ammountTooBigTransfer_and_kyc(self, driver, kyc, flag):
+        comment = str(time.time())
+        transactionsPage = TransactionsPage(driver)
+        dashboardPage = DashboardPage(driver)
+        sql.set_user_kyc(ExistingBasicUser.email, kyc)
+        date = dashboardPage.get_current_time()
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("DOGE")
+        transactionsPage.send_transaction_step_2_user_id("dwarf91111@gmail.com")
+        transactionsPage.send_transaction_step_3(1)
+        transactionsPage.send_transaction_step_4(comment)
+        hostel.check_status_transaction_by_email(ExistingBasicUser.email, date, flag)
+
+    @pytest.mark.parametrize("kyc, flag", [
+        (0, True),
+        (1, True),
+        (10, False),
+        (20, False)
+    ])
+    @pytest.mark.usefixtures("register_as_basic_user", "user_laundering", "delete_kyc_new_user")
+    def test_userLaundering(self, driver, kyc, flag):
+        hostel.send_transaction("doge", sql.get_user_account_id(NewBasicLimitBackend.email)[0], "1000")
+        transactionsPage = TransactionsPage(driver)
+        dashboardPage = DashboardPage(driver)
+        sql.set_user_kyc(NewBasicLimitBackend.email, kyc)
+        date = dashboardPage.get_current_time()
+        comment = str(time.time())
+        dashboardPage.navigate_to_receive()
+        dashboardPage.select_wallet("Dogecoin")
+        dashboardPage.generate_new_deposit_address()
+        currentAdresss = dashboardPage.get_current_deposit_address()
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_wallet_address("DOGE")
+        transactionsPage.send_transaction_step_2_wallet_address(currentAdresss, "DOGE")
+        transactionsPage.send_transaction_step_3(999)
+        transactionsPage.send_transaction_step_4(comment)
+        hostel.check_status_transaction_by_email(NewBasicLimitBackend.email, date, flag)
+
+    @pytest.mark.parametrize("kyc, flag", [
+        (0, True),
+        (1, True),
+        (10, False),
+        (20, False)
+    ])
+    @pytest.mark.usefixtures("register_as_basic_user", "user_laundering_transfer", "delete_kyc_new_user")
+    def test_userLaunderingTransfer(self, driver, kyc, flag):
+        hostel.send_transaction("doge", sql.get_user_account_id(NewBasicLimitBackend.email)[0], "1000")
+        sql.set_user_kyc(NewBasicLimitBackend.email, kyc)
+        transactionsPage = TransactionsPage(driver)
+        dashboardPage = DashboardPage(driver)
+        date = dashboardPage.get_current_time()
+        comment = str(time.time())
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("DOGE")
+        transactionsPage.send_transaction_step_2_user_id("dwarf91111@gmail.com")
+        transactionsPage.send_transaction_step_3(999)
+        transactionsPage.send_transaction_step_4(comment)
+        hostel.check_status_transaction_by_email(NewBasicLimitBackend.email, date, flag)
 
 
 
