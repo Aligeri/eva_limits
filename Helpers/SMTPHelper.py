@@ -99,4 +99,8 @@ class SMTPHelper():
         server.sendmail("kindlyfindattached0@gmail.com", "madokamelpo@gmail.com", "something")
         server.quit()
 
-
+    def get_change_mail_link_from_email(self, address, password, email_from, email_subject=''):
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+        pattern = "(https:\/\/\w*?\.?freewallet\.org\/user\/email-change-validate\/.*?)]"
+        verification_link = re.search(pattern, email_string).group(1)
+        return (verification_link)

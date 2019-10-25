@@ -305,3 +305,19 @@ class Page(object):
         action = ActionChains(self.driver)
         move = action.move_to_element_with_offset(element, 150, 150).perform()
 
+    def clear_input_text(self, element_locator):
+        """
+        Очищает поле в инпуте, если он с автозаполнением и не работает стадартный clear()
+        """
+        retries_left = 2
+        while retries_left > 0:
+            try:
+                WebDriverWait(self.driver, 3).until(EC.visibility_of_element_located(element_locator))
+                element = self.driver.find_element(*element_locator)
+                element.click()
+                for i in range(len(element.get_attribute('value'))):
+                    element.send_keys(Keys.BACK_SPACE)
+                return
+            except WebDriverException:
+                retries_left -= 1
+        raise NoSuchElementException("Error occurred during clear input")

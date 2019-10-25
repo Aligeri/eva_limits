@@ -13,6 +13,10 @@ class Account:
     emailNotifications = (By.XPATH, "//input[contains(@class, 'settings__input--oMx6t styles__input--2cyn3')]")
     dangerText = (By.XPATH, "//div[contains(@class, 'settings__dangerDescription--24GPv settings__description--3sdDL')]")
     successText = (By.XPATH, "//div[contains(@class, 'settings__successDescription--IowBh settings__description--3sdDL')]")
+    SaveBtn = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 settings__button--11kwP button__type-inline--3PR1T')]")
+    VerificationPopup = (By.XPATH, "//div[contains(@class, 'pp__popup--2rStv settings__verificationPopup--28NHV')]")
+    SendLinkBtn = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Send link']")
+    ConfirmEmailText = (By.XPATH, "//div[contains(@class, 'settings__warningDescription--Oh3AO settings__description--3sdDL') and text()='Confirm email change']")
 
 class FiatCurrency:
     fiatCurrencyDropdown = (By.XPATH, "//select[@id='local-currency']")
