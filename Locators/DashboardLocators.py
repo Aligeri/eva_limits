@@ -65,3 +65,6 @@ class Graph:
     month = (By.XPATH, ".//div[@data-period='month']")
     table = (By.XPATH, ".//div[contains(@class, 'graph-widget__tableData--1dvDO')]")
     chart = (By.XPATH, ".//div[contains(@class, 'graph-widget__chartWrapper--jbxzD')]")
+
+class LimitLocks:
+    dogeLock = (By.XPATH, "//span[contains(@class, 'currency-lib__icon-doge--3Xirh')]/following-sibling::span[contains(@class, 'icon-currency__lockedIcon--1xa_E')]")

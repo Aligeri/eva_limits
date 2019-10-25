@@ -33,6 +33,12 @@ def data_1037():
     sql.delete_limits_by_email_from_database(ExistingBasicUser.email1037)
 
 @pytest.fixture(scope="function")
+def data_1040():
+    sql.delete_limits_by_email_from_database(ExistingBasicUser.email_1040)
+    yield
+    sql.delete_limits_by_email_from_database(ExistingBasicUser.email_1040)
+
+@pytest.fixture(scope="function")
 def data_839():
     sql.delete_limits_by_email_from_database(ExistingBasicUser.email839)
     yield
@@ -99,6 +105,29 @@ class TestClass:
         securityPage.close_limit_modal()
         securityPage.check_limit_buttons_are_not_displayed("FWH")
 
+    @xray("QA-1040")
+    @pytest.mark.usefixtures("data_1040")
+    def test_check_limit_visuals(self, driver):
+        loginPage = LoginPage(driver)
+        securityPage = SecurityPage(driver)
+        transactionsPage = TransactionsPage(driver)
+
+        loginPage.login_as_basic_user(ExistingBasicUser.email_1040, ExistingBasicUser.password)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        transactionsPage.navigate_to_send()
+        locks_count = transactionsPage.get_elements_count(LimitLocks.dogeLock)
+        assert locks_count == 0
+        securityPage.navigate_to_limits()
+        securityPage.create_new_weekly_limit("DOGE", "100")
+        securityPage.close_limit_modal()
+        securityPage.navigate_to_dashboard()
+        transactionsPage.navigate_to_send()
+        locks_count = transactionsPage.get_elements_count(LimitLocks.dogeLock)
+        assert locks_count == 2
+
+
+
+
     @xray("QA-1037")
     @pytest.mark.usefixtures("data_1037")
     def test_add_and_disable_limit(self, driver):
@@ -135,8 +164,6 @@ class TestClass:
         transactionsPage.send_transaction_step_4(comment)
         transactionsPage.find_transaction_by_comment("BTC", "0.00000001", comment)
         transactionsPage.navigate_to_send()
-        loginPage.refresh_page()
-        loginPage.input_pincode_login(ExistingBasicUser.pincode)
         transactionsPage.check_limit_exceeded_transaction("BTC", "0.00000001", ExistingGoogleUser.userID)
         securityPage.navigate_to_limits()
         securityPage.check_BTC_limit_percent("0%")
