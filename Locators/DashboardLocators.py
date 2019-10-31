@@ -45,6 +45,8 @@ class Filters:
     payOutFilter = (By.XPATH, "//div[@class='filter-block__content--3zlIV']/a[contains(@class, 'tags__typeTag--22azq') and text()='Pay Out']")
     payInFilter = (By.XPATH, "//div[@class='filter-block__content--3zlIV']/a[contains(@class, 'tags__typeTag--22azq') and text()='Pay In']")
     failedFilter = (By.XPATH, "//div[@class='filter-block__content--3zlIV']/a[contains(@class, 'tags__typeTag--22azq') and text()='Failed']")
+    transferInFilter = (By.XPATH, "//div[@class='filter-block__content--3zlIV']/a[contains(@class, 'tags__typeTag--22azq') and text()='Transfer In']")
+    transferOutFilter = (By.XPATH, "//div[@class='filter-block__content--3zlIV']/a[contains(@class, 'tags__typeTag--22azq') and text()='Transfer Out']")
 
     exchangeButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__typeTag--22azq') and text()='Exchange']")
     payOutButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__typeTag--22azq') and text()='Pay Out']")

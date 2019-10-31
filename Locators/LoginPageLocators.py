@@ -25,13 +25,14 @@ class LoginPageLocators:
     facebookConfirm = (By.NAME, "__CONFIRM__")  # Кнопка confirm при регистрации с фейсбуком
 
     google = (By.ID, "google-login")  # Кнопка google на страницах регистрации и авторизации
-    googleEmail = (By.NAME, "identifier")  # Поле email в поп-апе гугла
+    googleEmail = (By.XPATH, "//input[@type='email']")  # Поле email в поп-апе гугла
     googleEmailSubmit = (By.ID, "identifierNext")  # Кнопка подтверждения емейла в поп-апе гугла
-    googlePassword = (By.NAME, "password")  # Поле пароля в поп-апе гугла
+    googlePassword = (By.XPATH, "//input[@type='password']")  # Поле пароля в поп-апе гугла
     googlePasswordSubmit = (By.ID, "passwordNext")  # Кнопка подтверждения пароля в поп-апе гугла
-    googleChangeAddress = (By.CLASS_NAME, "BHzsHc")
+    googleChangeAddress = (By.XPATH, "//div[contains(@class, 'BHzsHc')]|//a[@id='account-chooser-add-account']")
     totp = (By.ID, "totpPin")
-    totpSubmit = (By.XPATH, "//span[contains(@class, 'RveJvd snByac')]")
+    totpSubmit = (By.XPATH, "//span[contains(@class, 'RveJvd snByac')]|//input[contains(@class, 'MK9CEd MVpUfe')]")
+    googlePopup = (By.CLASS_NAME, "zWl5kd")
 
     mobile = (By.ID, "mobile-login")  # Кнопка mobile на страницах авторизации и регистрации
 

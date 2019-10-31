@@ -12,10 +12,12 @@ WALLETFROM = {
     "ETH": Send.ethWallet,
     "XRP": Send.xrpWallet,
     "DOGE": Send.dogeWallet,
+    "XEM": Send.xemWallet,
 }
 
 COMPLEX_WALLET = {
-    "XRP": Send.xrpWallet
+    "XRP": Send.xrpWallet,
+    "XEM": Send.xemWallet
 }
 
 DESTINATION_WALLET = {
@@ -23,6 +25,7 @@ DESTINATION_WALLET = {
     "ETH": Send.ethRecieverWallet,
     "BTC": Send.btcRecieverWallet,
     "DOGE": Send.dogeWallet,
+    "XEM": Send.xemRecieverWallet,
 }
 
 
@@ -527,3 +530,13 @@ class TransactionsPage(Page):
         self.wait_and_input_text(TwoFactorAuth.code5, code_by_char[4])
         self.wait_and_input_text(TwoFactorAuth.code6, code_by_char[5])
         self.wait_and_click(Send.confirm2fa)
+
+    def check_transactions_on_page(self, comment, amount):
+        transactions = self.get_elements(Send.transactionBlock)
+        comments = []
+        amounts = []
+        for transaction in transactions:
+            comments.append(self.get_element_text_within_webelement(transaction, Send.commentBlock))
+            amounts.append(self.get_element_text_within_webelement(transaction, Send.amountBlock))
+        assert comment == comments
+        assert amount == amounts

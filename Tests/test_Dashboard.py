@@ -2,6 +2,7 @@ import pytest
 from Pages.LoginPage import *
 from Pages.SettingsPage import *
 from Pages.DashboardPage import *
+from Pages.TransactionsPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from xrayplugin.plugin import xray
@@ -20,11 +21,13 @@ def login_as_basic_user(driver):
 
 @pytest.fixture(scope='class')
 def data_new_user():
+    sql.delete_user_from_database(NewBasicUser.email_848)
     yield
     sql.delete_user_from_database(NewBasicUser.email_848)
 
 @pytest.fixture(scope='class')
 def data_752():
+    sql.delete_user_from_database(NewBasicUser.email_752)
     yield
     sql.delete_user_from_database(NewBasicUser.email_752)
 
@@ -72,6 +75,35 @@ class TestClass:
         dashboardPage.remove_filter("Pay In")
         dashboardPage.remove_filter("Failed")
 
+
+    @pytest.mark.websmoke
+    @xray("QA-991")
+    def test_apply_filters_po(self, driver):
+        loginPage = LoginPage(driver)
+        dashboardPage = DashboardPage(driver)
+        transactionsPage = TransactionsPage(driver)
+
+        loginPage.login_as_basic_user(ExistingBasicUser.email_808, ExistingBasicUser.password)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+
+        dashboardPage.apply_filter("Exchange")
+        comments = ['Comment "btc to eth comment" (BTC to ETH)']
+        amounts = ['–0.00065 BTC']
+        transactionsPage.check_transactions_on_page(comments, amounts)
+        dashboardPage.remove_filter("Exchange")
+
+        dashboardPage.apply_filter("Pay Out")
+        comments = ['Comment "btc to eth comment" (BTC to ETH)']
+        amounts = ['–0.00065 BTC']
+        transactionsPage.check_transactions_on_page(comments, amounts)
+        dashboardPage.remove_filter("Pay Out")
+
+        dashboardPage.apply_filter("Pay In")
+        comments = ['From 0x59...06e8']
+        amounts = ['+0.02319903 ETH']
+        transactionsPage.check_transactions_on_page(comments, amounts)
+        dashboardPage.remove_filter("Pay Out")
+
     @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-844", "QA-832")
     def test_buy_with_a_card(self, driver):
@@ -116,7 +148,7 @@ class TestClass:
         dashboard_page.navigate_to_receive()
         dashboard_page.check_receive_wallet("Bitcoin", False)
         dashboard_page.check_receive_wallet("Ethereum", False)
-        dashboard_page.check_receive_wallet("EOS", True)
+        dashboard_page.check_receive_wallet("XEM", True)
 
     @pytest.mark.usefixtures("data_752")
     @xray("QA-752")

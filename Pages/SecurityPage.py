@@ -96,6 +96,7 @@ class SecurityPage(Page):
             "FWH": LimitWallets.fwt,
             "BTC": LimitWallets.btc,
             "ARDR": LimitWallets.ardr,
+            "DOGE": LimitWallets.doge,
         }
         self.wait_and_click(WALLET[currency])
         self.wait_and_click(LimitModal.changeLimit)
@@ -130,6 +131,7 @@ class SecurityPage(Page):
             "FWH": LimitWallets.fwt,
             "BTC": LimitWallets.btc,
             "ARDR": LimitWallets.ardr,
+            "DOGE": LimitWallets.doge
         }
         self.wait_and_click(WALLET[currency])
         self.wait_and_assert_element_text(LimitModal.pendingChange, "Limit settings will be changed in in 2 days")
