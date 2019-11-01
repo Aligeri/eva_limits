@@ -73,6 +73,7 @@ class ExistingGoogleUser:
     userName = "Oleg Automation"
     userID = "567e6928"
     xrtWallet = "NDJBSFZCAO7WHF665KT4BTSTPZH2RPGW3EHLT4GX"
+    btcWallet = "3ESWm2sbbFmFR43muaFk1E12xGbvbU17G6"
     xrtTag = "763390057966"
     otp_secret = "gtcsl53kqtxpmv5gk5jp53j6bi7xd5ts"
 

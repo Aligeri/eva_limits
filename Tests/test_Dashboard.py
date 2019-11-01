@@ -8,6 +8,7 @@ from Config.Users import *
 from Helpers.SQLHelper import *
 from xrayplugin.plugin import xray
 import random, string
+from datetime import datetime
 
 
 sql = SQLHelper()
@@ -158,13 +159,14 @@ class TestClass:
     def test_ChangeName(self, driver):
         #проверка смены имени в настройках QA-820
         loginPage = LoginPage(driver)
+        settingsPage = SettingsPage(driver)
+        dashboardPage = DashboardPage(driver)
         loginPage.reset_session()
         loginPage.login_as_basic_user(UserforChangeName.email, UserforChangeName.password)
         loginPage.input_pincode_login(UserforChangeName.pincode)
-        dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_settings()
-        settingsPage = SettingsPage(driver)
         new_name = str(datetime.now().timestamp())
+
         settingsPage.change_name(new_name)
         settingsPage.navigate_to_dashboard()
         dashboardPage.wait_and_assert_element_text(DashboardLocators.userName, new_name)
