@@ -88,3 +88,31 @@ class SettingsPage(Page):
         self.navigate_to_account()
         self.wait_and_click(FiatCurrency.fiatCurrencyDropdown)
         self.wait_and_click(CURRENCY[currency])
+
+    def change_name(self, name):
+        """""
+        Меняет имя пользователя на вкладке UserDetails
+        """""
+        self.wait_until_element_visible(Identity.Badge)
+        self.wait_and_input_text(userDetails.Name, name)
+        self.wait_and_click(userDetails.SaveBtn)
+
+    def change_user_id(self, new_id):
+        """""
+        Меняет user id на вкладке UserDetails
+        """""
+        self.wait_until_element_visible(Identity.Badge)
+        self.wait_and_input_text(userDetails.UserId, new_id)
+        self.wait_and_click(userDetails.SaveBtn)
+
+    def change_email(self, new_email):
+        """""
+        Меняет email на вкладке Account
+        """""
+        self.wait_until_element_visible(Identity.Badge)
+        self.clear_input_text(Account.emailNotifications)
+        self.wait_and_input_text(Account.emailNotifications, new_email)
+        self.wait_and_click(Account.SaveBtn)
+        self.wait_until_element_visible(Account.VerificationPopup)
+        self.wait_and_click(Account.SendLinkBtn)
+        self.wait_until_element_visible(Account.ConfirmEmailText)
