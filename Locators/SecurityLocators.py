@@ -103,3 +103,12 @@ class Password:
     newPasswordRepeat = (By.XPATH, "//input[@name='newPasswordRepeat']")
     savePassword = (By.XPATH, "//button[contains(@class, 'security__saveButton--1NeUP')]")
     tooltip = (By.XPATH, "//div[@data-original-title='Password changed successfully!']")
+
+class ActiveSessions:
+    sessionBlock = (By.XPATH, "//div[contains(@class, 'tab-sessions__session--1CVnR')]")
+    singleSessionDrop = (By.XPATH, "//button[contains(@class, 'tab-sessions__dropButton--1A65y')]")
+    sessionBody = (By.XPATH, "//div[contains(@class, 'tab-sessions__model--3RUWz')]")
+    sessionPlatform = (By.XPATH, "//div[contains(@class, 'tab-sessions__platformTitle--1CSBr')]")
+    allSessionsDrop = (By.XPATH, "//button[contains(@class, 'tab-sessions__button--6zMwa')]")
+    dropYes = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Yes']")
+    dropClose = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Close']")

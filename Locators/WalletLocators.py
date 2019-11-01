@@ -8,6 +8,7 @@ class ReceiveWallets:
     eth = (By.XPATH, "//div[@data-currency='eth']//span")
     eos = (By.XPATH, "//div[@data-currency='eos']//span")
     doge = (By.XPATH, "//div[@data-currency='doge']//span")
+    xem = (By.XPATH, "//div[@data-currency='xem']//span")
 
 class TopUpWallets:
     btc = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='btc']//span")
@@ -16,6 +17,7 @@ class TopUpWallets:
     eth = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='eth']//span")
     eos = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='eos']//span")
     doge = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='doge']//span")
+    xem = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='xem']//span")
 
     depositAddress = (By.XPATH, "//div[@class='receive__wrapCurrentAddress--1qS_K']//div[contains(@class, 'receive__addressText--38aaT')]")
 

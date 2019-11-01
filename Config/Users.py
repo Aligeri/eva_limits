@@ -6,8 +6,8 @@ class ExistingBasicUser:
     changedPincode = "9876"
     userName = "Existing Basic User"
     userID = "5d97f3d6"
-    ethWallet = "0x5cc7d8dd2fa7be1c2d9e6f88a5125937767fcf4e"
-    btcWallet = "3NMcXFk5PoCYquUa9qwU2bbhkm5x4KzimU"
+    ethWallet = "0xd72a126aabc4f43639ee4e2b64c971bb35eec0ae"
+    btcWallet = "3QUKkcHLTLjK3dG27M2tnkybDNgEeXQQoS"
     """Емейлы пустых юзеров для безопасного распараллеливания тестов где не требутся транзакции"""
     email695 = "vasiliyautomation+695@gmail.com"
     email837 = "vasiliyautomation+837@gmail.com"
@@ -23,14 +23,23 @@ class ExistingBasicUser:
     email701 = "vasiliyautomation+701@gmail.com"
     email702 = "vasiliyautomation+702@gmail.com"
     email700_secret = "PFTEY33SHQTHI3ZTOVJFIZ2NMN6VALZT"
+    email711 = "vasiliyautomation+711@gmail.com"
+    email714 = "vasiliyautomation+714@gmail.com"
     email717 = "vasiliyautomation+717@gmail.com"
     email717_password = "$2y$10$scX/CLr0kEHcHvpj.WHUoOfTA1PLDeZpU3oWu6tXTsUTtqDqbZDKa"
     email718 = "vasiliyautomation+718@gmail.com"
     email718_password = "$2a$10$3.S0O3eb2uvTeCchjATvDOHtjy50zNxt1CH30jLta5H0ubWMn8jK6"
+    email_764 = "vasiliyautomation+764@gmail.com"
+    email_764_userid = "d123c9f4"
+    email_765 = "vasiliyautomation+765@gmail.com"
     email_780 = "vasiliyautomation+780@gmail.com"
+    email_808 = "vasiliyautomation+808@gmail.com"
+    email_827 = "vasiliyautomation+827@gmail.com"
+    email_828 = "vasiliyautomation+828@gmail.com"
     email_829 = "vasiliyautomation+829@gmail.com"
     email839 = "vasiliyautomation+839@gmail.com"
     email933 = "vasiliyautomation+933@gmail.com"
+    email_1040 = "vasiliyautomation+1040@gmail.com"
     email1523 = "vasiliyautomation+1523@gmail.com"
     email1524 = "vasiliyautomation+1524@gmail.com"
     email1525 = "vasiliyautomation+1524@gmail.com"
@@ -50,8 +59,10 @@ class NewBasicUser:
     email = "petrautomation@gmail.com"
     email_848 = "petrautomation+848@gmail.com"
     email_752 = "petrautomation+752@gmail.com"
+    email_1074 = "petrautomation+1074@gmail.com"
     password = "qAwSeD123"
     pincode = "1234"
+    wrong_pincode = "4321"
 
 
 class ExistingGoogleUser:
@@ -61,8 +72,8 @@ class ExistingGoogleUser:
     pincode = "4321"
     userName = "Oleg Automation"
     userID = "567e6928"
-    xrtWallet = "rMKqYAmXX21qsxGsJ4YtmpE5xPaDeoq6Me"
-    xrtTag = "1065871430"
+    xrtWallet = "NDJBSFZCAO7WHF665KT4BTSTPZH2RPGW3EHLT4GX"
+    xrtTag = "763390057966"
     otp_secret = "gtcsl53kqtxpmv5gk5jp53j6bi7xd5ts"
 
 class MultisigGoogleUser:
@@ -70,6 +81,7 @@ class MultisigGoogleUser:
     password = "qWeaSd123"
     pincode = "1234"
     otp_code = "mx7mru6qpkfrgvwdcvchobynorpacd2b"
+    imap_code = "nsbzgfpgiapxukxw"
 
 
 class NewGoogleUser:

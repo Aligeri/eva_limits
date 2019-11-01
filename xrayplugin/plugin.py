@@ -128,7 +128,6 @@ class PytestXrayPlugin(object):
         outcome = yield
         rep = outcome.get_result()
 
-        a = item.execution_count
         if not self.is_master(item.config):
             self.test_execution = item.config.slaveinput['test_e']
 

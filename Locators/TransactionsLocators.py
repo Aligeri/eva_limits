@@ -6,11 +6,13 @@ class Send:
     ethWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'ETH')]]")
     xrpWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'XRP')]]")
     dogeWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'DOGE')]]")
+    xemWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'XEM')]]")
 
     xrpRecieverWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[contains(text(), 'Ripple')]]")
     ethRecieverWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[text()='Ethereum']]")
     btcRecieverWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[text()='Bitcoin']]")
     dogeRecieverWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[text()='Dogecoin']]")
+    xemRecieverWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[contains(text(), 'NEM')]]")
 
     userIdOrEmail = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[contains(text(), 'User ID or email')]]")
     userWalletAddress = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[contains(text(), 'Wallet address')]]")
@@ -23,7 +25,7 @@ class Send:
     amount = (By.XPATH, "//input[contains(@class, 'input__input--1lDmD') and @placeholder='0']")
     comment = (By.XPATH, "//input[contains(@class, 'input__input--1lDmD') and @placeholder='Enter comment (optional)']")
     withdraw = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 send__buttonContinue--3pUpw')]")
-    destinationTag = (By.XPATH, "//input[contains(@class, 'input__input--1lDmD') and @placeholder='Enter destination tag']")
+    destinationTag = (By.XPATH, "//input[contains(@class, 'input__input--1lDmD') and @placeholder='Enter destination tag']|//input[contains(@class, 'input__input--1lDmD') and @placeholder='Enter message']")
     limitExceededTooltip = (By.CLASS_NAME, 'tippy-tooltip-content')
     tokenError = (By.XPATH, "//div[@class='send__tokenError--7Q4J_']")
     changeToFiat = (By.XPATH, "//span[contains(@class, 'svg-icon__svgIcon--216sc send__switchToFiatIcon--H1xig')]")
@@ -56,6 +58,10 @@ class Send:
 
     confirm2fa = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 button__type-inline--3PR1T button__color-full-red--1bKJL')]")
     twoFaTransactionError = (By.XPATH, "//div[@class='pop-ups__error--2VlGh']")
+
+    transactionBlock = (By.XPATH, '//a[contains(@class, "item__wrapper--2HY-h")]')
+    commentBlock = (By.XPATH, "//div[contains(@class, 'item__address--V6FmR')]")
+    amountBlock = (By.XPATH, "//div[contains(@class, 'item__amount--3WcgV')]")
 
 
 class TopUpPhone:

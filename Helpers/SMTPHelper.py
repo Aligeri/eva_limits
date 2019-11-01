@@ -13,7 +13,7 @@ class SMTPHelper():
 
     def __getEmailFromGmail(self, address, password, email_from, email_subject=''):
         mail = imaplib.IMAP4_SSL('imap.gmail.com', "993")
-        retries_left = 30
+        retries_left = 50
         mail.login(address, password)
         mail.list()
         mail.select('"INBOX"')

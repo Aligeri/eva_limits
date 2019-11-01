@@ -96,6 +96,7 @@ class SecurityPage(Page):
             "FWH": LimitWallets.fwt,
             "BTC": LimitWallets.btc,
             "ARDR": LimitWallets.ardr,
+            "DOGE": LimitWallets.doge,
         }
         self.wait_and_click(WALLET[currency])
         self.wait_and_click(LimitModal.changeLimit)
@@ -130,6 +131,7 @@ class SecurityPage(Page):
             "FWH": LimitWallets.fwt,
             "BTC": LimitWallets.btc,
             "ARDR": LimitWallets.ardr,
+            "DOGE": LimitWallets.doge
         }
         self.wait_and_click(WALLET[currency])
         self.wait_and_assert_element_text(LimitModal.pendingChange, "Limit settings will be changed in in 2 days")
@@ -254,4 +256,18 @@ class SecurityPage(Page):
         self.wait_and_click(Password.savePassword)
 
     def get_current_sessions_count(self):
-        self
+        count = self.get_elements_count(ActiveSessions.sessionBody)
+        return count
+
+    def drop_session_by_model(self, model):
+        node_session = (By.XPATH, ("//div[@class='tab-sessions__session--1CVnR' and .//div[text()='%s']]" % model))
+        self.wait_and_click_element_within_element(node_session, ActiveSessions.singleSessionDrop)
+        self.wait_and_click(ActiveSessions.dropYes)
+
+    def find_session_by_model(self, model):
+        node_session = (By.XPATH, ("//div[@class='tab-sessions__session--1CVnR' and .//div[text()='%s']]" % model))
+        self.wait_until_element_visible(node_session)
+
+    def drop_all_sessions(self):
+        self.wait_and_click(ActiveSessions.allSessionsDrop)
+        self.wait_and_click(ActiveSessions.dropYes)
