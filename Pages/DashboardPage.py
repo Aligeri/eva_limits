@@ -90,7 +90,8 @@ class DashboardPage(Page):
             "Bitcoin Cash": ReceiveWallets.bcc,
             "Dogecoin": ReceiveWallets.doge,
             "Ethereum": ReceiveWallets.eth,
-            "EOS": ReceiveWallets.eos
+            "EOS": ReceiveWallets.eos,
+            "XEM": ReceiveWallets.xem
         }
         self.wait_and_click(WALLET[wallet])
 
@@ -147,6 +148,15 @@ class DashboardPage(Page):
         """
         self.wait_and_click(DepositAddress.generateNew)
         self.assert_element_text_is_not_equal(DepositAddress.currentAddress, current_address)
+
+    def generate_new_deposit_address(self):
+        """
+        Генерирует новый deposit address у текущего выбранного кошелька
+        Проверяет что новый deposit address не равен старому
+        :param current_address: старый deposit address
+        """
+        self.wait_and_click(DepositAddress.generateNew)
+        time.sleep(1)
 
     def check_previous_address_in_list(self, current_address):
         """

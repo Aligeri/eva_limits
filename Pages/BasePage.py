@@ -16,6 +16,9 @@ class Page(object):
         self.driver = driver
         self.url = conftest.url + '/'
 
+    def get_html(self):
+        html = self.driver.page_source
+        return html
 
     def get_base_url(self):
         """
@@ -31,7 +34,7 @@ class Page(object):
         """
         return self.driver.current_url
 
-    def wait_to_be_clickable(self, element_locator, timeout=3):
+    def wait_to_be_clickable(self, element_locator, timeout=5):
         """
         Поиск и ожидание доступности клика по элементу
         :param element_locator: локатор элемента из Locators/*
@@ -49,7 +52,7 @@ class Page(object):
         retries_left = 2
         while retries_left > 0:
             try:
-                WebDriverWait(self.driver, 3).until(EC.visibility_of_element_located(element_locator))
+                WebDriverWait(self.driver, 5).until(EC.visibility_of_element_located(element_locator))
                 element = self.driver.find_element(*element_locator)
                 element.clear()
                 element.send_keys(value)
@@ -101,7 +104,7 @@ class Page(object):
             except (WebDriverException, TimeoutError) as e:
                 time.sleep(0.5)
                 retries_left -= 1
-        raise NoSuchElementException("Element is not clickable or not present on page")
+        raise NoSuchElementException("Element is not clickable or not present on page: " + str(element_locator))
 
     def assert_element_text(self, element_locator, value, timeout=10):
         element = WebDriverWait(self.driver, timeout).until(
@@ -184,6 +187,10 @@ class Page(object):
     def send_escape(self):
         action = ActionChains(self.driver)
         action.send_keys(Keys.ESCAPE).perform()
+
+    def send_enter(self):
+        action = ActionChains(self.driver)
+        action.send_keys(Keys.ENTER).perform()
 
     def close_alert(self):
         alert = self.driver.switch_to.alert
@@ -295,6 +302,63 @@ class Page(object):
                 retries_left -= 1
         raise WebDriverException("Element is not clickable or not present on page")
 
+    def find_element_within_element(self, node_locator, element_locator):
+        """
+        Находит элемент внутри другого элемента
+        :param node_locator: локатор родительского элемента из Locators/*
+        :param element_locator: локатор дочернего элемента из Locators/*
+        :return: дочерний элемент внутри родительского элемента
+        """
+        retries_left = 2
+        while retries_left > 0:
+            try:
+                node_element = self.driver.find_element(*node_locator)
+                child_element = node_element.find_element(*element_locator)
+                return child_element
+            except WebDriverException:
+                time.sleep(0.5)
+                retries_left -= 1
+        raise WebDriverException("Element is not present on page")
+
+    def get_element_text_within_element(self, node_locator, element_locator):
+        """
+        Находит элемент внутри другого элемента
+        :param node_locator: локатор родительского элемента из Locators/*
+        :param element_locator: локатор дочернего элемента из Locators/*
+        :return: дочерний элемент внутри родительского элемента
+        """
+        retries_left = 2
+        while retries_left > 0:
+            try:
+                node_element = self.driver.find_element(*node_locator)
+                child_element_text = node_element.find_element(*element_locator).text
+                return child_element_text
+            except WebDriverException:
+                time.sleep(0.5)
+                retries_left -= 1
+        raise WebDriverException("Element is not present on page")
+
+    def get_element_text_within_webelement(self, node_webelement, element_locator):
+        """
+        Находит элемент внутри другого элемента
+        :param node_webelement: родительский элемент (!! не локатор !!)
+        :param element_locator: локатор дочернего элемента из Locators/*
+        :return: дочерний элемент внутри родительского элемента
+        """
+        retries_left = 2
+        while retries_left > 0:
+            try:
+                child_element_text = node_webelement.find_element(*element_locator).text
+                return child_element_text
+            except WebDriverException:
+                time.sleep(0.5)
+                retries_left -= 1
+        raise WebDriverException("Element is not present on page")
+
+    def get_text_from_webelement(self, webelement):
+        text = webelement.text
+        return text
+
 
     def navigate_to_dashboard(self):
         self.wait_to_be_clickable(NavigationButtons.dashboard)
@@ -304,6 +368,24 @@ class Page(object):
         element = self.driver.find_element(*element_locator)
         action = ActionChains(self.driver)
         move = action.move_to_element_with_offset(element, 150, 150).perform()
+
+    def get_elements_count(self, element_locator):
+        elements = self.driver.find_elements(*element_locator)
+        count = len(elements)
+        return count
+
+    def get_elements(self, element_locator):
+        retries_left = 2
+        while retries_left > 0:
+            try:
+                elements = self.driver.find_elements(*element_locator)
+                return elements
+            except WebDriverException:
+                self.wait_until_element_visible(element_locator)
+                retries_left -= 1
+        raise WebDriverException("Elements are not present on page")
+
+
 
     def clear_input_text(self, element_locator):
         """

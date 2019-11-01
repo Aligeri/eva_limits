@@ -128,7 +128,7 @@ class SQLHelper():
     def get_deleted_sessions_by_email(self, email):
         cursor, connection = self.connect_to_database()
         user_id = self.__get_user_from_database(email)
-        cursor.execute("SELECT id, model FROM public.user_sessions WHERE user_id = (%s)", (user_id, ))
+        cursor.execute("SELECT id, model FROM public.user_sessions WHERE user_id = (%s) and deleted_at is not null", (user_id, ))
         return cursor.fetchall()
 
     def insert_session(self, email, model):
