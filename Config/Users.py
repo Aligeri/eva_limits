@@ -110,6 +110,30 @@ class UnregisteredBasicUser:
     email = "kindlyfindattached0+99@gmail.com"
     pincode = "1234"
 
+class UserforChangeName:
+    email = "testermail35+820@gmail.com"
+    password = "12345678"
+    pincode = "7777"
+
+class UserforChangeUserId:
+    email = "testermail35+822@gmail.com"
+    password = "12345678"
+    pincode = "7777"
+
+class RichUser:
+    email = "testermail35+751@gmail.com"
+    password = "12345678"
+    pincode = "7777"
+    ethWallet = "0x92ea4e9e56abe782939b15c57ba1f953f6b2aab6"
+    btcWallet = "3NWC98QrmFZNNc3NEPcGPSDk2AqYTGEECG"
+    dogeWallet = "DQbGyBMGrFyFJeSUzkTjzyraRprvkPQKpf"
+
+class UserforСhangeMail:
+    email = "testermail35+810@gmail.com"
+    password = "12345678"
+    email_password = "123QWEasdZXC"
+    pincode = "7777"
+    new_email = "testermail35+8101@gmail.com"
 
 class CommonData:
     FWTContract = "0xf966bc1e1ab786830fd98a3f8f978940f8e5c13e"

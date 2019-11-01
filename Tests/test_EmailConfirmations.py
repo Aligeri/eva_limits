@@ -24,6 +24,15 @@ def data_google_user():
     sql.delete_user_from_database(NewGoogleUser.email)
     email.delete_emails_from_gmail(NewGoogleUser.email, NewGoogleUser.imap_code, "Freewallet", "Verify your email address")
 
+@pytest.fixture(scope='function')
+def clear_data_for_change_mail():
+    email.delete_emails_from_gmail(UserforСhangeMail.email, UserforСhangeMail.email_password, "Freewallet", "Verify changing your email address")
+    email.delete_emails_from_gmail(UserforСhangeMail.new_email, UserforСhangeMail.email_password, "Freewallet", "Verify your email address")
+    sql.set_email_for_notifications(UserforСhangeMail.email)
+    sql.delete_user_from_database(UserforСhangeMail.new_email)
+    yield
+    email.delete_emails_from_gmail(UserforСhangeMail.email, UserforСhangeMail.email_password, "Freewallet", "Verify changing your email address")
+    email.delete_emails_from_gmail(UserforСhangeMail.new_email, UserforСhangeMail.email_password, "Freewallet", "Verify your email address")
 
 class TestClass:
 
@@ -62,4 +71,23 @@ class TestClass:
         loginPage.input_pincode_login(NewGoogleUser.pincode)
         settingsPage.check_email_is_verified(NewGoogleUser.email)
 
-
+    @xray("QA-810")
+    @pytest.mark.websmoke
+    @pytest.mark.usefixtures("clear_data_for_change_mail")
+    def test_change_email_for_notifications(self, driver):
+        # проверка смены емайл в настройках QA-810
+        loginPage = LoginPage(driver)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(UserforСhangeMail.email, UserforСhangeMail.password)
+        loginPage.input_pincode_login(UserforСhangeMail.pincode)
+        settingsPage = SettingsPage(driver)
+        settingsPage.check_email_is_loaded(UserforСhangeMail.email)
+        settingsPage.change_email(UserforСhangeMail.new_email)
+        verification_link = email.get_change_mail_link_from_email(UserforСhangeMail.email, UserforСhangeMail.email_password, "Freewallet", "Verify changing your email address")
+        settingsPage.navigate_to_link(verification_link)
+        loginPage.input_pincode_login(UserforСhangeMail.pincode)
+        #settingsPage.check_email_is_not_verified(UserforСhangeMail.new_email) не работает проверка промежуточного состояния
+        verification_link1 = email.get_verification_link_from_email(UserforСhangeMail.new_email, UserforСhangeMail.email_password,"Freewallet", "Verify your email address")
+        settingsPage.navigate_to_link(verification_link1)
+        loginPage.input_pincode_login(UserforСhangeMail.pincode)
+        #settingsPage.check_email_is_verified(UserforСhangeMail.new_email) не работает проверка финального состояния

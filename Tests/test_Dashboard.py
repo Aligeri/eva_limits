@@ -1,4 +1,5 @@
 import pytest
+import time
 from Pages.LoginPage import *
 from Pages.SettingsPage import *
 from Pages.DashboardPage import *
@@ -6,6 +7,7 @@ from Pages.TransactionsPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from xrayplugin.plugin import xray
+import random, string
 
 
 sql = SQLHelper()
@@ -151,6 +153,22 @@ class TestClass:
         dashboard_page.check_receive_wallet("Ethereum", False)
         dashboard_page.check_receive_wallet("XEM", True)
 
+    @xray("QA-820")
+    @pytest.mark.websmoke
+    def test_ChangeName(self, driver):
+        #проверка смены имени в настройках QA-820
+        loginPage = LoginPage(driver)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(UserforChangeName.email, UserforChangeName.password)
+        loginPage.input_pincode_login(UserforChangeName.pincode)
+        dashboardPage = DashboardPage(driver)
+        dashboardPage.navigate_to_settings()
+        settingsPage = SettingsPage(driver)
+        new_name = str(datetime.now().timestamp())
+        settingsPage.change_name(new_name)
+        settingsPage.navigate_to_dashboard()
+        dashboardPage.wait_and_assert_element_text(DashboardLocators.userName, new_name)
+
     @pytest.mark.usefixtures("data_752")
     @xray("QA-752")
     @pytest.mark.websmoke
@@ -191,3 +209,20 @@ class TestClass:
         dashboard_page.navigate_to_receive()
         dashboard_page.select_wallet("Dogecoin")
         dashboard_page.check_value_not_in_deposit_address("doge")
+
+    @xray("QA-822")
+    @pytest.mark.websmoke
+    def test_ChangeUserId(self, driver):
+        #проверка смены user id в настройках QA-822
+        loginPage = LoginPage(driver)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(UserforChangeUserId.email, UserforChangeUserId.password)
+        loginPage.input_pincode_login(UserforChangeUserId.pincode)
+        dashboardPage = DashboardPage(driver)
+        dashboardPage.navigate_to_settings()
+        settingsPage = SettingsPage(driver)
+        new_user_id = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(8))
+        settingsPage.change_user_id(new_user_id)
+        settingsPage.navigate_to_dashboard()
+        dashboardPage.navigate_to_receive()
+        dashboardPage.check_receive_link('Dogecoin',new_user_id)

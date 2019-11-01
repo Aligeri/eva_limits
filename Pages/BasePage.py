@@ -386,3 +386,20 @@ class Page(object):
         raise WebDriverException("Elements are not present on page")
 
 
+
+    def clear_input_text(self, element_locator):
+        """
+        Очищает поле в инпуте, если он с автозаполнением и не работает стадартный clear()
+        """
+        retries_left = 2
+        while retries_left > 0:
+            try:
+                WebDriverWait(self.driver, 3).until(EC.visibility_of_element_located(element_locator))
+                element = self.driver.find_element(*element_locator)
+                element.click()
+                for i in range(len(element.get_attribute('value'))):
+                    element.send_keys(Keys.BACK_SPACE)
+                return
+            except WebDriverException:
+                retries_left -= 1
+        raise NoSuchElementException("Error occurred during clear input")

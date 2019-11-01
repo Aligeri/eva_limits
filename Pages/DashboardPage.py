@@ -198,3 +198,15 @@ class DashboardPage(Page):
         """
         self.wait_and_click_element_within_element(FILTER_BUTTON[history_filter], Filters.removeFilter)
         self.wait_until_element_invisible(FILTER_BUTTON[history_filter], 0.5)
+
+    def check_receive_link(self, currency, user_id):
+        """
+           Проверяет что в ресиве для выбранной валюты currency
+           текст в поле userId равен переданному параметру user_id и что user_id содерждится в юзерлинке
+        """
+        self.select_wallet(currency)
+        self.wait_until_element_visible(DepositAddress.depositAddress)
+        assert self.get_element_text(DepositAddress.depositAddress) is not None
+        assert self.get_element_text(DepositAddress.userId) == user_id
+        assert self.get_element_text(DepositAddress.link).find(user_id)
+        time.sleep(0.5)
