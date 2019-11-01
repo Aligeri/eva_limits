@@ -35,7 +35,7 @@ class TestClass:
         loginPage.input_pincode_login(ExistingBasicUser2.pincode)
         loginPage.wait_and_assert_element_text(DashboardLocators.userName, ExistingBasicUser2.userName)
 
-    @xray("QA-828")
+    @xray("QA-829")
     @pytest.mark.websmoke
     def test_other_sessions_displayed(self, driver):
         loginPage = LoginPage(driver)

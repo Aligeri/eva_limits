@@ -292,5 +292,8 @@ class TestClass:
         security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
         time.sleep(0.5)
         security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(0.5)
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(0.5)
         login_page.wait_until_element_visible(LoginPageLocators.lockPopup)
         login_page.wait_and_assert_element_text(LoginPageLocators.lockPopupBody, "You have entered incorrect pin code too many times. Please try again later or contact Support for access recovery.")

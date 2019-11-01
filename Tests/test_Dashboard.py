@@ -76,6 +76,7 @@ class TestClass:
         dashboardPage.remove_filter("Failed")
 
 
+    @pytest.mark.skip()
     @pytest.mark.websmoke
     @xray("QA-991")
     def test_apply_filters_po(self, driver):
@@ -115,7 +116,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @pytest.mark.websmoke
-    @xray("QA-834")
+    @xray("QA-834", "QA-833")
     def test_change_graphs(self, driver):
         dashboardPage = DashboardPage(driver)
         dashboardPage.wait_and_click(WalletActionsButtons.firstWallet)
@@ -169,6 +170,7 @@ class TestClass:
         dashboard_page.check_top_up_wallet("EOS", True)
 
     @xray("QA-983")
+    @pytest.mark.skip("нет бккеша")
     @pytest.mark.websmoke
     def test_bitcoincash_ticker_in_receive(self, driver):
         login_page = LoginPage(driver)

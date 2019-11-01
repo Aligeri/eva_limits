@@ -236,7 +236,6 @@ class TestClass:
         transactionsPage.check_first_transaction_receive("XEM", "0.00001", comment)
 
     @pytest.mark.usefixtures("login_as_basic_user")
-    @pytest.mark.skip("пуши не работают")
     @xray("QA-781")
     @pytest.mark.websmoke
     def test_cancel_transaction_without_hash(self, driver):
@@ -255,7 +254,7 @@ class TestClass:
     def test_check_minimum_amount(self, driver):
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
-        transactionsPage.send_transaction_step_1_user_id("DOGE")
+        transactionsPage.send_transaction_step_1_user_id("BTC")
         transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
         transactionsPage.check_minimum_amount("0")
 
