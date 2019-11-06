@@ -43,6 +43,12 @@ def language_change(driver):
     yield
     sql.set_user_language(ExistingBasicUser.email1178, "en")
 
+@pytest.fixture(scope="function")
+def language_change_824(driver):
+    sql.set_user_language(ExistingBasicUser.email_824, "en")
+    yield
+    sql.set_user_language(ExistingBasicUser.email_824, "en")
+
 
 class TestClass:
 
@@ -126,6 +132,22 @@ class TestClass:
         dashboardPage.select_graph_period("day")
         dashboardPage.select_graph_period("week")
         dashboardPage.select_graph_period("month")
+
+    @pytest.mark.usefixtures("language_change_824")
+    @pytest.mark.websmoke
+    @xray("QA-824")
+    def test_change_language_in_settings(self, driver):
+        dashboardPage = DashboardPage(driver)
+        loginPage = LoginPage(driver)
+        settingsPage = SettingsPage(driver)
+        loginPage.login_as_basic_user(ExistingBasicUser.email_824, ExistingBasicUser.password)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        dashboardPage.navigate_to_settings()
+        settingsPage.navigate_to_account()
+        settingsPage.select_language_in_settings("ja")
+        dashboardPage.wait_and_assert_element_text(NavigationButtons.dashboard, "ダッシュボード")
+        dashboardPage.wait_and_assert_element_text(NavigationButtons.settings, "設定")
+        dashboardPage.wait_and_assert_element_text(NavigationButtons.security, "セキュリティ")
 
     @pytest.mark.usefixtures("language_change")
     @pytest.mark.websmoke

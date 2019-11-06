@@ -4,8 +4,14 @@ from Locators.SettingsLocators import *
 import time
 from Config.Users import *
 
+LANGUAGE = {
+    "en": Account.languageEn,
+    "ja": Account.languageJa,
+    "ru": Account.languageRu,
+}
 
 class SettingsPage(Page):
+
 
     def navigate_to_account(self):
         self.wait_and_click(NavigationLinks.account)
@@ -118,3 +124,8 @@ class SettingsPage(Page):
         self.wait_until_element_visible(Account.VerificationPopup)
         self.wait_and_click(Account.SendLinkBtn)
         self.wait_until_element_visible(Account.ConfirmEmailText)
+
+    def select_language_in_settings(self, language):
+        #self.hover_over_element(LanguageSelectors.dropdown)
+        self.wait_and_click(Account.languageDropdown)
+        self.wait_and_click(LANGUAGE[language])

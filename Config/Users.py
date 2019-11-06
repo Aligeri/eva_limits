@@ -34,6 +34,7 @@ class ExistingBasicUser:
     email_765 = "vasiliyautomation+765@gmail.com"
     email_780 = "vasiliyautomation+780@gmail.com"
     email_808 = "vasiliyautomation+808@gmail.com"
+    email_824 = "vasiliyautomation+824@gmail.com" # смена языка в настройках, пустой юзер
     email_827 = "vasiliyautomation+827@gmail.com"
     email_828 = "vasiliyautomation+828@gmail.com"
     email_829 = "vasiliyautomation+829@gmail.com"

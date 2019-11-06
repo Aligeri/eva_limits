@@ -18,6 +18,11 @@ class Account:
     SendLinkBtn = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Send link']")
     ConfirmEmailText = (By.XPATH, "//div[contains(@class, 'settings__warningDescription--Oh3AO settings__description--3sdDL') and text()='Confirm email change']")
 
+    languageDropdown = (By.XPATH, '//div[text()="Language"]/div')
+    languageEn = (By.XPATH, "//option[@value='en']")
+    languageJa = (By.XPATH, "//option[@value='ja']")
+    languageRu = (By.XPATH, "//option[@value='ru']")
+
 class FiatCurrency:
     fiatCurrencyDropdown = (By.XPATH, "//select[@id='local-currency']")
     fiatUsd = (By.XPATH, "//option[@value='usd']")
