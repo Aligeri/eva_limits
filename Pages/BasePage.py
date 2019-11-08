@@ -61,6 +61,11 @@ class Page(object):
                 retries_left -= 1
         raise NoSuchElementException("Error occurred during text input")
 
+    def clear_field(self, element_locator):
+        element = self.driver.find_element(*element_locator)
+        actions = ActionChains(self.driver)
+        actions.move_to_element(element).click().click().send_keys(Keys.DELETE).perform()
+
     def get_element(self, element_locator, timeout=1):
         try:
             element = WebDriverWait(self.driver, timeout).until(

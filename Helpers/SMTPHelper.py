@@ -51,13 +51,13 @@ class SMTPHelper():
 
     def get_multisig_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "https:\/\/\w*?\.?freewallet\.org\/multisig\/email\/\w*"
+        pattern = "https:\/\/\w*?\.?freewallet\.org(\/multisig\/email\/.*?)[<\]]"
         multisig_link = re.search(pattern, email_string).group(0)
         return multisig_link
 
     def get_verification_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "https:\/\/\w*?\.?freewallet\.org(\/email-validate\/.*?)]"
+        pattern = "https:\/\/\w*?\.?freewallet\.org(\/email-validate\/.*?)[<\]]"
         verification_link = re.search(pattern, email_string).group(1)
         fixed_link = re.sub("(=3D=3D)", "==", verification_link)
         domain_link = email_url + fixed_link
@@ -65,19 +65,24 @@ class SMTPHelper():
 
     def get_registration_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "(https:\/\/\w*?\.?freewallet\.org\/email-temporary\/.*?)]"
-        registration_link = re.search(pattern, email_string).group(1)
+        try:
+            pattern = "(https:\/\/\w*?\.?freewallet\.org\/email-temporary\/.*?)[<\]]"
+            registration_link = re.search(pattern, email_string).group(1)
+        except:
+            pattern = 'claim.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            registration_link = re.sub("upn=3D", "upn=", nonfixed_link)
         return (registration_link)
 
     def get_multisig_transaction_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "(https:\/\/\w*?\.?freewallet\.org\/multisig\/tx\/.*?)]"
+        pattern = "(https:\/\/\w*?\.?freewallet\.org\/multisig\/tx\/.*?)[<\]]"
         registration_link = re.search(pattern, email_string).group(1)
         return (registration_link)
 
     def get_session_drop_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "https:\/\/\w*?\.?freewallet\.org(\/auth\/session-drop\/.*?)]"
+        pattern = "https:\/\/\w*?\.?freewallet\.org(\/auth\/session-drop\/.*?)[<\]]"
         session_link = re.search(pattern, email_string).group(1)
         fixed_link = re.sub("(=3D=3D)", "==", session_link)
         domain_link = email_url + fixed_link
@@ -101,6 +106,6 @@ class SMTPHelper():
 
     def get_change_mail_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "(https:\/\/\w*?\.?freewallet\.org\/user\/email-change-validate\/.*?)]"
+        pattern = "(https:\/\/\w*?\.?freewallet\.org\/user\/email-change-validate\/.*?)[<\]]"
         verification_link = re.search(pattern, email_string).group(1)
         return (verification_link)

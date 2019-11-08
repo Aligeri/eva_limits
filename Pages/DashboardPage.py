@@ -51,7 +51,7 @@ class DashboardPage(Page):
         assert self.get_element_text(DepositAddress.userId) is not None
         assert self.get_element_text(DepositAddress.link) is not None
         if extra_id:
-            assert self.get_element_text(DepositAddress.memo) is not None
+            assert self.get_element_text(DepositAddress.message) is not None
         self.select_wallet(currency)
         time.sleep(0.5)
 

@@ -34,6 +34,7 @@ class ExistingBasicUser:
     email_765 = "vasiliyautomation+765@gmail.com"
     email_780 = "vasiliyautomation+780@gmail.com"
     email_808 = "vasiliyautomation+808@gmail.com"
+    email_824 = "vasiliyautomation+824@gmail.com" # смена языка в настройках, пустой юзер
     email_827 = "vasiliyautomation+827@gmail.com"
     email_828 = "vasiliyautomation+828@gmail.com"
     email_829 = "vasiliyautomation+829@gmail.com"
@@ -73,6 +74,7 @@ class ExistingGoogleUser:
     userName = "Oleg Automation"
     userID = "567e6928"
     xrtWallet = "NDJBSFZCAO7WHF665KT4BTSTPZH2RPGW3EHLT4GX"
+    btcWallet = "3ESWm2sbbFmFR43muaFk1E12xGbvbU17G6"
     xrtTag = "763390057966"
     otp_secret = "gtcsl53kqtxpmv5gk5jp53j6bi7xd5ts"
 
