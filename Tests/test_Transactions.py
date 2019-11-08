@@ -42,7 +42,7 @@ def login_as_google_user(driver):
 class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
-    @xray("QA-746", "QA-740")
+    @xray("QA-746", "QA-740", "QA-767")
     @pytest.mark.websmoke
     def test_send_transaction_to_user_ID(self, driver):
         comment = str(time.time())
@@ -259,7 +259,6 @@ class TestClass:
         transactionsPage.check_minimum_amount("0")
 
     @xray("QA-780")
-    @pytest.mark.skip("Пуши для фейлов не работают")
     def test_send_double_spending_transaction(self, driver):
         comment = str(time.time())
         transactionsPage = TransactionsPage(driver)
@@ -286,10 +285,33 @@ class TestClass:
         # проверка что для смарт переводов нельзя переключать фи в инклюд состояние QA-751
         loginPage = LoginPage(driver)
         loginPage.reset_session()
-        loginPage.login_as_basic_user(RichUser.email, RichUser.password)
-        loginPage.input_pincode_login(RichUser.pincode)
+        loginPage.login_as_basic_user(ExistingBasicUser.email, ExistingBasicUser.password)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
         transactionsPage = TransactionsPage(driver)
         transactionsPage.navigate_to_send()
         transactionsPage.send_transaction_step_1_wallet_address("BTC")
-        transactionsPage.send_transaction_step_2_wallet_address(RichUser.ethWallet, "ETH")
-        transactionsPage.wait_until_element_invisible(Send.includeExcludeSwitch,3)
+        transactionsPage.send_transaction_step_2_wallet_address(ExistingBasicUser.ethWallet, "ETH")
+        transactionsPage.wait_until_element_invisible(Send.includeExcludeSwitch,1)
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-773")
+    @pytest.mark.websmoke
+    def test_send_complex_transaction_to_wallet_address(self, driver):
+        comment = str(time.time())
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_complex_transaction_step_1("XEM")
+        transactionsPage.send_complex_transaction_step_2("XEM", ExistingGoogleUser.xrtWallet, ExistingGoogleUser.xrtTag)
+        transactionsPage.send_transaction_step_3("0.00001")
+        transactionsPage.send_transaction_step_4(comment)
+        transactionsPage.find_transaction_by_comment("XEM", "0.00001", comment)
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-771")
+    @pytest.mark.websmoke
+    def test_check_minimum_amount_simple(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_wallet_address("BTC")
+        transactionsPage.send_transaction_step_2_wallet_address(ExistingGoogleUser.btcWallet, "BTC")
+        transactionsPage.check_minimum_amount("0")

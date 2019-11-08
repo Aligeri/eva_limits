@@ -72,6 +72,7 @@ class TestClass:
         settingsPage.check_email_is_verified(NewGoogleUser.email)
 
     @xray("QA-810")
+    @pytest.mark.skip("TODO")
     @pytest.mark.websmoke
     @pytest.mark.usefixtures("clear_data_for_change_mail")
     def test_change_email_for_notifications(self, driver):

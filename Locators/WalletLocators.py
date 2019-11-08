@@ -30,6 +30,7 @@ class DepositAddress:
 
     depositAddress = (By.XPATH, "//h3[text()='My deposit  address']/following-sibling::div[contains(@class, 'receive__addressText--38aaT')]")
     memo = (By.XPATH, "//h3[text()='Memo']/following-sibling::div[contains(@class, 'receive__addressText--38aaT')]")
+    message = (By.XPATH, "//h3[text()='Message']/following-sibling::div[contains(@class, 'receive__addressText--38aaT')]")
     userId = (By.XPATH, "//div[contains(@class, 'receive__userId--3hHHB')]")
     link = (By.XPATH, "//a[@target='_blank']/b")
     minimumBlock = (By.XPATH, "//div[@class='receive__minimalBlock--y7xpq']")

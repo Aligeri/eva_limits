@@ -49,6 +49,10 @@ class TransactionsPage(Page):
         self.wait_and_input_text(Send.amount, amount)
         self.wait_and_assert_element_text(Send.limitExceededTooltip, "Minimum amount 0.00000001 BTC")
 
+    def check_minimum_simple_amount(self, amount):
+        self.wait_and_input_text(Send.amount, amount)
+        self.wait_and_assert_element_text(Send.limitExceededTooltip, "Minimum amount 0.00000001 BTC")
+
     def send_transaction_step_4(self, comment):
         self.wait_and_input_text(Send.comment, comment)
         self.wait_and_click(Send.withdraw)
@@ -370,7 +374,7 @@ class TransactionsPage(Page):
         comment_formatted = 'Comment "%s"' % comment
         self.wait_and_click((By.XPATH, (
                 ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment_formatted)))
-        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Transaction processing error")
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Too many similar requests. Try again")
 
 
     def check_frozen_transaction(self):

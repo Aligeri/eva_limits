@@ -128,7 +128,7 @@ class TestClass:
 
 
 
-    @xray("QA-1037")
+    @xray("QA-1037", "QA-836")
     @pytest.mark.usefixtures("data_1037")
     def test_add_and_disable_limit(self, driver):
         loginPage = LoginPage(driver)
