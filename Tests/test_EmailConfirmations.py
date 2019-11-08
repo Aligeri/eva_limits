@@ -72,7 +72,6 @@ class TestClass:
         settingsPage.check_email_is_verified(NewGoogleUser.email)
 
     @xray("QA-810")
-    @pytest.mark.skip("TODO")
     @pytest.mark.websmoke
     @pytest.mark.usefixtures("clear_data_for_change_mail")
     def test_change_email_for_notifications(self, driver):
@@ -87,8 +86,8 @@ class TestClass:
         verification_link = email.get_change_mail_link_from_email(UserforСhangeMail.email, UserforСhangeMail.email_password, "Freewallet", "Verify changing your email address")
         settingsPage.navigate_to_link(verification_link)
         loginPage.input_pincode_login(UserforСhangeMail.pincode)
-        #settingsPage.check_email_is_not_verified(UserforСhangeMail.new_email) не работает проверка промежуточного состояния
+        #settingsPage.check_email_is_not_verified(UserforСhangeMail.new_email) # не работает проверка промежуточного состояния
         verification_link1 = email.get_verification_link_from_email(UserforСhangeMail.new_email, UserforСhangeMail.email_password,"Freewallet", "Verify your email address")
         settingsPage.navigate_to_link(verification_link1)
         loginPage.input_pincode_login(UserforСhangeMail.pincode)
-        #settingsPage.check_email_is_verified(UserforСhangeMail.new_email) не работает проверка финального состояния
+        #settingsPage.check_email_is_verified(UserforСhangeMail.new_email) # не работает проверка финального состояния
