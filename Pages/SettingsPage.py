@@ -118,7 +118,7 @@ class SettingsPage(Page):
         Меняет email на вкладке Account
         """""
         self.wait_until_element_visible(Identity.Badge)
-        self.clear_field(Account.emailNotifications)
+        self.clear_input_text(Account.emailNotifications)
         self.wait_and_input_text(Account.emailNotifications, new_email)
         self.wait_and_click(Account.SaveBtn)
         self.wait_until_element_visible(Account.VerificationPopup)
