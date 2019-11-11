@@ -65,6 +65,8 @@ class NewBasicUser:
     password = "qAwSeD123"
     pincode = "1234"
     wrong_pincode = "4321"
+    otp_secret = "3t5slsa3py5hlgaz54kxjdm4yfssqqua"
+    imap_code = "ybkuiysnyjnvsfrm"
 
 
 class ExistingGoogleUser:
