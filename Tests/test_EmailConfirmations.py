@@ -87,7 +87,9 @@ class TestClass:
         settingsPage.navigate_to_link(verification_link)
         loginPage.input_pincode_login(UserforСhangeMail.pincode)
         #settingsPage.check_email_is_not_verified(UserforСhangeMail.new_email) # не работает проверка промежуточного состояния
+        # ждем правки https://jira.adam.loc/browse/EM-7187
         verification_link1 = email.get_verification_link_from_email(UserforСhangeMail.new_email, UserforСhangeMail.email_password,"Freewallet", "Verify your email address")
         settingsPage.navigate_to_link(verification_link1)
         loginPage.input_pincode_login(UserforСhangeMail.pincode)
         #settingsPage.check_email_is_verified(UserforСhangeMail.new_email) # не работает проверка финального состояния
+        # ждем правки https://jira.adam.loc/browse/EM-7187
