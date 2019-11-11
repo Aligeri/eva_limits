@@ -215,8 +215,13 @@ class TransactionsPage(Page):
             "Urgent": Send.urgentFee
         }
         self.wait_and_click(FEE_TYPE[fee_type])
-        amount_text = "%s BTC" % amount
-        self.wait_and_assert_element_text(Send.totalWithFee, amount_text)
+        time.sleep(0.5)
+        network_fee = self.__get_network_fee()
+        arrival_amount = self.__get_arrival_amount()
+        total_amount = self.__get_total_amount()
+        a = float(network_fee) + float(arrival_amount)
+        b = float(total_amount)
+        assert a == b
 
     def check_exclude_fee(self):
         """
@@ -292,6 +297,31 @@ class TransactionsPage(Page):
         self.wait_until_element_visible(Send.firstTransaction)
 
     def find_transaction_by_comment(self, currency, amount, comment):
+        """
+        Проверяет данные самой верхней транзакции в history
+        :param currency: валюта транзакции, BTC/ETH/DOGE
+        :param amount: string с количеством валюты
+        :param comment: комментарий к транзакции
+        """
+        transaction_title = "–%s %s" % (amount, currency)
+        comment_formatted = 'Comment "%s"' % comment
+        retries_left = 10
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible((By.XPATH, (
+                        ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment_formatted)),
+                                                10)
+                self.wait_until_element_visible((By.XPATH, (
+                        ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % transaction_title)),
+                                                10)
+                return
+            except:
+                self.navigate_to_send()
+                self.navigate_to_history()
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
+
+    def find_simple_by_comment(self, currency, amount, comment):
         """
         Проверяет данные самой верхней транзакции в history
         :param currency: валюта транзакции, BTC/ETH/DOGE

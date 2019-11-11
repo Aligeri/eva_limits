@@ -8,6 +8,7 @@ class ExistingBasicUser:
     userID = "5d97f3d6"
     ethWallet = "0xd72a126aabc4f43639ee4e2b64c971bb35eec0ae"
     btcWallet = "3QUKkcHLTLjK3dG27M2tnkybDNgEeXQQoS"
+    dogeWallet = "DFNKD4dGpTAYCZjjqnpJL2WZrtk7McebFU"
     """Емейлы пустых юзеров для безопасного распараллеливания тестов где не требутся транзакции"""
     email695 = "vasiliyautomation+695@gmail.com"
     email837 = "vasiliyautomation+837@gmail.com"

@@ -295,6 +295,7 @@ class TestClass:
 
     @pytest.mark.usefixtures("login_as_basic_user")
     @xray("QA-773")
+    @pytest.mark.skip()
     @pytest.mark.websmoke
     def test_send_complex_transaction_to_wallet_address(self, driver):
         comment = str(time.time())
@@ -303,6 +304,20 @@ class TestClass:
         transactionsPage.send_complex_transaction_step_1("XEM")
         transactionsPage.send_complex_transaction_step_2("XEM", ExistingGoogleUser.xrtWallet, ExistingGoogleUser.xrtTag)
         transactionsPage.send_transaction_step_3("0.00001")
+        transactionsPage.send_transaction_step_4(comment)
+        transactionsPage.find_transaction_by_comment("XEM", "0.00001", comment)
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-773")
+    @pytest.mark.skip()
+    @pytest.mark.websmoke
+    def test_send_simple_transaction_to_yourself(self, driver):
+        comment = str(time.time())
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_wallet_address("DOGE")
+        transactionsPage.send_transaction_step_2_wallet_address("DOGE", ExistingBasicUser.dogeWallet)
+        transactionsPage.send_transaction_step_3("1")
         transactionsPage.send_transaction_step_4(comment)
         transactionsPage.find_transaction_by_comment("XEM", "0.00001", comment)
 
