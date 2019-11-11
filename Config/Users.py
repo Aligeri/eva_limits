@@ -139,6 +139,12 @@ class UserforСhangeMail:
     pincode = "7777"
     new_email = "testermail35+8101@gmail.com"
 
+class UserforResendLink:
+    email = "testermail35+811@gmail.com"
+    password = "12345678"
+    email_password = "123QWEasdZXC"
+    pincode = "7777"
+
 class CommonData:
     FWTContract = "0xf966bc1e1ab786830fd98a3f8f978940f8e5c13e"
     unsupportedSmartContract = "0x8b40761142b9aa6dc8964e61d0585995425c3d94"

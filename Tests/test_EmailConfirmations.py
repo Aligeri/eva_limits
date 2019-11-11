@@ -34,6 +34,13 @@ def clear_data_for_change_mail():
     email.delete_emails_from_gmail(UserforСhangeMail.email, UserforСhangeMail.email_password, "Freewallet", "Verify changing your email address")
     email.delete_emails_from_gmail(UserforСhangeMail.new_email, UserforСhangeMail.email_password, "Freewallet", "Verify your email address")
 
+@pytest.fixture(scope='function')
+def clear_data_for_resend_link():
+    email.delete_emails_from_gmail(UserforResendLink.email, UserforResendLink.email_password, "Freewallet", "Verify your email address")
+    sql.set_email_unverified(UserforResendLink.email)
+    yield
+    email.delete_emails_from_gmail(UserforResendLink.email, UserforResendLink.email_password, "Freewallet", "Verify your email address")
+
 class TestClass:
 
     @xray("QA-797", "QA-795")
@@ -93,3 +100,20 @@ class TestClass:
         loginPage.input_pincode_login(UserforСhangeMail.pincode)
         #settingsPage.check_email_is_verified(UserforСhangeMail.new_email) # не работает проверка финального состояния
         # ждем правки https://jira.adam.loc/browse/EM-7187
+
+    @xray("QA-811","QA-784")
+    @pytest.mark.websmoke
+    @pytest.mark.usefixtures("clear_data_for_resend_link")
+    def test_resend_link(self, driver):
+        # получение письма по resend и верификация link QA-811
+        loginPage = LoginPage(driver)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(UserforResendLink.email, UserforResendLink.password)
+        loginPage.input_pincode_login(UserforResendLink.pincode)
+        settingsPage = SettingsPage(driver)
+        settingsPage.check_email_is_loaded(UserforResendLink.email)
+        settingsPage.resend_link()
+        verification_link = email.get_verification_link_from_email(UserforResendLink.email,UserforResendLink.email_password, "Freewallet","Verify your email address")
+        settingsPage.navigate_to_link(verification_link)
+        loginPage.input_pincode_login(UserforResendLink.pincode)
+        settingsPage.check_email_is_verified(UserforResendLink.email)

@@ -129,3 +129,6 @@ class SettingsPage(Page):
         #self.hover_over_element(LanguageSelectors.dropdown)
         self.wait_and_click(Account.languageDropdown)
         self.wait_and_click(LANGUAGE[language])
+
+    def resend_link(self):
+        self.wait_and_click(Account.ResendLink)
