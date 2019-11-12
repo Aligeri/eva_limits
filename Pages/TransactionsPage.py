@@ -215,8 +215,16 @@ class TransactionsPage(Page):
             "Urgent": Send.urgentFee
         }
         self.wait_and_click(FEE_TYPE[fee_type])
+        time.sleep(0.5)
         amount_text = "%s BTC" % amount
-        self.wait_and_assert_element_text(Send.totalWithFee, amount_text)
+        network_fee = self.__get_network_fee()
+        arrival_amount = self.__get_arrival_amount()
+        total_amount = self.__get_total_amount()
+        a = float(network_fee) + float(arrival_amount)
+        b = float(total_amount)
+        assert a == b
+
+        #self.wait_and_assert_element_text(Send.totalWithFee, amount_text)
 
     def check_exclude_fee(self):
         """
