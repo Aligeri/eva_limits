@@ -132,7 +132,7 @@ class RichUser:
     btcWallet = "3NWC98QrmFZNNc3NEPcGPSDk2AqYTGEECG"
     dogeWallet = "DQbGyBMGrFyFJeSUzkTjzyraRprvkPQKpf"
 
-class UserforСhangeMail:
+class UserforChangeMail:
     email = "testermail35+810@gmail.com"
     password = "12345678"
     email_password = "123QWEasdZXC"
