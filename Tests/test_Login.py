@@ -13,7 +13,7 @@ class TestClass:
     def test_IncorrectPasswordLogin(self, driver):
         loginPage = LoginPage(driver)
         loginPage.login_as_basic_user(ExistingBasicUser.email, "12345678")
-        loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Incorrect password")
+        loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "The email and password you entered do not match our records. Please verify and try again")
         loginPage.get_base_url()
 
     @xray("QA-690", "QA-671")
