@@ -101,7 +101,7 @@ class TestClass:
         #settingsPage.check_email_is_verified(UserforСhangeMail.new_email) # не работает проверка финального состояния
         # ждем правки https://jira.adam.loc/browse/EM-7187
 
-    @xray("QA-811","QA-784")
+    @xray("QA-811", "QA-784")
     @pytest.mark.websmoke
     @pytest.mark.usefixtures("clear_data_for_resend_link")
     def test_resend_link(self, driver):
@@ -117,3 +117,4 @@ class TestClass:
         settingsPage.navigate_to_link(verification_link)
         loginPage.input_pincode_login(UserforResendLink.pincode)
         settingsPage.check_email_is_verified(UserforResendLink.email)
+

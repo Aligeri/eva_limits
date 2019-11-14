@@ -57,6 +57,16 @@ def existing_multisig(driver):
     yield
     sql.delete_multisig_emails(MultisigGoogleUser.email)
 
+@pytest.fixture(scope='function')
+def preset_for_add_second_multisig(driver):
+    email.delete_emails_from_gmail(UserforAddSecondMultisig.first_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
+    email.delete_emails_from_gmail(UserforAddSecondMultisig.second_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
+    sql.delete_multisig_emails(UserforAddSecondMultisig.email)
+    sql.add_multisig_email(UserforAddSecondMultisig.email, UserforAddSecondMultisig.first_multisig_email)
+    yield
+    email.delete_emails_from_gmail(UserforAddSecondMultisig.first_multisig_email,UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
+    email.delete_emails_from_gmail(UserforAddSecondMultisig.second_multisig_email,UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
+    sql.delete_multisig_emails(UserforAddSecondMultisig.email)
 
 class TestClass:
 
@@ -110,4 +120,27 @@ class TestClass:
         transactionsPage.cancel_transaction()
         transactionsPage.check_canceled_transaction(comment, "Email confirmation canceled by user")
 
-
+    @pytest.mark.usefixtures("preset_for_add_second_multisig")
+    @xray("QA-816")
+    @pytest.mark.websmoke
+    def test_add_second_multisig(self, driver):
+        loginPage = LoginPage(driver)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(UserforAddSecondMultisig.email, UserforAddSecondMultisig.password)
+        loginPage.input_pincode_login(UserforAddSecondMultisig.pincode)
+        securityPage = SecurityPage(driver)
+        securityPage.navigate_to_email_confirmation()
+        securityPage.add_second_multisig_address(UserforAddSecondMultisig.second_multisig_email)
+        link = email.get_multisig_link_from_email(UserforAddSecondMultisig.second_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet","Verify your multisig email")
+        securityPage.navigate_to_link(link)
+        loginPage.input_pincode_login(UserforAddSecondMultisig.pincode)
+        securityPage.navigate_to_email_confirmation()
+        securityPage.wait_and_assert_element_text(Multisig.pending_multisig_status,"Waiting for confirmation (1/2)")
+        link1 = email.get_add_multisig_link_from_email(UserforAddSecondMultisig.first_multisig_email,UserforAddSecondMultisig.email_password, "Freewallet","Verify add new confirmation email")
+        securityPage.navigate_to_link(link1)
+        loginPage.input_pincode_login(UserforAddSecondMultisig.pincode)
+        securityPage.navigate_to_email_confirmation()
+        securityPage.wait_and_assert_element_text(Multisig.disclaimer_title,"Active")
+        securityPage.wait_and_assert_element_text(Multisig.confirmedAddressFirst, UserforAddSecondMultisig.first_multisig_email)
+        #тут бы еще проверить что второй емайл прописался в подтвержденные, но у него локатор такой же как confirmedAddressFirst потому что класс такой же
+        #как отличить первый от второго не придумал пока что
