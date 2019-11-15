@@ -61,11 +61,13 @@ def existing_multisig(driver):
 def preset_for_add_second_multisig(driver):
     email.delete_emails_from_gmail(UserforAddSecondMultisig.first_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
     email.delete_emails_from_gmail(UserforAddSecondMultisig.second_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
+    email.delete_emails_from_gmail(UserforAddSecondMultisig.first_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet", "Verify add new confirmation email")
     sql.delete_multisig_emails(UserforAddSecondMultisig.email)
     sql.add_multisig_email(UserforAddSecondMultisig.email, UserforAddSecondMultisig.first_multisig_email)
     yield
-    email.delete_emails_from_gmail(UserforAddSecondMultisig.first_multisig_email,UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
-    email.delete_emails_from_gmail(UserforAddSecondMultisig.second_multisig_email,UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
+    email.delete_emails_from_gmail(UserforAddSecondMultisig.first_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
+    email.delete_emails_from_gmail(UserforAddSecondMultisig.second_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
+    email.delete_emails_from_gmail(UserforAddSecondMultisig.first_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet", "Verify add new confirmation email")
     sql.delete_multisig_emails(UserforAddSecondMultisig.email)
 
 class TestClass:
