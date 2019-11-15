@@ -283,3 +283,17 @@ class SecurityPage(Page):
     def drop_all_sessions(self):
         self.wait_and_click(ActiveSessions.allSessionsDrop)
         self.wait_and_click(ActiveSessions.dropYes)
+
+    def check_veified_multisig_addreses(self, email1, email2):
+        """
+        Проверяет на странице Security > Email confirmation два верицированных емайла
+        :param email1: первый multisig емайл
+        :param email1: второй multisig емайл
+        :return:
+        """
+        emails = self.get_elements(Multisig.confirmedAddressFirst)
+        emails_text = []
+        for i in range(len(emails)):
+            emails_text.append(self.get_text_from_webelement(emails[i]))
+        assert email1 in emails_text
+        assert email2 in emails_text

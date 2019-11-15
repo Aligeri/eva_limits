@@ -136,11 +136,9 @@ class TestClass:
         loginPage.input_pincode_login(UserforAddSecondMultisig.pincode)
         securityPage.navigate_to_email_confirmation()
         securityPage.wait_and_assert_element_text(Multisig.pending_multisig_status,"Waiting for confirmation (1/2)")
-        link1 = email.get_add_multisig_link_from_email(UserforAddSecondMultisig.first_multisig_email,UserforAddSecondMultisig.email_password, "Freewallet","Verify add new confirmation email")
+        link1 = email.get_add_multisig_link_from_email(UserforAddSecondMultisig.first_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet","Verify add new confirmation email")
         securityPage.navigate_to_link(link1)
         loginPage.input_pincode_login(UserforAddSecondMultisig.pincode)
         securityPage.navigate_to_email_confirmation()
         securityPage.wait_and_assert_element_text(Multisig.disclaimer_title,"Active")
-        securityPage.wait_and_assert_element_text(Multisig.confirmedAddressFirst, UserforAddSecondMultisig.first_multisig_email)
-        #тут бы еще проверить что второй емайл прописался в подтвержденные, но у него локатор такой же как confirmedAddressFirst потому что класс такой же
-        #как отличить первый от второго не придумал пока что
+        securityPage.check_veified_multisig_addreses(UserforAddSecondMultisig.first_multisig_email, UserforAddSecondMultisig.second_multisig_email)
