@@ -89,7 +89,7 @@ class TestClass:
         loginPage = LoginPage(driver)
         securityPage.navigate_to_email_confirmation()
         securityPage.disable_multisig()
-        link = email.get_multisig_link_from_email(ExistingBasicUser.email, ExistingBasicUser.password, "Freewallet", "Verify removing your confirmation email")
+        link = email.get_multisig_remove_link_from_email(ExistingBasicUser.email, ExistingBasicUser.password, "Freewallet", "Verify removing your confirmation email")
         securityPage.navigate_to_link(link)
         loginPage.input_pincode_login(MultisigGoogleUser.pincode)
         securityPage.navigate_to_email_confirmation()

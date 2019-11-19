@@ -223,6 +223,8 @@ class TransactionsPage(Page):
         b = float(total_amount)
         assert a == b
 
+        #self.wait_and_assert_element_text(Send.totalWithFee, amount_text)
+
     def check_exclude_fee(self):
         """
         Проверяет правильность расчета fee при exclude
