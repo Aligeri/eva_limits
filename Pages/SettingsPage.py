@@ -10,6 +10,22 @@ LANGUAGE = {
     "ru": Account.languageRu,
 }
 
+IDENTITY_FIELDS = {
+    "firstName": Identity.firstName,
+    "secondName": Identity.secondName,
+    "birthDate": Identity.birthDate,
+    "identityFile": Identity.identityFile,
+    "selfieFile": Identity.selfieFile
+}
+
+IDENTITY_ERRORS = {
+    "firstName": Identity.firstNameError,
+    "secondName": Identity.secondNameError,
+    "birthDate": Identity.birthDateError,
+    "identityFile": Identity.identityFileError,
+    "selfieFile": Identity.identityFileError
+}
+
 class SettingsPage(Page):
 
 
@@ -33,6 +49,10 @@ class SettingsPage(Page):
     def generate_wallet_key(self):
         while self.get_element_text(Mnemonic.percent) != "100%":
             self.move_mouse_in_element(Mnemonic.mouseArea)
+
+    def navigate_to_identity(self):
+        self.wait_and_click(NavigationButtons.settings)
+        self.wait_and_click(NavigationLinks.identity)
 
     def select_mnemonic_words(self, list):
         for word in list:
@@ -129,3 +149,13 @@ class SettingsPage(Page):
         #self.hover_over_element(LanguageSelectors.dropdown)
         self.wait_and_click(Account.languageDropdown)
         self.wait_and_click(LANGUAGE[language])
+
+    def check_identity_errors(self, field, value, error):
+        self.wait_and_input_text(IDENTITY_FIELDS[field], value)
+        self.wait_and_click(NavigationLinks.identity)
+        self.assert_element_text(IDENTITY_ERRORS[field], error)
+
+    def assert_identity_error_not_displayed(self, field, value):
+        self.wait_and_input_text(IDENTITY_FIELDS[field], value)
+        self.wait_and_click(NavigationLinks.identity)
+        self.wait_until_element_invisible(IDENTITY_ERRORS[field], 1)

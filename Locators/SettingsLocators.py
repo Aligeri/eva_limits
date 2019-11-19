@@ -8,6 +8,7 @@ class NavigationLinks:
     exportWallet = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='Export wallet']")
     mnemonic = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='Mnemonic phrase']")
     privateKey = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='Private key']")
+    identity = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='Identity']")
 
 class Account:
     emailNotifications = (By.XPATH, "//input[contains(@class, 'settings__input--oMx6t styles__input--2cyn3')]")
@@ -37,6 +38,18 @@ class userDetails:
 
 class Identity:
     Badge = (By.XPATH, "//div[contains(@class, 'badge__badge--D7Fy- badge__red--zTfOo settings__badge--SmlrG')]")
+    firstName = (By.XPATH, "//input[@name='name']")
+    firstNameError = (By.XPATH, "//input[@name='name']/following-sibling::div")
+    secondName = (By.XPATH, "//input[@name='surname']")
+    secondNameError = (By.XPATH, "//input[@name='surname']/following-sibling::div")
+    birthDate = (By.XPATH, "//input[@name='birthday']")
+    birthDateError = (By.XPATH, "//input[@name='birthday']/following-sibling::div")
+    identityFile = (By.XPATH, "//input[@name='identity']")
+    identityFileError = (By.XPATH, "//input[@name='identity']/following-sibling::div")
+    selfieFile = (By.XPATH, "//input[@name='selfie']")
+    selfieFileError = (By.XPATH, "//input[@name='selfie']/following-sibling::div")
+    submit = (By.XPATH, "//button[contains(@class, 'tab-kyc__submit--18iGh')]")
+
 
 class Mnemonic:
     gotIt = (By.XPATH, ".//a[@class='settings__tooltipAction--3DkWd' and text()='Got it']")
