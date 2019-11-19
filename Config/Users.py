@@ -125,6 +125,7 @@ class UserforChangeUserId:
     pincode = "7777"
 
 class RichUser:
+    '''юзер с баблом на балансе в нескольких валютах'''
     email = "testermail35+751@gmail.com"
     password = "12345678"
     pincode = "7777"
@@ -149,6 +150,15 @@ class UserforAddSecondMultisig:
     email = "testermail35+816@gmail.com"
     first_multisig_email = "testermail35@gmail.com"
     second_multisig_email = "testermail35+816@gmail.com"
+    password = "12345678"
+    email_password = "123QWEasdZXC"
+    pincode = "7777"
+
+class UserforMultisigTransaction:
+    '''юзер с баблом на балансе в BTC и DOGE и включенным мультисигом на два адреса'''
+    email = "testermail35+762@gmail.com"
+    first_multisig_email = "testermail35+762@gmail.com"
+    second_multisig_email = "testermail35+7622@gmail.com"
     password = "12345678"
     email_password = "123QWEasdZXC"
     pincode = "7777"

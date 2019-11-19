@@ -95,8 +95,13 @@ class SMTPHelper():
 
     def get_multisig_transaction_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "(https:\/\/\w*?\.?freewallet\.org\/multisig\/tx\/.*?)[<\]]"
-        registration_link = re.search(pattern, email_string).group(1)
+        try:
+            pattern = "(https:\/\/\w*?\.?freewallet\.org\/multisig\/tx\/.*?)[<\]]"
+            registration_link = re.search(pattern, email_string).group(1)
+        except:
+            pattern = 'this transaction.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            registration_link = re.sub("upn=3D", "upn=", nonfixed_link)
         return (registration_link)
 
     def get_session_drop_link_from_email(self, address, password, email_from, email_subject=''):

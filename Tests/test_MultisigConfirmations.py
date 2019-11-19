@@ -65,10 +65,21 @@ def preset_for_add_second_multisig(driver):
     sql.delete_multisig_emails(UserforAddSecondMultisig.email)
     sql.add_multisig_email(UserforAddSecondMultisig.email, UserforAddSecondMultisig.first_multisig_email)
     yield
-    email.delete_emails_from_gmail(UserforAddSecondMultisig.first_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
-    email.delete_emails_from_gmail(UserforAddSecondMultisig.second_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet", "Verify your multisig email")
-    email.delete_emails_from_gmail(UserforAddSecondMultisig.first_multisig_email, UserforAddSecondMultisig.email_password, "Freewallet", "Verify add new confirmation email")
+    email.delete_emails_from_gmail(UserforMultisigTransaction.first_multisig_email, UserforMultisigTransaction.email_password, "Freewallet", "Verify transaction")
+    email.delete_emails_from_gmail(UserforMultisigTransaction.second_multisig_email, UserforMultisigTransaction.email_password, "Freewallet", "Verify transaction")
     sql.delete_multisig_emails(UserforAddSecondMultisig.email)
+
+@pytest.fixture(scope='function')
+def preset_for_multisig_transaction(driver):
+    email.delete_emails_from_gmail(UserforMultisigTransaction.first_multisig_email, UserforMultisigTransaction.email_password, "Freewallet", "Verify transaction")
+    email.delete_emails_from_gmail(UserforMultisigTransaction.second_multisig_email, UserforMultisigTransaction.email_password, "Freewallet", "Verify transaction")
+    sql.delete_multisig_emails(UserforMultisigTransaction.email)
+    sql.add_multisig_email(UserforMultisigTransaction.email, UserforMultisigTransaction.first_multisig_email)
+    sql.add_multisig_email(UserforMultisigTransaction.email, UserforMultisigTransaction.second_multisig_email)
+    yield
+    email.delete_emails_from_gmail(UserforMultisigTransaction.first_multisig_email, UserforMultisigTransaction.email_password, "Freewallet", "Verify transaction")
+    email.delete_emails_from_gmail(UserforMultisigTransaction.second_multisig_email, UserforMultisigTransaction.email_password, "Freewallet", "Verify transaction")
+    sql.delete_multisig_emails(UserforMultisigTransaction.email)
 
 class TestClass:
 
@@ -144,3 +155,25 @@ class TestClass:
         securityPage.navigate_to_email_confirmation()
         securityPage.wait_and_assert_element_text(Multisig.disclaimer_title,"Active")
         securityPage.check_veified_multisig_addreses(UserforAddSecondMultisig.first_multisig_email, UserforAddSecondMultisig.second_multisig_email)
+
+    @pytest.mark.usefixtures("preset_for_multisig_transaction")
+    @xray("QA-762")
+    @pytest.mark.websmoke
+    def test_multisig_transaction_with_2_emails(self, driver):
+        loginPage = LoginPage(driver)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(UserforMultisigTransaction.email, UserforMultisigTransaction.password)
+        loginPage.input_pincode_login(UserforMultisigTransaction.pincode)
+        comment = str(time.time())
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_to_user_id('DOGE','0.1',RichUser.email,comment)
+        transactionsPage.check_unconfirmed_transaction_by_comment(comment)
+        link = email.get_multisig_transaction_link_from_email(UserforMultisigTransaction.first_multisig_email, UserforMultisigTransaction.email_password, "Freewallet", "Verify transaction")
+        transactionsPage.navigate_to_link(link)
+        link1 = email.get_multisig_transaction_link_from_email(UserforMultisigTransaction.second_multisig_email, UserforMultisigTransaction.email_password, "Freewallet", "Verify transaction")
+        transactionsPage.navigate_to_link(link1)
+        loginPage.input_pincode_login(UserforAddSecondMultisig.pincode)
+        transactionsPage.check_completed_transaction(comment)
+
+
