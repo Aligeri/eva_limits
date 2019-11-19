@@ -100,7 +100,7 @@ class SettingsPage(Page):
         Меняет имя пользователя на вкладке UserDetails
         """""
         self.wait_until_element_visible(Identity.Badge)
-        self.clear_field(userDetails.Name)
+        self.clear_input_text(userDetails.Name)
         self.wait_and_input_text(userDetails.Name, name)
         self.wait_and_click(userDetails.SaveBtn)
 
@@ -109,7 +109,7 @@ class SettingsPage(Page):
         Меняет user id на вкладке UserDetails
         """""
         self.wait_until_element_visible(Identity.Badge)
-        self.clear_field(userDetails.UserId)
+        self.clear_input_text(userDetails.UserId)
         self.wait_and_input_text(userDetails.UserId, new_id)
         self.wait_and_click(userDetails.SaveBtn)
 
