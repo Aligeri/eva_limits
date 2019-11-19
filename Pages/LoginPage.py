@@ -61,7 +61,7 @@ class LoginPage(Page):
                     self.wait_and_input_text(LoginPageLocators.totp, auth.now())
                     self.wait_and_click(LoginPageLocators.totpSubmit)
                     print("second totp")
-        except WebDriverException as e:
+        except:
             self.driver.switch_to.window(main_page)
         self.driver.switch_to.window(main_page)
 
