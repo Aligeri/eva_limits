@@ -91,7 +91,8 @@ class DashboardPage(Page):
             "Dogecoin": ReceiveWallets.doge,
             "Ethereum": ReceiveWallets.eth,
             "EOS": ReceiveWallets.eos,
-            "XEM": ReceiveWallets.xem
+            "XEM": ReceiveWallets.xem,
+            "XMR": ReceiveWallets.xmr
         }
         self.wait_and_click(WALLET[wallet])
 
@@ -106,7 +107,8 @@ class DashboardPage(Page):
             "Bitcoin Cash": TopUpWallets.bcc,
             "Ethereum": TopUpWallets.eth,
             "Doge": TopUpWallets.doge,
-            "EOS": TopUpWallets.eos
+            "EOS": TopUpWallets.eos,
+            "XMR": TopUpWallets.xmr
         }
         self.wait_and_click(WALLET[wallet])
 

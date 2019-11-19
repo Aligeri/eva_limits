@@ -209,7 +209,7 @@ class TestClass:
         dashboard_page.select_wallet("Bitcoin")
         dashboard_page.check_top_up_wallet("Ethereum", True)
         dashboard_page.check_top_up_wallet("Doge", True)
-        dashboard_page.check_top_up_wallet("EOS", True)
+        dashboard_page.check_top_up_wallet("XMR", True)
 
     @xray("QA-983")
     @pytest.mark.skip("нет бккеша")

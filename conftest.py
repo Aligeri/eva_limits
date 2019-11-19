@@ -31,12 +31,15 @@ def driver(request, get_url):
 
     #options.add_argument('--start-maximized')
     headless = False
+    options.add_argument('lang=en')
     if headless == True:
         options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument('--disable-mobile-emulation')
         options.add_argument('--disable-device-emulation')
+        options.add_argument('lang=en')
+        options.add_experimental_option('prefs', {'intl.accept_languages': 'en,en_US'})
     #driverpath = "D:\FC\chromedriver.exe"
     driver = webdriver.Chrome(executable_path=driverpath, options=options)  # Временное решение, потом допилю подхват драйвера из PATH
     if headless == True:
