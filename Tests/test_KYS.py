@@ -15,6 +15,7 @@ sql = SQLHelper()
 class TestClass:
 
     @xray("QA-1611")
+    @pytest.mark.websmoke
     def test_russian_letters_in_KYS_fields(self, driver):
         loginPage = LoginPage(driver)
         settingsPage = SettingsPage(driver)
@@ -25,6 +26,7 @@ class TestClass:
         settingsPage.check_identity_errors("secondName", "Петров", "Name must be entered in Latin characters")
 
     @xray("QA-1612")
+    @pytest.mark.websmoke
     def test_symbols_in_KYS_fields(self, driver):
         loginPage = LoginPage(driver)
         settingsPage = SettingsPage(driver)
@@ -45,6 +47,7 @@ class TestClass:
         settingsPage.check_identity_errors("birthDate", date_today, "Incorrect data format")
 
     @xray("QA-1614")
+    @pytest.mark.websmoke
     def test_18_years_ago_date_in_KYS_fields(self, driver):
         loginPage = LoginPage(driver)
         settingsPage = SettingsPage(driver)
@@ -68,6 +71,7 @@ class TestClass:
         settingsPage.check_identity_errors("birthDate", date_118_years_ago, "Incorrect data format")
 
     @xray("QA-1616")
+    @pytest.mark.websmoke
     def test_1_years_later_date_in_KYS_fields(self, driver):
         loginPage = LoginPage(driver)
         settingsPage = SettingsPage(driver)
@@ -123,6 +127,7 @@ class TestClass:
         settingsPage.check_identity_errors_file_upload("selfieFile", file_path, "File size must be less than 10MB")
 
     @xray("QA-1621")
+    @pytest.mark.websmoke
     def test_normal_size_file_in_KYS_fields(self, driver):
         loginPage = LoginPage(driver)
         settingsPage = SettingsPage(driver)
