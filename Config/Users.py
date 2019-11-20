@@ -163,6 +163,15 @@ class UserforMultisigTransaction:
     email_password = "123QWEasdZXC"
     pincode = "7777"
 
+class UserforDisableMultisig:
+    '''юзер с включенным мультисигом на два адреса, для последующего выключения'''
+    email = "testermail35+899@gmail.com"
+    first_multisig_email = "testermail35+899@gmail.com"
+    second_multisig_email = "testermail35+8999@gmail.com"
+    password = "12345678"
+    email_password = "123QWEasdZXC"
+    pincode = "7777"
+
 class CommonData:
     FWTContract = "0xf966bc1e1ab786830fd98a3f8f978940f8e5c13e"
     unsupportedSmartContract = "0x8b40761142b9aa6dc8964e61d0585995425c3d94"

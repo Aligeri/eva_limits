@@ -81,6 +81,18 @@ def preset_for_multisig_transaction(driver):
     email.delete_emails_from_gmail(UserforMultisigTransaction.second_multisig_email, UserforMultisigTransaction.email_password, "Freewallet", "Verify transaction")
     sql.delete_multisig_emails(UserforMultisigTransaction.email)
 
+@pytest.fixture(scope='function')
+def preset_for_disable_multisig(driver):
+    email.delete_emails_from_gmail(UserforDisableMultisig.first_multisig_email, UserforDisableMultisig.email_password, "Freewallet", "Verify removing your confirmation email")
+    email.delete_emails_from_gmail(UserforDisableMultisig.second_multisig_email, UserforDisableMultisig.email_password, "Freewallet", "Verify removing your confirmation email")
+    sql.delete_multisig_emails(UserforDisableMultisig.email)
+    sql.add_multisig_email(UserforDisableMultisig.email, UserforDisableMultisig.first_multisig_email)
+    sql.add_multisig_email(UserforDisableMultisig.email, UserforDisableMultisig.second_multisig_email)
+    yield
+    email.delete_emails_from_gmail(UserforDisableMultisig.first_multisig_email, UserforDisableMultisig.email_password, "Freewallet", "Verify removing your confirmation email")
+    email.delete_emails_from_gmail(UserforDisableMultisig.second_multisig_email, UserforDisableMultisig.email_password, "Freewallet", "Verify removing your confirmation email")
+    sql.delete_multisig_emails(UserforDisableMultisig.email)
+
 class TestClass:
 
     @pytest.mark.usefixtures("data_basic_user")
@@ -112,7 +124,7 @@ class TestClass:
         loginPage = LoginPage(driver)
         securityPage.navigate_to_email_confirmation()
         securityPage.disable_multisig()
-        link = email.get_multisig_link_from_email(ExistingBasicUser.email, ExistingBasicUser.password, "Freewallet", "Verify removing your confirmation email")
+        link = email.get_disable_multisig_link_from_email(ExistingBasicUser.email, ExistingBasicUser.password, "Freewallet", "Verify removing your confirmation email")
         securityPage.navigate_to_link(link)
         loginPage.input_pincode_login(MultisigGoogleUser.pincode)
         securityPage.navigate_to_email_confirmation()
@@ -176,4 +188,22 @@ class TestClass:
         loginPage.input_pincode_login(UserforAddSecondMultisig.pincode)
         transactionsPage.check_completed_transaction(comment)
 
+    @pytest.mark.usefixtures("preset_for_disable_multisig")
+    @xray("QA-899")
+    @pytest.mark.websmoke
+    def test_disable_multisig_for_2_emails(self, driver):
+        loginPage = LoginPage(driver)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(UserforDisableMultisig.email, UserforMultisigTransaction.password)
+        loginPage.input_pincode_login(UserforDisableMultisig.pincode)
+        securityPage = SecurityPage(driver)
+        securityPage.navigate_to_email_confirmation()
+        securityPage.disable_multisig()
+        link = email.get_disable_multisig_link_from_email(UserforDisableMultisig.first_multisig_email, UserforDisableMultisig.email_password, "Freewallet", "Verify removing your confirmation email")
+        securityPage.navigate_to_link(link)
+        link1 = email.get_disable_multisig_link_from_email(UserforDisableMultisig.first_multisig_email, UserforDisableMultisig.email_password, "Freewallet", "Verify removing your confirmation email")
+        securityPage.navigate_to_link(link1)
+        loginPage.input_pincode_login(UserforDisableMultisig.pincode)
+        securityPage.navigate_to_email_confirmation()
+        securityPage.wait_and_assert_element_text(Multisig.email1, '')
 
