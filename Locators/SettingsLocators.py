@@ -46,8 +46,10 @@ class Identity:
     birthDateError = (By.XPATH, "//input[@name='birthday']/following-sibling::div")
     identityFile = (By.XPATH, "//input[@name='identity']")
     identityFileError = (By.XPATH, "//input[@name='identity']/following-sibling::div")
+    identityFileName = (By.XPATH, "//input[@name='identity']/following-sibling::span[contains(@class, 'input-image__name--2A6q9')]")
     selfieFile = (By.XPATH, "//input[@name='selfie']")
     selfieFileError = (By.XPATH, "//input[@name='selfie']/following-sibling::div")
+    selfieFileName = (By.XPATH, "//input[@name='selfie']/following-sibling::span[contains(@class, 'input-image__name--2A6q9')]")
     submit = (By.XPATH, "//button[contains(@class, 'tab-kyc__submit--18iGh')]")
 
 

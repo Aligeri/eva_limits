@@ -98,13 +98,38 @@ class TestClass:
         settingsPage.navigate_to_identity()
         settingsPage.check_identity_errors("birthDate", "qwertyuiopasdfghjklzxcvbnm,./;\[]<>?:'\[p]!@#$%^&*()_+-=¡™£¢∞§¶•ªº", "Required")
 
-    @xray("QA-1618")
-    def test_symbols_in_date_KYS_field(self, driver):
+    @xray("QA-1620")
+    def test_low_size_file_in_KYS_fields(self, driver):
         loginPage = LoginPage(driver)
         settingsPage = SettingsPage(driver)
         loginPage.login_as_basic_user(ExistingBasicUser.email1611, ExistingBasicUser.password)
         loginPage.input_pincode_login(ExistingBasicUser.pincode)
         settingsPage.navigate_to_identity()
         folder_path = os.path.abspath(os.path.dirname(__file__))
-        file_path = os.path.join(folder_path, "data/1620.png")
-        settingsPage.check_identity_errors("identityFile", file_path, "File size must be at least 500KB")
+        file_path = os.path.join(folder_path, "data/low_size_file.png")
+        settingsPage.check_identity_errors_file_upload("identityFile", file_path, "File size must be at least 500KB")
+        settingsPage.check_identity_errors_file_upload("selfieFile", file_path, "File size must be at least 500KB")
+
+    @xray("QA-1619")
+    def test_high_size_file_in_KYS_fields(self, driver):
+        loginPage = LoginPage(driver)
+        settingsPage = SettingsPage(driver)
+        loginPage.login_as_basic_user(ExistingBasicUser.email1611, ExistingBasicUser.password)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        settingsPage.navigate_to_identity()
+        folder_path = os.path.abspath(os.path.dirname(__file__))
+        file_path = os.path.join(folder_path, "data/high_size_file.png")
+        settingsPage.check_identity_errors_file_upload("identityFile", file_path, "File size must be less than 10MB")
+        settingsPage.check_identity_errors_file_upload("selfieFile", file_path, "File size must be less than 10MB")
+
+    @xray("QA-1621")
+    def test_normal_size_file_in_KYS_fields(self, driver):
+        loginPage = LoginPage(driver)
+        settingsPage = SettingsPage(driver)
+        loginPage.login_as_basic_user(ExistingBasicUser.email1611, ExistingBasicUser.password)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        settingsPage.navigate_to_identity()
+        folder_path = os.path.abspath(os.path.dirname(__file__))
+        file_path = os.path.join(folder_path, "data/normal_size_file.png")
+        settingsPage.check_identity_error_not_displayed_file_upload("identityFile", file_path)
+        settingsPage.check_identity_error_not_displayed_file_upload("selfieFile", file_path)

@@ -26,6 +26,11 @@ IDENTITY_ERRORS = {
     "selfieFile": Identity.identityFileError
 }
 
+IDENTITY_FILENAMES = {
+    "identityFile": Identity.identityFileName,
+    "selfieFile": Identity.selfieFileName
+}
+
 class SettingsPage(Page):
 
 
@@ -155,7 +160,20 @@ class SettingsPage(Page):
         self.wait_and_click(NavigationLinks.identity)
         self.assert_element_text(IDENTITY_ERRORS[field], error)
 
+    def check_identity_errors_file_upload(self, field, value, error):
+        self.upload_file(IDENTITY_FIELDS[field], value)
+        self.assert_element_text(IDENTITY_ERRORS[field], error)
+
     def assert_identity_error_not_displayed(self, field, value):
         self.wait_and_input_text(IDENTITY_FIELDS[field], value)
         self.wait_and_click(NavigationLinks.identity)
         self.wait_until_element_invisible(IDENTITY_ERRORS[field], 1)
+
+    def check_identity_error_not_displayed_file_upload(self, field, value):
+        self.upload_file(IDENTITY_FIELDS[field], value)
+        self.wait_until_element_visible(IDENTITY_FILENAMES[field])
+        self.wait_until_element_invisible(IDENTITY_ERRORS[field], 1)
+
+    def send_file(self, field, value):
+        a = self.driver.find_element(*IDENTITY_FIELDS[field])
+        a.send_keys(value)

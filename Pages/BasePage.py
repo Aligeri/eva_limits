@@ -61,6 +61,11 @@ class Page(object):
                 retries_left -= 1
         raise NoSuchElementException("Error occurred during text input")
 
+    def upload_file(self, element_locator, file_path):
+        WebDriverWait(self.driver, 5).until(EC.presence_of_element_located(element_locator))
+        element = self.driver.find_element(*element_locator)
+        element.send_keys(file_path)
+
     def clear_field(self, element_locator):
         element = self.driver.find_element(*element_locator)
         actions = ActionChains(self.driver)
