@@ -229,13 +229,11 @@ class TestClass:
         loginPage.input_pincode_login(UserforDeleteOneMultisigAddress.pincode)
         securityPage = SecurityPage(driver)
         securityPage.navigate_to_email_confirmation()
-        time.sleep(2)
         securityPage.delete_one_multisig_address(UserforDeleteOneMultisigAddress.first_multisig_email)
-        '''тут тапает всегда по верхнему крестику, а порядок емайлов произвольный на странице и иногда первый оказывается вторым, 
-        я проверял  на отладке - в wait_and_click_element_within_webelement он уходит всегда с правильным веб элементом, 
-        который содержит именно тот емайл для которого я вызываю securityPage.delete_one_multisig_address, 
-        но вот внутри wait_and_click_element_within_webelement происходит клик всегда по первому верхнему крестику, 
-        а не по крестику внутри нужного веб эклемента. почему ?
-        '''
-        time.sleep(2)
+        link = email.get_delete_one_multisig_address_link_from_email(UserforDeleteOneMultisigAddress.first_multisig_email, UserforDeleteOneMultisigAddress.email_password, "Freewallet", "Verify removing your confirmation email")
+        securityPage.navigate_to_link(link)
+        loginPage.input_pincode_login(UserforDeleteOneMultisigAddress.pincode)
+        securityPage.navigate_to_email_confirmation()
+        securityPage.wait_until_element_visible(Multisig.confirmedAddressFirst)
+        securityPage.wait_and_assert_element_text(Multisig.confirmedAddressFirst, UserforDeleteOneMultisigAddress.second_multisig_email)
 
