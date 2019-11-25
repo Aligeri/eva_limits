@@ -297,3 +297,13 @@ class SecurityPage(Page):
             emails_text.append(self.get_text_from_webelement(emails[i]))
         assert email1 in emails_text
         assert email2 in emails_text
+
+    def delete_one_multisig_address(self,  email):
+        self.wait_until_element_visible(Multisig.confirmedAddressFirst)
+        emails = self.get_elements(Multisig.confirmedAddressFirst)
+        for i in range(len(emails)):
+            email_text = self.get_text_from_webelement(emails[i])
+            if email_text == email:
+                self.wait_and_click_element_within_webelement(emails[i], Multisig.remove_icon)
+                break
+

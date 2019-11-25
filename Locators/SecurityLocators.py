@@ -97,6 +97,7 @@ class Multisig:
     confirmedAddressFirst = (By.XPATH, "//div[contains(@class, 'tab-multisig__confirmedEmailItem--3LH85')]")
     pending_multisig_status = (By.XPATH, "//div[contains(@class, 'multisig__pendingEmailItemStatus')]")
     disclaimer_title = (By.XPATH, "//h2[contains(@class, 'disclaimer__title--3-6C7')]")
+    remove_icon = (By.XPATH, "//div[contains(@class, 'tab-multisig__emailItemRemove--1646k')]")
 
 class Password:
     password = (By.XPATH, "//input[@name='password']")

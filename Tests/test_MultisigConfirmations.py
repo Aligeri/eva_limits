@@ -93,6 +93,18 @@ def preset_for_disable_multisig(driver):
     email.delete_emails_from_gmail(UserforDisableMultisig.second_multisig_email, UserforDisableMultisig.email_password, "Freewallet", "Verify removing your confirmation email")
     sql.delete_multisig_emails(UserforDisableMultisig.email)
 
+@pytest.fixture(scope='function')
+def preset_for_delete_one_multisig_address(driver):
+    email.delete_emails_from_gmail(UserforDeleteOneMultisigAddress.first_multisig_email, UserforDeleteOneMultisigAddress.email_password, "Freewallet", "Verify removing your confirmation email")
+    email.delete_emails_from_gmail(UserforDeleteOneMultisigAddress.second_multisig_email, UserforDeleteOneMultisigAddress.email_password, "Freewallet", "Verify removing your confirmation email")
+    sql.delete_multisig_emails(UserforDeleteOneMultisigAddress.email)
+    sql.add_multisig_email(UserforDeleteOneMultisigAddress.email, UserforDeleteOneMultisigAddress.first_multisig_email)
+    sql.add_multisig_email(UserforDeleteOneMultisigAddress.email, UserforDeleteOneMultisigAddress.second_multisig_email)
+    yield
+    email.delete_emails_from_gmail(UserforDeleteOneMultisigAddress.first_multisig_email, UserforDeleteOneMultisigAddress.email_password, "Freewallet", "Verify removing your confirmation email")
+    email.delete_emails_from_gmail(UserforDeleteOneMultisigAddress.second_multisig_email, UserforDeleteOneMultisigAddress.email_password, "Freewallet", "Verify removing your confirmation email")
+    sql.delete_multisig_emails(UserforDeleteOneMultisigAddress.email)
+
 class TestClass:
 
     @pytest.mark.usefixtures("data_basic_user")
@@ -206,4 +218,24 @@ class TestClass:
         loginPage.input_pincode_login(UserforDisableMultisig.pincode)
         securityPage.navigate_to_email_confirmation()
         securityPage.wait_and_assert_element_text(Multisig.email1, '')
+
+    @pytest.mark.usefixtures("preset_for_delete_one_multisig_address")
+    @xray("QA-1681")
+    @pytest.mark.websmoke
+    def test_delete_one_multisig_address(self, driver):
+        loginPage = LoginPage(driver)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(UserforDeleteOneMultisigAddress.email, UserforMultisigTransaction.password)
+        loginPage.input_pincode_login(UserforDeleteOneMultisigAddress.pincode)
+        securityPage = SecurityPage(driver)
+        securityPage.navigate_to_email_confirmation()
+        time.sleep(2)
+        securityPage.delete_one_multisig_address(UserforDeleteOneMultisigAddress.first_multisig_email)
+        '''тут тапает всегда по верхнему крестику, а порядок емайлов произвольный на странице и иногда первый оказывается вторым, 
+        я проверял  на отладке - в wait_and_click_element_within_webelement он уходит всегда с правильным веб элементом, 
+        который содержит именно тот емайл для которого я вызываю securityPage.delete_one_multisig_address, 
+        но вот внутри wait_and_click_element_within_webelement происходит клик всегда по первому верхнему крестику, 
+        а не по крестику внутри нужного веб эклемента. почему ?
+        '''
+        time.sleep(2)
 
