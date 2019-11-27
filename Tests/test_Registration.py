@@ -125,7 +125,7 @@ class TestClass:
         loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Something went wrong. Try again later.")
 
     @pytest.mark.usefixtures("data_1074")
-    @xray("QA-1074")
+    @xray("QA-1074", "QA-1073")
     @pytest.mark.websmoke
     def test_pin_codes_must_match(self, driver):
         loginPage = LoginPage(driver)

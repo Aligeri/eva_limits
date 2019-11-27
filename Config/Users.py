@@ -45,6 +45,8 @@ class ExistingBasicUser:
     email1523 = "vasiliyautomation+1523@gmail.com"
     email1524 = "vasiliyautomation+1524@gmail.com"
     email1525 = "vasiliyautomation+1524@gmail.com"
+    email_1526 = "vasiliyautomation+1526@gmail.com" # отправка транзакций с 2фа, доге
+    email_1528 = "vasiliyautomation+1528@gmail.com"
     email1611 = "vasiliyautomation+1611@gmail.com"
     highEmail = "Vasiliyautomation@gmail.com"
 

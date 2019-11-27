@@ -330,3 +330,17 @@ class TestClass:
         transactionsPage.send_transaction_step_1_wallet_address("BTC")
         transactionsPage.send_transaction_step_2_wallet_address(ExistingGoogleUser.btcWallet, "BTC")
         transactionsPage.check_minimum_amount("0")
+
+    @pytest.mark.usefixtures("login_as_basic_user")
+    @xray("QA-1081")
+    @pytest.mark.websmoke
+    def test_send_minimum_amount_transaction(self, driver):
+        comment = str(time.time())
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_send()
+        transactionsPage.send_transaction_step_1_user_id("ETH")
+        transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
+        amount = transactionsPage.send_minimum_amount_step_3()
+        transactionsPage.send_transaction_step_4(comment)
+        transactionsPage.find_transaction_by_comment("ETH", amount, comment)
+
