@@ -60,8 +60,9 @@ def get_xray_keys(items):
 
 class PytestXrayPlugin(object):
     def __init__(self, username, password, testplan, test_execution):
+        self.server = 'https://jira-eva.flora.ltfs.tools'
         self.options = {
-            'server': 'https://jira.adam.loc',
+            'server': self.server,
             'verify': False,  # SSL validation off because Jira use self signed certificate
         }
         self.username = username
@@ -112,7 +113,7 @@ class PytestXrayPlugin(object):
                 self.testplan
             ]
         }
-        execution_id = requests.post(("https://jira.adam.loc/rest/raven/1.0/api/testexec/%s/test" % self.test_execution), json=add_tests, auth=HTTPBasicAuth("solinichenko", "madokaqWeaSd123"), verify=False)
+        execution_id = requests.post(("%s/rest/raven/1.0/api/testexec/%s/test" % (self.server, self.test_execution)), json=add_tests, auth=HTTPBasicAuth("solinichenko", "madokaqWeaSd123"), verify=False)
         return execution_id
 
     def create_execution_and_associate_with_smoke(self):
@@ -202,11 +203,11 @@ class PytestXrayPlugin(object):
                 "status": status
             }
         try:
-            a = requests.get("https://jira.adam.loc/rest/raven/1.0/api/testrun/?testExecIssueKey=%s&testIssueKey=%s" % (test_execution, issue_key),
+            a = requests.get("%s/rest/raven/1.0/api/testrun/?testExecIssueKey=%s&testIssueKey=%s" % (self.server, test_execution, issue_key),
                              auth=HTTPBasicAuth(self.username, self.password), verify=False)
             b = a.json()
             c = b.get("id")
-            d = requests.put(("https://jira.adam.loc/rest/raven/1.0/api/testrun/%s/" % c), json=jsontest,
+            d = requests.put(("%s/rest/raven/1.0/api/testrun/%s/" % (self.server, c)), json=jsontest,
                              auth=HTTPBasicAuth(self.username, self.password), verify=False)
         except:
             print("there is no %s test in %s execution" % (issue_key, test_execution))
