@@ -113,7 +113,7 @@ class PytestXrayPlugin(object):
                 self.testplan
             ]
         }
-        execution_id = requests.post(("%s/rest/raven/1.0/api/testexec/%s/test" % (self.server, self.test_execution)), json=add_tests, auth=HTTPBasicAuth("solinichenko", "madokaqWeaSd123"), verify=False)
+        execution_id = requests.post(("%s/rest/raven/1.0/api/testexec/%s/test" % (self.server, self.test_execution)), json=add_tests, auth=HTTPBasicAuth(self.username, self.password), verify=False)
         return execution_id
 
     def create_execution_and_associate_with_smoke(self):

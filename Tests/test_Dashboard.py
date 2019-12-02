@@ -120,7 +120,6 @@ class TestClass:
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_buy_with_a_card()
         dashboardPage.select_buy_currency("ETH")
-        dashboardPage.select_buy_currency("LTC")
         dashboardPage.select_buy_currency("BTC")
 
     @pytest.mark.usefixtures("login_as_basic_user")
