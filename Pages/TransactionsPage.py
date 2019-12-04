@@ -407,7 +407,7 @@ class TransactionsPage(Page):
         """
 
         self.wait_and_click(Send.firstErrorTransaction)
-        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Cannot send eth to yourself pay in address")
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "You cannot send circularly eth to your pay in addresss")
 
     def check_doublespending_transaction(self, comment):
         """

@@ -14,7 +14,8 @@ IDENTITY_FIELDS = {
     "firstName": Identity.firstName,
     "secondName": Identity.secondName,
     "birthDate": Identity.birthDate,
-    "identityFile": Identity.identityFile,
+    "identityFrontFile": Identity.identityFrontFile,
+    "identityBackFile": Identity.identityBackFile,
     "selfieFile": Identity.selfieFile
 }
 
@@ -22,12 +23,14 @@ IDENTITY_ERRORS = {
     "firstName": Identity.firstNameError,
     "secondName": Identity.secondNameError,
     "birthDate": Identity.birthDateError,
-    "identityFile": Identity.identityFileError,
-    "selfieFile": Identity.identityFileError
+    "identityFrontFile": Identity.identityFrontFileError,
+    "identityBackFile": Identity.identityBackFileError,
+    "selfieFile": Identity.selfieFileError
 }
 
 IDENTITY_FILENAMES = {
-    "identityFile": Identity.identityFileName,
+    "identityFrontFile": Identity.identityFrontFileName,
+    "identityBackFile": Identity.identityBackFileName,
     "selfieFile": Identity.selfieFileName
 }
 

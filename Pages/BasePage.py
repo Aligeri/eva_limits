@@ -257,6 +257,8 @@ class Page(object):
         """
         self.driver.execute_script("window.localStorage.clear();")
         self.driver.execute_script("window.sessionStorage.clear();")
+        self.driver.execute_script("indexedDB.deleteDatabase('firebaseLocalStorageDb')")
+        self.driver.execute_script('indexedDB.deleteDatabase("redux-persist-fw")')
         self.get_base_url()
 
         retries_left = 4
@@ -272,6 +274,8 @@ class Page(object):
             if not (self.driver.current_url == self.url or self.driver.current_url == ("%sauth/login" % self.url)):
                 self.driver.execute_script("window.localStorage.clear();")
                 self.driver.execute_script("window.sessionStorage.clear();")
+                self.driver.execute_script("indexedDB.deleteDatabase('firebaseLocalStorageDb')")
+                self.driver.execute_script('indexedDB.deleteDatabase("redux-persist-fw")')
                 self.get_base_url()
                 retries_left -= 1
             else:
