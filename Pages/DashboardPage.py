@@ -27,12 +27,25 @@ FILTER_APPLY = {
     "Pay Out": Filters.payOutFilter,
     "Pay In": Filters.payInFilter,
     "Failed": Filters.failedFilter,
+    "Transfer In": Filters.transferInFilter,
+    "Transfer Out": Filters.transferOutFilter,
+    "Ethereum": Filters.ethereumFilter,
+    "Bitcoin": Filters.bitcoinFilter,
+    "Dogecoin": Filters.dogecoinFilter,
+    "XEM": Filters.xemFilter,
+
 }
 FILTER_BUTTON = {
     "Exchange": Filters.exchangeButton,
     "Pay Out": Filters.payOutButton,
     "Pay In": Filters.payInButton,
     "Failed": Filters.failedButton,
+    "Transfer In": Filters.transferInButton,
+    "Transfer Out": Filters.transferOutButton,
+    "Ethereum": Filters.ethereumButton,
+    "Bitcoin": Filters.bitcoinButton,
+    "Dogecoin": Filters.dogecoinButton,
+    "XEM": Filters.xemButton,
 }
 
 class DashboardPage(Page):
@@ -212,3 +225,11 @@ class DashboardPage(Page):
         assert self.get_element_text(DepositAddress.userId) == user_id
         assert self.get_element_text(DepositAddress.link).find(user_id)
         time.sleep(0.5)
+
+    def compare_transactions(self, transactions):
+        texts = []
+        webelements = self.get_elements(Filters.transaction)
+        for element in webelements:
+            text = self.get_text_from_webelement(element)
+            texts.append(text)
+        a = texts

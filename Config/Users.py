@@ -49,6 +49,7 @@ class ExistingBasicUser:
     email_1528 = "vasiliyautomation+1528@gmail.com"
     email1611 = "vasiliyautomation+1611@gmail.com"
     highEmail = "Vasiliyautomation@gmail.com"
+    email_filters = "vasiliyautomation+filters@gmail.com"
 
 
 class ExistingBasicVerifiedUser:

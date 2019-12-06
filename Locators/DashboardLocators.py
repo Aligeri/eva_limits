@@ -48,12 +48,26 @@ class Filters:
     transferInFilter = (By.XPATH, "//div[@class='filter-block__content--3zlIV']/a[contains(@class, 'tags__typeTag--22azq') and text()='Transfer In']")
     transferOutFilter = (By.XPATH, "//div[@class='filter-block__content--3zlIV']/a[contains(@class, 'tags__typeTag--22azq') and text()='Transfer Out']")
 
+    ethereumFilter = (By.XPATH, "//div[@class='filter-block__content--3zlIV']//div[contains(@class, 'tags__iconCurrency--1naxG') and text()='Ethereum']")
+    dogecoinFilter = (By.XPATH, "//div[@class='filter-block__content--3zlIV']//div[contains(@class, 'tags__iconCurrency--1naxG') and text()='Dogecoin']")
+    bitcoinFilter = (By.XPATH, "//div[@class='filter-block__content--3zlIV']//div[contains(@class, 'tags__iconCurrency--1naxG') and text()='Bitcoin']")
+    xemFilter = (By.XPATH, "//div[@class='filter-block__content--3zlIV']//div[contains(@class, 'tags__iconCurrency--1naxG') and text()='NEM']")
+
     exchangeButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__typeTag--22azq') and text()='Exchange']")
     payOutButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__typeTag--22azq') and text()='Pay Out']")
     payInButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__typeTag--22azq') and text()='Pay In']")
     failedButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__typeTag--22azq') and text()='Failed']")
+    transferInButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__typeTag--22azq') and text()='Transfer In']")
+    transferOutButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__typeTag--22azq') and text()='Transfer Out']")
+
+    ethereumButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__currencyTag--1mG4U') and //div[text()='Ethereum']]")
+    dogecoinButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__currencyTag--1mG4U') and //div[text()='Dogecoin']]")
+    bitcoinButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__currencyTag--1mG4U') and //div[text()='Bitcoin']]")
+    xemButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__currencyTag--1mG4U') and //div[text()='NEM']]")
 
     removeFilter = (By.XPATH, "//span[@class='svg-icon__svgIcon--216sc tags__removeIcon--SbaLA']")
+
+    transaction = (By.XPATH, "//a[contains(@class, 'item__wrapper--2HY-h')]")
 
 class BuyWithACard:
     bitcoin = (By.XPATH, "//div[contains(@class, 'wallets-select__currencyFrom--3N3t5') and @data-currency='btc']")

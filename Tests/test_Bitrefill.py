@@ -19,6 +19,14 @@ def login_as_basic_user(driver):
     loginPage.input_pincode_login(ExistingBasicUser.pincode)
     yield
 
+@pytest.fixture(scope="function")
+def login_as_google_user(driver):
+    loginPage = LoginPage(driver)
+    loginPage.clear_google_cookies()
+    loginPage.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password, ExistingGoogleUser.otp_secret)
+    loginPage.input_pincode_login(ExistingGoogleUser.pincode)
+    yield
+
 
 class TestClass:
 
@@ -47,3 +55,11 @@ class TestClass:
         transactionsPage.navigate_to_top_up_phone()
         transactionsPage.check_top_up_phone_validation("+78005553535", False)
         transactionsPage.check_bitrefill_operator("Tele2")
+
+    @pytest.mark.usefixtures("login_as_google_user")
+    @xray("QA-1683")
+    @pytest.mark.websmoke
+    def test_bitrefill_shown_in_social_accounts(self, driver):
+        transactionsPage = TransactionsPage(driver)
+        transactionsPage.navigate_to_top_up_phone()
+        transactionsPage.check_top_up_phone_validation("+78005553535", False)
