@@ -65,7 +65,12 @@ class Filters:
     bitcoinButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__currencyTag--1mG4U') and //div[text()='Bitcoin']]")
     xemButton = (By.XPATH, "//div[@class='filter-block__wrapper--3j5F2']/a[contains(@class, 'tags__currencyTag--1mG4U') and //div[text()='NEM']]")
 
+    startDateFilter = (By.XPATH, "//input[@class='date-filter__input--264KP' and @placeholder='Start Date']")
+    endDateFilter = (By.XPATH, "//input[@class='date-filter__input--264KP' and @placeholder='End Date']")
+
     removeFilter = (By.XPATH, "//span[@class='svg-icon__svgIcon--216sc tags__removeIcon--SbaLA']")
+
+    appliedFilter = (By.XPATH, "//button[@class='tags__typeTag--22azq']")
 
     transaction = (By.XPATH, "//a[contains(@class, 'item__wrapper--2HY-h')]")
 

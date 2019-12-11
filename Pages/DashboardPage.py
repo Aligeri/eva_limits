@@ -121,7 +121,8 @@ class DashboardPage(Page):
             "Ethereum": TopUpWallets.eth,
             "Doge": TopUpWallets.doge,
             "EOS": TopUpWallets.eos,
-            "XMR": TopUpWallets.xmr
+            "XMR": TopUpWallets.xmr,
+            "XEM": TopUpWallets.xem
         }
         self.wait_and_click(WALLET[wallet])
 
@@ -206,6 +207,18 @@ class DashboardPage(Page):
         self.wait_and_click(Filters.applyFilters)
         #self.wait_until_element_visible(FILTER_BUTTON[history_filter])
 
+    def apply_date_filters(self, startDate, endDate):
+        """
+        Применяет фильтры по дате на странице History
+        :param startDate: дата начала выборки
+        :param endDate: дата конца выборки
+        :return:
+        """
+        self.wait_and_click(Filters.filtersButton)
+        self.wait_and_input_text(Filters.startDateFilter, startDate)
+        self.wait_and_input_text(Filters.endDateFilter, endDate)
+        self.wait_and_click(Filters.applyFilters)
+
     def remove_filter(self, history_filter):
         """
         Отключает фильтры на странице History
@@ -232,4 +245,4 @@ class DashboardPage(Page):
         for element in webelements:
             text = self.get_text_from_webelement(element)
             texts.append(text)
-        a = texts
+        assert transactions == texts
