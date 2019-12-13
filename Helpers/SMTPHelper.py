@@ -11,13 +11,16 @@ class SMTPHelper():
         self.__smtp_ssl_host ='smtp.gmail.com'
         self.__smtp_ssl_port = 465
 
-    def __getEmailFromGmail(self, address, password, email_from, email_subject=''):
+    def __getEmailFromGmail(self, address, password, email_from, email_subject='', email_to=''):
         mail = imaplib.IMAP4_SSL('imap.gmail.com', "993")
         retries_left = 50
         mail.login(address, password)
         mail.list()
         mail.select('"INBOX"')
-        result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
+        if email_to != '':
+            result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject, "TO", email_to)
+        else:
+            result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
         ids = data[0]
         id_list = ids.split()
         while retries_left >= 0:
@@ -25,7 +28,10 @@ class SMTPHelper():
                 if data[0] == b'':
                     time.sleep(3)
                     mail.select('"INBOX"')
-                    result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
+                    if email_to != '':
+                        result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject, "TO", email_to)
+                    else:
+                        result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
                     ids = data[0]
                     id_list = ids.split()
                     retries_left -= 1
@@ -42,8 +48,8 @@ class SMTPHelper():
         raw_email = data[0][1]
         return raw_email
 
-    def __getEmailAsString(self, address, password, email_from, email_subject=''):
-        raw_email = self.__getEmailFromGmail(address, password, email_from, email_subject)
+    def __getEmailAsString(self, address, password, email_from, email_subject='', email_to=''):
+        raw_email = self.__getEmailFromGmail(address, password, email_from, email_subject, email_to)
         msg = email.message_from_bytes(raw_email)
         msgtext = msg.as_string()
         email_string = re.sub('=\n', '', msgtext)
@@ -105,8 +111,8 @@ class SMTPHelper():
             registration_link = re.sub("upn=3D", "upn=", nonfixed_link)
         return (registration_link)
 
-    def get_multisig_transaction_link_from_email(self, address, password, email_from, email_subject=''):
-        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+    def get_multisig_transaction_link_from_email(self, address, password, email_from, email_subject='', email_to=''):
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject, email_to)
         try:
             pattern = "(https:\/\/\w*?\.?freewallet\.org\/multisig\/tx\/.*?)[<\]]"
             registration_link = re.search(pattern, email_string).group(1)
@@ -151,9 +157,9 @@ class SMTPHelper():
             verification_link = re.sub("upn=3D", "upn=", nonfixed_link)
         return (verification_link)
 
-    def get_disable_multisig_link_from_email(self, address, password, email_from, email_subject=''):
+    def get_disable_multisig_link_from_email(self, address, password, email_from, email_subject='', email_to=''):
         """линка ОБЩЕГО выключения мультисиг"""
-        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject, email_to)
 
         try:
             pattern = "https:\/\/\w*?\.?freewallet\.org(\/multisig\/email\/.*?)[<\]]"
