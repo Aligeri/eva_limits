@@ -45,6 +45,16 @@ class TransactionsPage(Page):
         self.wait_to_be_clickable(Send.continueButton3)
         self.wait_and_click(Send.continueButton3)
 
+    def send_minimum_amount_step_3(self):
+        self.wait_and_input_text(Send.amount, "0")
+        amount_text = self.get_element_text(Send.limitExceededTooltip)
+        amount = re.search("\d\.\d*", amount_text).group(0)
+        self.clear_input_text(Send.amount)
+        self.wait_and_input_text(Send.amount, amount)
+        self.wait_to_be_clickable(Send.continueButton3)
+        self.wait_and_click(Send.continueButton3)
+        return amount
+
     def check_minimum_amount(self, amount):
         self.wait_and_input_text(Send.amount, amount)
         self.wait_and_assert_element_text(Send.limitExceededTooltip, "Minimum amount 0.00000001 BTC")
@@ -397,7 +407,7 @@ class TransactionsPage(Page):
         """
 
         self.wait_and_click(Send.firstErrorTransaction)
-        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Cannot send eth to yourself pay in address")
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "You cannot send circularly eth to your pay in address")
 
     def check_doublespending_transaction(self, comment):
         """

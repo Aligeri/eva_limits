@@ -8,6 +8,7 @@ class NavigationLinks:
     exportWallet = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='Export wallet']")
     mnemonic = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='Mnemonic phrase']")
     privateKey = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='Private key']")
+    identity = (By.XPATH, "//li[contains(@class, 'settings__tab--7oBOJ') and text()='Identity']")
 
 class Account:
     emailNotifications = (By.XPATH, "//input[contains(@class, 'settings__input--oMx6t styles__input--2cyn3')]")
@@ -37,6 +38,23 @@ class userDetails:
 
 class Identity:
     Badge = (By.XPATH, "//div[contains(@class, 'badge__badge--D7Fy- badge__red--zTfOo settings__badge--SmlrG')]")
+    firstName = (By.XPATH, "//input[@name='name']")
+    firstNameError = (By.XPATH, "//input[@name='name']/following-sibling::div")
+    secondName = (By.XPATH, "//input[@name='surname']")
+    secondNameError = (By.XPATH, "//input[@name='surname']/following-sibling::div")
+    birthDate = (By.XPATH, "//input[@name='birthday']")
+    birthDateError = (By.XPATH, "//input[@name='birthday']/following-sibling::div")
+    identityFrontFile = (By.XPATH, ".//input[@name='identity[0]']")
+    identityFrontFileError = (By.XPATH, ".//input[@name='identity[0]']/following-sibling::div")
+    identityBackFile = (By.XPATH, ".//input[@name='identity[1]']")
+    identityBackFileError = (By.XPATH, ".//input[@name='identity[1]']/following-sibling::div")
+    identityFrontFileName = (By.XPATH, ".//input[@name='identity[0]']/following-sibling::span[contains(@class, 'input-image__name--2A6q9')]")
+    identityBackFileName = (By.XPATH, ".//input[@name='identity[1]']/following-sibling::span[contains(@class, 'input-image__name--2A6q9')]")
+    selfieFile = (By.XPATH, "//input[@name='selfie']")
+    selfieFileError = (By.XPATH, "//input[@name='selfie']/following-sibling::div")
+    selfieFileName = (By.XPATH, "//input[@name='selfie']/following-sibling::span[contains(@class, 'input-image__name--2A6q9')]")
+    submit = (By.XPATH, "//button[contains(@class, 'tab-kyc__submit--18iGh')]")
+
 
 class Mnemonic:
     gotIt = (By.XPATH, ".//a[@class='settings__tooltipAction--3DkWd' and text()='Got it']")

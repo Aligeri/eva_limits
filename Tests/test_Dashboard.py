@@ -120,7 +120,6 @@ class TestClass:
         dashboardPage = DashboardPage(driver)
         dashboardPage.navigate_to_buy_with_a_card()
         dashboardPage.select_buy_currency("ETH")
-        dashboardPage.select_buy_currency("LTC")
         dashboardPage.select_buy_currency("BTC")
 
     @pytest.mark.usefixtures("login_as_basic_user")
@@ -209,7 +208,7 @@ class TestClass:
         dashboard_page.select_wallet("Bitcoin")
         dashboard_page.check_top_up_wallet("Ethereum", True)
         dashboard_page.check_top_up_wallet("Doge", True)
-        dashboard_page.check_top_up_wallet("XMR", True)
+        dashboard_page.check_top_up_wallet("XEM", True)
 
     @xray("QA-983")
     @pytest.mark.skip("нет бккеша")

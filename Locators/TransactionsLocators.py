@@ -5,7 +5,7 @@ class Send:
     btcWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'BTC')]]")
     ethWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'ETH')]]")
     xrpWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'XRP')]]")
-    dogeWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'DOGE')]]")
+    dogeWallet = (By.XPATH, '//a[@href="/?currencies=doge&section=send"]')
     xemWallet = (By.XPATH, "//div[contains(@class, 'brick-wall__textWrapper--2PYAE')][div[contains(text(), 'XEM')]]")
 
     xrpRecieverWallet = (By.XPATH, "//a[contains(@class, 'brick-wall__item--1bMyi') and descendant::div[contains(text(), 'Ripple')]]")
