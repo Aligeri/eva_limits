@@ -100,7 +100,7 @@ class TestClass:
         dashboardPage.compare_transactions(date_transactions)
 
     @pytest.mark.websmoke
-    @xray("QA-992")
+    @xray("QA-993")
     def test_wrong_date_filter(self, driver):
 
         dashboardPage = DashboardPage(driver)
@@ -113,7 +113,7 @@ class TestClass:
         dashboardPage.wait_until_element_invisible(Filters.appliedFilter, 1)
 
     @pytest.mark.websmoke
-    @xray("QA-992")
+    @xray("QA-997")
     def test_date_type_currency_filter(self, driver):
 
         dashboardPage = DashboardPage(driver)
