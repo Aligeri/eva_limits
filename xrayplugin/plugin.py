@@ -60,8 +60,9 @@ def get_xray_keys(items):
 
 class PytestXrayPlugin(object):
     def __init__(self, username, password, testplan, test_execution):
+        self.server = 'https://jira-eva.flora.ltfs.tools'
         self.options = {
-            'server': 'https://jira.adam.loc',
+            'server': self.server,
             'verify': False,  # SSL validation off because Jira use self signed certificate
         }
         self.username = username
@@ -112,7 +113,7 @@ class PytestXrayPlugin(object):
                 self.testplan
             ]
         }
-        execution_id = requests.post(("https://jira.adam.loc/rest/raven/1.0/api/testexec/%s/test" % self.test_execution), json=add_tests, auth=HTTPBasicAuth("solinichenko", "madokaqWeaSd123"), verify=False)
+        execution_id = requests.post(("%s/rest/raven/1.0/api/testexec/%s/test" % (self.server, self.test_execution)), json=add_tests, auth=HTTPBasicAuth(self.username, self.password), verify=False)
         return execution_id
 
     def create_execution_and_associate_with_smoke(self):
@@ -127,6 +128,7 @@ class PytestXrayPlugin(object):
     def pytest_runtest_makereport(self, item, call):
         outcome = yield
         rep = outcome.get_result()
+
         if not self.is_master(item.config):
             self.test_execution = item.config.slaveinput['test_e']
 
@@ -135,22 +137,29 @@ class PytestXrayPlugin(object):
             if rep.when == 'call' and testcaseids:
                 for testcase in testcaseids:
                     if rep.outcome == "failed":
+                        execution = 1
+                        reruns = 0
+                        try:
+                            execution = item.execution_count
+                            reruns = item.config.getoption("--reruns")
+                        except:
+                            pass
+                        if execution >= reruns+1:
+                            feature_request = item.funcargs['request']
+                            driver = feature_request.getfixturevalue('driver')
+                            dirname = os.path.dirname(__file__)
+                            screenshot_file_path = "{}/../screenshots/{}.png".format(dirname, item.name)
+                            driver.save_screenshot(
+                                screenshot_file_path
+                            )
 
-                        feature_request = item.funcargs['request']
-                        driver = feature_request.getfixturevalue('driver')
-                        dirname = os.path.dirname(__file__)
-                        screenshot_file_path = "{}/../screenshots/{}.png".format(dirname, item.name)
-                        driver.save_screenshot(
-                            screenshot_file_path
-                        )
-
-                        self.update_test_status(
-                            testcase,
-                            self.test_execution,
-                            PYTEST_TO_XRAY[outcome.get_result().outcome],
-                            str(outcome.get_result().longrepr),
-                            self.get_screenshot(item.name)
-                        )
+                            self.update_test_status(
+                                testcase,
+                                self.test_execution,
+                                PYTEST_TO_XRAY[outcome.get_result().outcome],
+                                str(outcome.get_result().longrepr),
+                                self.get_screenshot(item.name)
+                            )
                     else:
                         self.update_test_status(
                             testcase,
@@ -194,11 +203,11 @@ class PytestXrayPlugin(object):
                 "status": status
             }
         try:
-            a = requests.get("https://jira.adam.loc/rest/raven/1.0/api/testrun/?testExecIssueKey=%s&testIssueKey=%s" % (test_execution, issue_key),
+            a = requests.get("%s/rest/raven/1.0/api/testrun/?testExecIssueKey=%s&testIssueKey=%s" % (self.server, test_execution, issue_key),
                              auth=HTTPBasicAuth(self.username, self.password), verify=False)
             b = a.json()
             c = b.get("id")
-            d = requests.put(("https://jira.adam.loc/rest/raven/1.0/api/testrun/%s/" % c), json=jsontest,
+            d = requests.put(("%s/rest/raven/1.0/api/testrun/%s/" % (self.server, c)), json=jsontest,
                              auth=HTTPBasicAuth(self.username, self.password), verify=False)
         except:
             print("there is no %s test in %s execution" % (issue_key, test_execution))

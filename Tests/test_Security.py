@@ -2,6 +2,7 @@ import pytest
 from Pages.LoginPage import *
 from Pages.SecurityPage import *
 from Pages.TransactionsPage import *
+from Pages.SettingsPage import *
 from Config.Users import *
 from Helpers.SQLHelper import *
 from Locators.SecurityLocators import *
@@ -32,6 +33,12 @@ def data_1037():
     sql.delete_limits_by_email_from_database(ExistingBasicUser.email1037)
 
 @pytest.fixture(scope="function")
+def data_1040():
+    sql.delete_limits_by_email_from_database(ExistingBasicUser.email_1040)
+    yield
+    sql.delete_limits_by_email_from_database(ExistingBasicUser.email_1040)
+
+@pytest.fixture(scope="function")
 def data_839():
     sql.delete_limits_by_email_from_database(ExistingBasicUser.email839)
     yield
@@ -50,6 +57,17 @@ def data_717():
     sql.remove_freeze_by_email(ExistingBasicUser.email717)
     yield
 
+@pytest.fixture(scope='function')
+def data_714():
+    sql.delete_user_from_database(ExistingBasicUser.email714)
+    yield
+    sql.delete_user_from_database(ExistingBasicUser.email714)
+
+@pytest.fixture(scope='function')
+def data_711():
+    sql.delete_user_from_database(ExistingBasicUser.email711)
+    yield
+    sql.delete_user_from_database(ExistingBasicUser.email711)
 
 class TestClass:
 
@@ -60,17 +78,26 @@ class TestClass:
         loginPage = LoginPage(driver)
         securityPage = SecurityPage(driver)
         loginPage.login_as_basic_user(ExistingBasicUser.email954, ExistingBasicUser.password)
-        loginPage.input_pincode_login(ExistingBasicUser.pincode)
-        securityPage.navigate_to_pincode()
-        securityPage.input_security_pincode_current(ExistingBasicUser.pincode)
-        securityPage.input_security_pincode_new(ExistingBasicUser.changedPincode)
-        securityPage.input_security_pincode_repeat(ExistingBasicUser.changedPincode)
+        try:
+            loginPage.input_pincode_login(ExistingBasicUser.pincode)
+            securityPage.navigate_to_pincode()
+            pinTrue = ExistingBasicUser.pincode
+            pinFalse = ExistingBasicUser.changedPincode
+        except:
+            loginPage.input_pincode_login(ExistingBasicUser.changedPincode)
+            securityPage.navigate_to_pincode()
+            pinTrue = ExistingBasicUser.changedPincode
+            pinFalse = ExistingBasicUser.pincode
+
+        securityPage.input_security_pincode_current(pinTrue)
+        securityPage.input_security_pincode_new(pinFalse)
+        securityPage.input_security_pincode_repeat(pinFalse)
         securityPage.wait_until_element_visible(SecurityPincode.successPopup)
         securityPage.refresh_page()
-        loginPage.input_pincode_login(ExistingBasicUser.changedPincode)
-        securityPage.input_security_pincode_current(ExistingBasicUser.changedPincode)
-        securityPage.input_security_pincode_new(ExistingBasicUser.pincode)
-        securityPage.input_security_pincode_repeat(ExistingBasicUser.pincode)
+        loginPage.input_pincode_login(pinFalse)
+        securityPage.input_security_pincode_current(pinFalse)
+        securityPage.input_security_pincode_new(pinTrue)
+        securityPage.input_security_pincode_repeat(pinTrue)
         securityPage.wait_until_element_visible(SecurityPincode.successPopup)
 
     @xray("QA-837", "QA-838")
@@ -81,13 +108,36 @@ class TestClass:
         loginPage.login_as_basic_user(ExistingBasicUser.email837, ExistingBasicUser.password)
         loginPage.input_pincode_login(ExistingBasicUser.pincode)
         securityPage.navigate_to_limits()
-        securityPage.create_new_weekly_limit("FWH", "100")
+        securityPage.create_new_weekly_limit("DOGE", "100")
         securityPage.close_limit_modal()
-        securityPage.change_limit_after_creation("200", "FWH")
+        securityPage.change_limit_after_creation("200", "DOGE")
         securityPage.close_limit_modal()
-        securityPage.check_limit_buttons_are_not_displayed("FWH")
+        securityPage.check_limit_buttons_are_not_displayed("DOGE")
 
-    @xray("QA-1037")
+    @xray("QA-1040")
+    @pytest.mark.usefixtures("data_1040")
+    def test_check_limit_visuals(self, driver):
+        loginPage = LoginPage(driver)
+        securityPage = SecurityPage(driver)
+        transactionsPage = TransactionsPage(driver)
+
+        loginPage.login_as_basic_user(ExistingBasicUser.email_1040, ExistingBasicUser.password)
+        loginPage.input_pincode_login(ExistingBasicUser.pincode)
+        transactionsPage.navigate_to_send()
+        locks_count = transactionsPage.get_elements_count(LimitLocks.dogeLock)
+        assert locks_count == 0
+        securityPage.navigate_to_limits()
+        securityPage.create_new_weekly_limit("DOGE", "100")
+        securityPage.close_limit_modal()
+        securityPage.navigate_to_dashboard()
+        transactionsPage.navigate_to_send()
+        locks_count = transactionsPage.get_elements_count(LimitLocks.dogeLock)
+        assert locks_count == 2
+
+
+
+
+    @xray("QA-1037", "QA-836")
     @pytest.mark.usefixtures("data_1037")
     def test_add_and_disable_limit(self, driver):
         loginPage = LoginPage(driver)
@@ -117,11 +167,12 @@ class TestClass:
         securityPage.check_BTC_limit_percent("100%")
         securityPage.navigate_to_dashboard()
         transactionsPage.navigate_to_send()
-        transactionsPage.send_transaction_to_user_id("BTC", "0.00000001", ExistingGoogleUser.userID, comment)
-        transactionsPage.wait_until_element_visible(Send.firstTransactionAmount)
+        transactionsPage.send_transaction_step_1_user_id("BTC")
+        transactionsPage.send_transaction_step_2_user_id(ExistingGoogleUser.userID)
+        transactionsPage.send_transaction_step_3("0.00000001")
+        transactionsPage.send_transaction_step_4(comment)
+        transactionsPage.find_transaction_by_comment("BTC", "0.00000001", comment)
         transactionsPage.navigate_to_send()
-        loginPage.refresh_page()
-        loginPage.input_pincode_login(ExistingBasicUser.pincode)
         transactionsPage.check_limit_exceeded_transaction("BTC", "0.00000001", ExistingGoogleUser.userID)
         securityPage.navigate_to_limits()
         securityPage.check_BTC_limit_percent("0%")
@@ -149,16 +200,20 @@ class TestClass:
 
 
     @pytest.mark.usefixtures("data_718")
-    @xray("QA-718")
+    @xray("QA-718", "QA-679")
     @pytest.mark.websmoke
     def test_change_password(self, driver):
         login_page = LoginPage(driver)
         security_page = SecurityPage(driver)
+        settings_page = SettingsPage(driver)
         login_page.login_as_basic_user(ExistingBasicUser.email718, ExistingBasicUser.password)
         login_page.input_pincode_login(ExistingBasicUser.pincode)
+        settings_page.check_email_is_loaded(ExistingBasicUser.email718)
         security_page.navigate_to_security()
         security_page.wait_until_element_visible(Password.password)
         security_page.change_password(ExistingBasicUser.password, ExistingBasicUser.changedPassword)
+        time.sleep(2)
+        login_page.reset_session()
         login_page.login_as_basic_user(ExistingBasicUser.email718, ExistingBasicUser.changedPassword)
         login_page.input_pincode_login(ExistingBasicUser.pincode)
 
@@ -175,6 +230,8 @@ class TestClass:
         security_page.navigate_to_security()
         security_page.wait_until_element_visible(Password.password)
         security_page.change_password(ExistingBasicUser.password, ExistingBasicUser.changedPassword)
+        time.sleep(2)
+        login_page.reset_session()
         login_page.login_as_basic_user(ExistingBasicUser.email717, ExistingBasicUser.changedPassword)
         login_page.input_pincode_login(ExistingBasicUser.pincode)
         transactions_page.navigate_to_send()
@@ -184,3 +241,68 @@ class TestClass:
         transactions_page.send_transaction_step_4(comment)
         transactions_page.find_transaction_by_comment("DOGE", "1", comment)
         transactions_page.check_frozen_transaction()
+
+
+    @xray("QA-694")
+    @pytest.mark.websmoke
+    def test_change_password_is_not_displayed_for_social(self, driver):
+        login_page = LoginPage(driver)
+        security_page = SecurityPage(driver)
+        settings_page = SettingsPage(driver)
+        login_page.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password, ExistingGoogleUser.otp_secret)
+        login_page.input_pincode_login(ExistingGoogleUser.pincode)
+        settings_page.check_email_is_loaded(ExistingGoogleUser.email)
+        security_page.navigate_to_security()
+        security_page.wait_until_element_invisible(NavigationLinks.password)
+
+    @pytest.mark.usefixtures("data_714")
+    @xray("QA-714")
+    def test_pin_code_lock_after_5_tries(self, driver):
+        login_page = LoginPage(driver)
+        login_page.input_basic_user_registration_data(ExistingBasicUser.email714, ExistingBasicUser.password, ExistingBasicUser.password)
+        login_page.wait_and_click(LoginPageLocators.termsCheckbox)
+        login_page.assert_signup_button_state("enabled")
+        login_page.wait_and_click(LoginPageLocators.signUpButton)
+        login_page.input_pincode_create(ExistingBasicUser.pincode)
+        login_page.input_pincode_repeat(ExistingBasicUser.pincode)
+        login_page.wait_until_element_visible(NavigationButtons.security)
+        login_page.reset_session()
+        login_page.login_as_basic_user(ExistingBasicUser.email714, ExistingBasicUser.password)
+        login_page.input_pincode_login(ExistingBasicUser.changedPincode)
+        time.sleep(1)
+        login_page.input_pincode_login(ExistingBasicUser.changedPincode)
+        time.sleep(1)
+        login_page.input_pincode_login(ExistingBasicUser.changedPincode)
+        time.sleep(1)
+        login_page.input_pincode_login(ExistingBasicUser.changedPincode)
+        time.sleep(1)
+        login_page.input_pincode_login(ExistingBasicUser.changedPincode)
+        login_page.wait_until_element_visible(LoginPageLocators.lockPopup)
+        login_page.wait_and_assert_element_text(LoginPageLocators.lockPopupBody, "You have entered incorrect pin code too many times. Please try again later or contact Support for access recovery.")
+
+    @pytest.mark.usefixtures("data_711")
+    @xray("QA-711")
+    def test_pin_code_lock_after_5_tries_in_security(self, driver):
+        login_page = LoginPage(driver)
+        security_page = SecurityPage(driver)
+        login_page.input_basic_user_registration_data(ExistingBasicUser.email711, ExistingBasicUser.password, ExistingBasicUser.password)
+        login_page.wait_and_click(LoginPageLocators.termsCheckbox)
+        login_page.assert_signup_button_state("enabled")
+        login_page.wait_and_click(LoginPageLocators.signUpButton)
+        login_page.input_pincode_create(ExistingBasicUser.pincode)
+        login_page.input_pincode_repeat(ExistingBasicUser.pincode)
+        security_page.navigate_to_pincode()
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(1)
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(1)
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(1)
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(1)
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(1)
+        security_page.input_security_pincode_current(ExistingBasicUser.changedPincode)
+        time.sleep(1)
+        login_page.wait_until_element_visible(LoginPageLocators.lockPopup)
+        login_page.wait_and_assert_element_text(LoginPageLocators.lockPopupBody, "You have entered incorrect pin code too many times. Please try again later or contact Support for access recovery.")

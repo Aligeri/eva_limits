@@ -6,13 +6,14 @@ from selenium.common.exceptions import WebDriverException
 from xrayplugin.plugin import xray
 
 
+
 class TestClass:
 
     @xray("QA-720")
     def test_IncorrectPasswordLogin(self, driver):
         loginPage = LoginPage(driver)
         loginPage.login_as_basic_user(ExistingBasicUser.email, "12345678")
-        loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Incorrect password")
+        loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "The email and password you entered do not match our records. Please verify and try again")
         loginPage.get_base_url()
 
     @xray("QA-690", "QA-671")
@@ -30,7 +31,7 @@ class TestClass:
     def test_LoginAsGoogleUser(self, driver):
         loginPage = LoginPage(driver)
         loginPage.clear_google_cookies()
-        loginPage.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password)
+        loginPage.login_as_google_user(ExistingGoogleUser.email, ExistingGoogleUser.password, ExistingGoogleUser.otp_secret)
         loginPage.input_pincode_login(ExistingGoogleUser.pincode)
         loginPage.wait_until_element_visible(DashboardLocators.logout)
         loginPage.wait_and_assert_element_text(DashboardLocators.userName, ExistingGoogleUser.userName)

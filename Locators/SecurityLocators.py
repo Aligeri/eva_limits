@@ -94,11 +94,23 @@ class Multisig:
     disclaimer = (By.XPATH, "//div[contains(@class, 'tab-multisig__disclaimerWithChild--2DkfO')]")
     disclaimerDiscard = (By.XPATH, "//a[contains(@class, 'tab-multisig__disclaimerCancelPending--2a7Ip')]")
     disclaimerDisable = (By.XPATH, "//a[contains(@class, 'tab-multisig__disclaimerDisableAll--2RjWV')]")
-
     confirmedAddressFirst = (By.XPATH, "//div[contains(@class, 'tab-multisig__confirmedEmailItem--3LH85')]")
+    pending_multisig_status = (By.XPATH, "//div[contains(@class, 'multisig__pendingEmailItemStatus')]")
+    disclaimer_title = (By.XPATH, "//h2[contains(@class, 'disclaimer__title--3-6C7')]")
+    remove_icon = (By.XPATH, ".//div[contains(@class, 'tab-multisig__emailItemRemove--1646k')]")
 
 class Password:
     password = (By.XPATH, "//input[@name='password']")
     newPassword = (By.XPATH, "//input[@name='newPassword']")
     newPasswordRepeat = (By.XPATH, "//input[@name='newPasswordRepeat']")
     savePassword = (By.XPATH, "//button[contains(@class, 'security__saveButton--1NeUP')]")
+    tooltip = (By.XPATH, "//div[@data-original-title='Password changed successfully!']")
+
+class ActiveSessions:
+    sessionBlock = (By.XPATH, "//div[contains(@class, 'tab-sessions__session--1CVnR')]")
+    singleSessionDrop = (By.XPATH, "//button[contains(@class, 'tab-sessions__dropButton--1A65y')]")
+    sessionBody = (By.XPATH, "//div[contains(@class, 'tab-sessions__model--3RUWz')]")
+    sessionPlatform = (By.XPATH, "//div[contains(@class, 'tab-sessions__platformTitle--1CSBr')]")
+    allSessionsDrop = (By.XPATH, "//button[contains(@class, 'tab-sessions__button--6zMwa')]")
+    dropYes = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Yes']")
+    dropClose = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Close']")

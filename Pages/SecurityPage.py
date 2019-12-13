@@ -16,6 +16,10 @@ class SecurityPage(Page):
     def navigate_to_security(self):
         self.wait_and_click(NavigationButtons.security)
 
+    def navigate_to_active_sessions(self):
+        self.wait_and_click(NavigationButtons.security)
+        self.wait_and_click(NavigationLinks.activeSessions)
+
 
     def input_security_pincode_current(self, pincode):
         """
@@ -92,6 +96,7 @@ class SecurityPage(Page):
             "FWH": LimitWallets.fwt,
             "BTC": LimitWallets.btc,
             "ARDR": LimitWallets.ardr,
+            "DOGE": LimitWallets.doge,
         }
         self.wait_and_click(WALLET[currency])
         self.wait_and_click(LimitModal.changeLimit)
@@ -126,6 +131,7 @@ class SecurityPage(Page):
             "FWH": LimitWallets.fwt,
             "BTC": LimitWallets.btc,
             "ARDR": LimitWallets.ardr,
+            "DOGE": LimitWallets.doge
         }
         self.wait_and_click(WALLET[currency])
         self.wait_and_assert_element_text(LimitModal.pendingChange, "Limit settings will be changed in in 2 days")
@@ -155,6 +161,18 @@ class SecurityPage(Page):
         self.assert_element_attirbute_value(Multisig.continueButton, "disabled", "true")
         self.wait_and_input_text(Multisig.email1, email)
         self.wait_and_click(Multisig.gotIt)
+        self.wait_and_click(Multisig.continueButton)
+
+    def add_second_multisig_address(self, email):
+        """
+        Добавляет второй емайл в multisig на странице Security > Email confirmation
+        :param email: емейл который добавляется в качестве multisig
+        :return:
+        """
+        self.wait_until_element_visible(Multisig.stats)
+        time.sleep(0.5)
+        self.assert_element_attirbute_value(Multisig.continueButton, "disabled", "true")
+        self.wait_and_input_text(Multisig.email1, email)
         self.wait_and_click(Multisig.continueButton)
 
 
@@ -236,6 +254,7 @@ class SecurityPage(Page):
             self.wait_and_click(CHECKBOX[checkbox])
             self.input_2fa(code)
             self.wait_and_click(TwoFactorAuth.disableModal)
+            self.wait_until_element_invisible(TwoFactorAuth.disableModal, 2)
         if checkboxState is None:
             return
 
@@ -247,3 +266,44 @@ class SecurityPage(Page):
         self.wait_and_input_text(Password.newPassword, new_password)
         self.wait_and_input_text(Password.newPasswordRepeat, new_password)
         self.wait_and_click(Password.savePassword)
+
+    def get_current_sessions_count(self):
+        count = self.get_elements_count(ActiveSessions.sessionBody)
+        return count
+
+    def drop_session_by_model(self, model):
+        node_session = (By.XPATH, ("//div[@class='tab-sessions__session--1CVnR' and .//div[text()='%s']]" % model))
+        self.wait_and_click_element_within_element(node_session, ActiveSessions.singleSessionDrop)
+        self.wait_and_click(ActiveSessions.dropYes)
+
+    def find_session_by_model(self, model):
+        node_session = (By.XPATH, ("//div[@class='tab-sessions__session--1CVnR' and .//div[text()='%s']]" % model))
+        self.wait_until_element_visible(node_session)
+
+    def drop_all_sessions(self):
+        self.wait_and_click(ActiveSessions.allSessionsDrop)
+        self.wait_and_click(ActiveSessions.dropYes)
+
+    def check_veified_multisig_addreses(self, email1, email2):
+        """
+        Проверяет на странице Security > Email confirmation два верицированных емайла
+        :param email1: первый multisig емайл
+        :param email1: второй multisig емайл
+        :return:
+        """
+        emails = self.get_elements(Multisig.confirmedAddressFirst)
+        emails_text = []
+        for i in range(len(emails)):
+            emails_text.append(self.get_text_from_webelement(emails[i]))
+        assert email1 in emails_text
+        assert email2 in emails_text
+
+    def delete_one_multisig_address(self,  email):
+        self.wait_until_element_visible(Multisig.confirmedAddressFirst)
+        emails = self.get_elements(Multisig.confirmedAddressFirst)
+        for i in range(len(emails)):
+            email_text = self.get_text_from_webelement(emails[i])
+            if email_text == email:
+                self.wait_and_click_element_within_webelement(emails[i], Multisig.remove_icon)
+                break
+

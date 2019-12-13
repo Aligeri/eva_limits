@@ -12,17 +12,20 @@ WALLETFROM = {
     "ETH": Send.ethWallet,
     "XRP": Send.xrpWallet,
     "DOGE": Send.dogeWallet,
+    "XEM": Send.xemWallet,
 }
 
 COMPLEX_WALLET = {
-    "XRP": Send.xrpWallet
+    "XRP": Send.xrpWallet,
+    "XEM": Send.xemWallet
 }
 
 DESTINATION_WALLET = {
     "XRP": Send.xrpRecieverWallet,
     "ETH": Send.ethRecieverWallet,
     "BTC": Send.btcRecieverWallet,
-    "DOGE": Send.dogeRecieverWallet,
+    "DOGE": Send.dogeWallet,
+    "XEM": Send.xemRecieverWallet,
 }
 
 
@@ -42,7 +45,21 @@ class TransactionsPage(Page):
         self.wait_to_be_clickable(Send.continueButton3)
         self.wait_and_click(Send.continueButton3)
 
+    def send_minimum_amount_step_3(self):
+        self.wait_and_input_text(Send.amount, "0")
+        amount_text = self.get_element_text(Send.limitExceededTooltip)
+        amount = re.search("\d\.\d*", amount_text).group(0)
+        self.clear_input_text(Send.amount)
+        self.wait_and_input_text(Send.amount, amount)
+        self.wait_to_be_clickable(Send.continueButton3)
+        self.wait_and_click(Send.continueButton3)
+        return amount
+
     def check_minimum_amount(self, amount):
+        self.wait_and_input_text(Send.amount, amount)
+        self.wait_and_assert_element_text(Send.limitExceededTooltip, "Minimum amount 0.00000001 BTC")
+
+    def check_minimum_simple_amount(self, amount):
         self.wait_and_input_text(Send.amount, amount)
         self.wait_and_assert_element_text(Send.limitExceededTooltip, "Minimum amount 0.00000001 BTC")
 
@@ -208,8 +225,15 @@ class TransactionsPage(Page):
             "Urgent": Send.urgentFee
         }
         self.wait_and_click(FEE_TYPE[fee_type])
-        amount_text = "%s BTC" % amount
-        self.wait_and_assert_element_text(Send.totalWithFee, amount_text)
+        time.sleep(0.5)
+        network_fee = self.__get_network_fee()
+        arrival_amount = self.__get_arrival_amount()
+        total_amount = self.__get_total_amount()
+        a = float(network_fee) + float(arrival_amount)
+        b = float(total_amount)
+        assert a == b
+
+        #self.wait_and_assert_element_text(Send.totalWithFee, amount_text)
 
     def check_exclude_fee(self):
         """
@@ -293,7 +317,32 @@ class TransactionsPage(Page):
         """
         transaction_title = "–%s %s" % (amount, currency)
         comment_formatted = 'Comment "%s"' % comment
-        retries_left = 5
+        retries_left = 10
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible((By.XPATH, (
+                        ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment_formatted)),
+                                                10)
+                self.wait_until_element_visible((By.XPATH, (
+                        ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % transaction_title)),
+                                                10)
+                return
+            except:
+                self.navigate_to_send()
+                self.navigate_to_history()
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
+
+    def find_simple_by_comment(self, currency, amount, comment):
+        """
+        Проверяет данные самой верхней транзакции в history
+        :param currency: валюта транзакции, BTC/ETH/DOGE
+        :param amount: string с количеством валюты
+        :param comment: комментарий к транзакции
+        """
+        transaction_title = "–%s %s" % (amount, currency)
+        comment_formatted = 'Comment "%s"' % comment
+        retries_left = 10
         while retries_left > 0:
             try:
                 self.wait_until_element_visible((By.XPATH, (
@@ -358,7 +407,17 @@ class TransactionsPage(Page):
         """
 
         self.wait_and_click(Send.firstErrorTransaction)
-        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Cannot send eth to yourself pay in address")
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "You cannot send circularly eth to your pay in address")
+
+    def check_doublespending_transaction(self, comment):
+        """
+        Проверяет данные внутри упавшей транзакции даблспендинга в history
+        """
+        comment_formatted = 'Comment "%s"' % comment
+        self.wait_and_click((By.XPATH, (
+                ".//a[contains(@class, 'item__wrapper--2HY-h')][.//div[contains(text(), '%s')]]" % comment_formatted)))
+        self.wait_and_assert_element_text(Send.errorMessageInTransaction, "Too many similar requests. Try again")
+
 
     def check_frozen_transaction(self):
         """
@@ -434,6 +493,34 @@ class TransactionsPage(Page):
         self.wait_and_click(TopUpPhone.firstPaymentValue)
         self.wait_and_click(TopUpPhone.sendCoinsButton)
         self.wait_until_element_visible(TopUpPhone.successModal)
+
+    def check_top_up_phone_validation(self, phone, validation, validation_message=''):
+        self.wait_and_input_text(TopUpPhone.mobileNumber, phone)
+        if validation:
+            button_state = self.get_element_attribute(TopUpPhone.continueButton, "disabled")
+            print(button_state)
+            assert button_state == "true"
+        else:
+            self.wait_to_be_clickable(TopUpPhone.continueButton, 20)
+        if validation_message is not '':
+            self.wait_until_element_visible(TopUpPhone.errorMessage)
+            text = self.get_element_text(TopUpPhone.errorMessage)
+            assert text == validation_message
+
+    def check_bitrefill_operator(self, operator):
+        self.wait_until_element_visible(TopUpPhone.logo)
+        alt = self.get_element_attribute(TopUpPhone.logo, "alt")
+        url = self.get_element_attribute(TopUpPhone.logo, "src")
+        if operator == "MTS":
+            assert alt == "MTS Russia"
+            assert url == "https://www.bitrefill.com/content/cn/d_operator.png/mts-russia"
+        if operator == "Tele2":
+            assert alt == "Tele2 Russia"
+            assert url == "https://www.bitrefill.com/content/cn/d_operator.png/tele2-russia"
+
+
+
+
 
     def navigate_to_send(self):
         """
@@ -517,3 +604,39 @@ class TransactionsPage(Page):
         self.wait_and_input_text(TwoFactorAuth.code5, code_by_char[4])
         self.wait_and_input_text(TwoFactorAuth.code6, code_by_char[5])
         self.wait_and_click(Send.confirm2fa)
+
+    def check_transactions_on_page(self, comment, amount):
+        transactions = self.get_elements(Send.transactionBlock)
+        comments = []
+        amounts = []
+        for transaction in transactions:
+            comments.append(self.get_element_text_within_webelement(transaction, Send.commentBlock))
+            amounts.append(self.get_element_text_within_webelement(transaction, Send.amountBlock))
+        assert comment == comments
+        assert amount == amounts
+
+    def check_unconfirmed_transaction_by_comment(self, comment):
+        """
+        проверяет, что транзакция подвисла в фиолетовом статусе ожидания мультисиг
+        не переходя в детали транзакции
+        """
+        retries_left = 5
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible((By.XPATH, (
+                            ".//a[contains(@class, 'item__wrapper--2HY-h item__wrapper__unconfirmed--3YAln')][.//div[contains(text(), '%s')]]" % comment)),
+                                                10)
+                return
+            except:
+                self.navigate_to_send()
+                self.navigate_to_history()
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
+
+    def check_completed_transaction(self, comment):
+        """
+        Проверяет что транзакция закомплитилась
+        """
+        self.open_transaction_by_comment(comment)
+        self.wait_and_assert_element_text(Send.statusInTransaction, "Completed")
+        time.sleep(1)

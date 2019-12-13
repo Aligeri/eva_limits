@@ -8,6 +8,9 @@ class ReceiveWallets:
     doge = (By.XPATH, "//div[@data-currency='doge']//span")
     eth = (By.XPATH, "//div[@data-currency='eth']//span")
     eos = (By.XPATH, "//div[@data-currency='eos']//span")
+    doge = (By.XPATH, "//div[@data-currency='doge']//span")
+    xem = (By.XPATH, "//div[@data-currency='xem']//span")
+    xmr = (By.XPATH, "//div[@data-currency='xmr']//span")
 
 class TopUpWallets:
     btc = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='btc']//span")
@@ -16,6 +19,8 @@ class TopUpWallets:
     eth = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='eth']//span")
     eos = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='eos']//span")
     doge = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='doge']//span")
+    xem = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='xem']//span")
+    xmr = (By.XPATH, "//h3[text()='Top up with other currencies']/following-sibling::div//div[@data-currency='xmr']//span")
 
     depositAddress = (By.XPATH, "//div[@class='receive__wrapCurrentAddress--1qS_K']//div[contains(@class, 'receive__addressText--38aaT')]")
 
@@ -28,6 +33,7 @@ class DepositAddress:
 
     depositAddress = (By.XPATH, "//h3[text()='My deposit  address']/following-sibling::div[contains(@class, 'receive__addressText--38aaT')]")
     memo = (By.XPATH, "//h3[text()='Memo']/following-sibling::div[contains(@class, 'receive__addressText--38aaT')]")
+    message = (By.XPATH, "//h3[text()='Message']/following-sibling::div[contains(@class, 'receive__addressText--38aaT')]")
     userId = (By.XPATH, "//div[contains(@class, 'receive__userId--3hHHB')]")
     link = (By.XPATH, "//a[@target='_blank']/b")
     minimumBlock = (By.XPATH, "//div[@class='receive__minimalBlock--y7xpq']")

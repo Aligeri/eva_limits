@@ -1,4 +1,5 @@
 import psycopg2
+import uuid
 
 class SQLHelper():
     # тут создавать коннекшен стринг
@@ -26,7 +27,7 @@ class SQLHelper():
         :return: tuple с ID юзера
         """
         cursor, connection = self.connect_to_database()
-        cursor.execute("SELECT id FROM public.user WHERE email = (%s)", (email,))  # пример коннекшена (работает и возвращает имя юзера)
+        cursor.execute("SELECT user_id FROM public.user_social WHERE email = (%s)", (email,))  # пример коннекшена (работает и возвращает ид юзера)
         return cursor.fetchone()
 
     # тут пойдут методы которые будут дергаться в сетапе/тирдауне
@@ -36,7 +37,8 @@ class SQLHelper():
         :param email: email удаляемого юзера
         """
         cursor, connection = self.connect_to_database()
-        cursor.execute("DELETE FROM public.user WHERE email = (%s)", (email,))  # удаляем юзера из user
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("DELETE FROM public.user WHERE id = (%s)", (user_id,))  # удаляем юзера из user
         cursor.execute("DELETE FROM public.user_social WHERE email = (%s)", (email,))  # удаляем юзера из user_social
         connection.commit()  # коммитим изменения в БД, взяв коннекшен из внутреннего метода (постгрес такой постгрес)
 
@@ -167,3 +169,43 @@ class SQLHelper():
         connection.commit()
 
 
+
+
+    def delete_sessions_by_email(self, email):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("DELETE FROM public.user_sessions WHERE user_id = (%s)", (user_id,))
+        connection.commit()
+
+    def get_deleted_sessions_by_email(self, email):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("SELECT id, model FROM public.user_sessions WHERE user_id = (%s) and deleted_at is not null", (user_id, ))
+        return cursor.fetchall()
+
+    def insert_session(self, email, model):
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(email)
+        cursor.execute("INSERT INTO public.user_sessions (user_id, model, platform, session_id, currency, ip) VALUES (%s, %s, %s, %s, %s, %s)", (user_id, model, "Web", str(uuid.uuid1()), "mw", '10.100.201.1',))
+        connection.commit()
+
+    def set_email_for_notifications(self, login_email):
+        """
+        Устанавливает емайл для нотификаций такой же как и емайл для логина у данного юзера
+        :param email: Емейл для логина
+        """
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(login_email)  # получаем ид по емайл, который используется для логина
+        cursor.execute("UPDATE public.user SET  email = (%s) WHERE id = (%s)", (login_email, user_id,)) # прописываем емайл для нотиыикаций такой же как и для логина
+        cursor.execute("UPDATE public.user SET  email_valid = true WHERE id = (%s)", (user_id,)) # верифицируем
+        connection.commit()
+
+    def set_email_unverified(self, login_email):
+        """
+        Убрает галочку верификации емайл у данного юзера
+        :param email: Емейл для логина
+        """
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(login_email)  # получаем ид по емайл, который используется для логина
+        cursor.execute("UPDATE public.user SET  email_valid = false WHERE id = (%s)", (user_id,)) # снимаем верификацию
+        connection.commit()

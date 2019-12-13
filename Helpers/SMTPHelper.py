@@ -11,13 +11,16 @@ class SMTPHelper():
         self.__smtp_ssl_host ='smtp.gmail.com'
         self.__smtp_ssl_port = 465
 
-    def __getEmailFromGmail(self, address, password, email_from, email_subject=''):
+    def __getEmailFromGmail(self, address, password, email_from, email_subject='', email_to=''):
         mail = imaplib.IMAP4_SSL('imap.gmail.com', "993")
-        retries_left = 30
+        retries_left = 50
         mail.login(address, password)
         mail.list()
         mail.select('"INBOX"')
-        result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
+        if email_to != '':
+            result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject, "TO", email_to)
+        else:
+            result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
         ids = data[0]
         id_list = ids.split()
         while retries_left >= 0:
@@ -25,7 +28,10 @@ class SMTPHelper():
                 if data[0] == b'':
                     time.sleep(3)
                     mail.select('"INBOX"')
-                    result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
+                    if email_to != '':
+                        result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject, "TO", email_to)
+                    else:
+                        result, data = mail.search(None, 'FROM', email_from, 'SUBJECT', '"%s"' % email_subject)
                     ids = data[0]
                     id_list = ids.split()
                     retries_left -= 1
@@ -42,8 +48,8 @@ class SMTPHelper():
         raw_email = data[0][1]
         return raw_email
 
-    def __getEmailAsString(self, address, password, email_from, email_subject=''):
-        raw_email = self.__getEmailFromGmail(address, password, email_from, email_subject)
+    def __getEmailAsString(self, address, password, email_from, email_subject='', email_to=''):
+        raw_email = self.__getEmailFromGmail(address, password, email_from, email_subject, email_to)
         msg = email.message_from_bytes(raw_email)
         msgtext = msg.as_string()
         email_string = re.sub('=\n', '', msgtext)
@@ -51,13 +57,44 @@ class SMTPHelper():
 
     def get_multisig_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "https:\/\/\w*?\.?freewallet\.org\/multisig\/email\/\w*"
-        multisig_link = re.search(pattern, email_string).group(0)
+
+        try:
+            pattern = "https:\/\/\w*?\.?freewallet\.org(\/multisig\/email\/.*?)[<\]]"
+            multisig_link = re.search(pattern, email_string).group(0)
+        except:
+            pattern = 'via email.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            multisig_link = re.sub("upn=3D", "upn=", nonfixed_link)
+        return multisig_link
+
+    def get_multisig_remove_link_from_email(self, address, password, email_from, email_subject=''):
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+
+        try:
+            pattern = "https:\/\/\w*?\.?freewallet\.org(\/multisig\/email\/.*?)[<\]]"
+            multisig_link = re.search(pattern, email_string).group(0)
+        except:
+            pattern = 'verify this change.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            multisig_link = re.sub("upn=3D", "upn=", nonfixed_link)
+        return multisig_link
+
+    def get_add_multisig_link_from_email(self, address, password, email_from, email_subject=''):
+        """линка добавления второго адреса в мультисиг, которая прилетает на ранее добавленный первый емайл"""
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+
+        try:
+            pattern = "https:\/\/\w*?\.?freewallet\.org(\/multisig\/email\/.*?)[<\]]"
+            multisig_link = re.search(pattern, email_string).group(0)
+        except:
+            pattern = 'your request:.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            multisig_link = re.sub("upn=3D", "upn=", nonfixed_link)
         return multisig_link
 
     def get_verification_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "https:\/\/\w*?\.?freewallet\.org(\/email-validate\/.*?)]"
+        pattern = "https:\/\/\w*?\.?freewallet\.org(\/email-validate\/.*?)[<\]]"
         verification_link = re.search(pattern, email_string).group(1)
         fixed_link = re.sub("(=3D=3D)", "==", verification_link)
         domain_link = email_url + fixed_link
@@ -65,19 +102,29 @@ class SMTPHelper():
 
     def get_registration_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "(https:\/\/\w*?\.?freewallet\.org\/email-temporary\/.*?)]"
-        registration_link = re.search(pattern, email_string).group(1)
+        try:
+            pattern = "(https:\/\/\w*?\.?freewallet\.org\/email-temporary\/.*?)[<\]]"
+            registration_link = re.search(pattern, email_string).group(1)
+        except:
+            pattern = 'claim.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            registration_link = re.sub("upn=3D", "upn=", nonfixed_link)
         return (registration_link)
 
-    def get_multisig_transaction_link_from_email(self, address, password, email_from, email_subject=''):
-        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "(https:\/\/\w*?\.?freewallet\.org\/multisig\/tx\/.*?)]"
-        registration_link = re.search(pattern, email_string).group(1)
+    def get_multisig_transaction_link_from_email(self, address, password, email_from, email_subject='', email_to=''):
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject, email_to)
+        try:
+            pattern = "(https:\/\/\w*?\.?freewallet\.org\/multisig\/tx\/.*?)[<\]]"
+            registration_link = re.search(pattern, email_string).group(1)
+        except:
+            pattern = 'this transaction.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            registration_link = re.sub("upn=3D", "upn=", nonfixed_link)
         return (registration_link)
 
     def get_session_drop_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "https:\/\/\w*?\.?freewallet\.org(\/auth\/session-drop\/.*?)]"
+        pattern = "https:\/\/\w*?\.?freewallet\.org(\/auth\/session-drop\/.*?)[<\]]"
         session_link = re.search(pattern, email_string).group(1)
         fixed_link = re.sub("(=3D=3D)", "==", session_link)
         domain_link = email_url + fixed_link
@@ -99,4 +146,39 @@ class SMTPHelper():
         server.sendmail("kindlyfindattached0@gmail.com", "madokamelpo@gmail.com", "something")
         server.quit()
 
+    def get_change_mail_link_from_email(self, address, password, email_from, email_subject=''):
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+        try:
+            pattern = "(https:\/\/\w*?\.?freewallet\.org\/user\/email-change-validate\/.*?)[<\]]"
+            verification_link = re.search(pattern, email_string).group(1)
+        except:
+            pattern = 'verify this change.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            verification_link = re.sub("upn=3D", "upn=", nonfixed_link)
+        return (verification_link)
 
+    def get_disable_multisig_link_from_email(self, address, password, email_from, email_subject='', email_to=''):
+        """линка ОБЩЕГО выключения мультисиг"""
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject, email_to)
+
+        try:
+            pattern = "https:\/\/\w*?\.?freewallet\.org(\/multisig\/email\/.*?)[<\]]"
+            multisig_link = re.search(pattern, email_string).group(0)
+        except:
+            pattern = 'this change:.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            multisig_link = re.sub("upn=3D", "upn=", nonfixed_link)
+        return multisig_link
+
+    def get_delete_one_multisig_address_link_from_email(self, address, password, email_from, email_subject=''):
+        """линка удаления ОДНОГО мультисиг адреса"""
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+
+        try:
+            pattern = "https:\/\/\w*?\.?freewallet\.org(\/multisig\/email\/.*?)[<\]]"
+            multisig_link = re.search(pattern, email_string).group(0)
+        except:
+            pattern = 'this removal.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            multisig_link = re.sub("upn=3D", "upn=", nonfixed_link)
+        return multisig_link

@@ -2,6 +2,7 @@ from Pages.BasePage import Page
 from Locators.LoginPageLocators import *
 from selenium.common.exceptions import WebDriverException
 import time
+from pyotp.totp import TOTP
 
 class LoginPage(Page):
 
@@ -16,7 +17,7 @@ class LoginPage(Page):
         self.wait_to_be_clickable(LoginPageLocators.loginButton)
         self.wait_and_click(LoginPageLocators.loginButton)
 
-    def login_as_google_user(self, google_email, google_password):
+    def login_as_google_user(self, google_email, google_password, otp_secret):
         """
         Метод для логина как G+ пользователь
         :param google_email: email пользователя на gmail
@@ -24,6 +25,7 @@ class LoginPage(Page):
         """
         main_page = self.driver.current_window_handle
         google_popup = None
+        auth = TOTP(otp_secret)
         try:
             self.wait_and_click(LoginPageLocators.google)
             while google_popup is None:
@@ -31,19 +33,34 @@ class LoginPage(Page):
                     if handle != main_page:
                         google_popup = handle
             self.driver.switch_to.window(google_popup)
-            if self.get_element(LoginPageLocators.googleEmail, 1) == True:
+            if self.get_element(LoginPageLocators.googleEmail, 2) == True:
+
                 self.wait_and_input_text(LoginPageLocators.googleEmail, google_email)
-                self.wait_and_click(LoginPageLocators.googleEmailSubmit)
+                self.send_enter()
+                #self.wait_and_click(LoginPageLocators.googleEmailSubmit)
                 self.wait_and_input_text(LoginPageLocators.googlePassword, google_password)
                 time.sleep(0.5)
-                self.wait_and_click(LoginPageLocators.googlePasswordSubmit)
+                #self.wait_and_click(LoginPageLocators.googlePasswordSubmit)
+                self.send_enter()
+                if self.get_element(LoginPageLocators.totp, 2) == True:
+                    self.wait_and_input_text(LoginPageLocators.totp, auth.now())
+                    self.wait_and_click(LoginPageLocators.totpSubmit)
+                    print("first totp")
             else:
+                a = self.get_html()
+                print(a)
                 self.wait_and_click(LoginPageLocators.googleChangeAddress)
                 self.wait_and_input_text(LoginPageLocators.googleEmail, google_email)
-                self.wait_and_click(LoginPageLocators.googleEmailSubmit)
+                self.send_enter()
+                #self.wait_and_click(LoginPageLocators.googleEmailSubmit)
                 self.wait_and_input_text(LoginPageLocators.googlePassword, google_password)
                 time.sleep(0.5)
-                self.wait_and_click(LoginPageLocators.googlePasswordSubmit)
+                self.send_enter()
+                #self.wait_and_click(LoginPageLocators.googlePasswordSubmit)
+                if self.get_element(LoginPageLocators.totp, 2) == True:
+                    self.wait_and_input_text(LoginPageLocators.totp, auth.now())
+                    self.wait_and_click(LoginPageLocators.totpSubmit)
+                    print("second totp")
         except:
             self.driver.switch_to.window(main_page)
         self.driver.switch_to.window(main_page)

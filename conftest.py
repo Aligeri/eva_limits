@@ -30,16 +30,27 @@ def driver(request, get_url):
         driverpath = os.path.join(filepath, "chromedriverMac")
 
     #options.add_argument('--start-maximized')
-    # options.add_argument('--headless')
-    # options.add_argument('--no-sandbox')
-    # options.add_argument('--disable-dev-shm-usage')
+    headless = False
+    options.add_argument('lang=en')
+    if headless == True:
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--disable-mobile-emulation')
+        options.add_argument('--disable-device-emulation')
+        options.add_argument('lang=en')
+        options.add_experimental_option('prefs', {'intl.accept_languages': 'en,en_US'})
     #driverpath = "D:\FC\chromedriver.exe"
     driver = webdriver.Chrome(executable_path=driverpath, options=options)  # Временное решение, потом допилю подхват драйвера из PATH
-    driver.maximize_window()
+    if headless == True:
+        driver.set_window_size(1920, 1080)
+        print("set size")
+    if headless == False:
+        driver.maximize_window()
+        print("max window")
     global driver_screenshots
     if driver_screenshots == None:
         driver_screenshots = driver
-    #driver.set_window_size(1920, 1080)
     driver.implicitly_wait(5)
     driver.get(get_url)
     yield driver

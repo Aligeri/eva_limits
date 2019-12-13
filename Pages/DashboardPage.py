@@ -27,12 +27,25 @@ FILTER_APPLY = {
     "Pay Out": Filters.payOutFilter,
     "Pay In": Filters.payInFilter,
     "Failed": Filters.failedFilter,
+    "Transfer In": Filters.transferInFilter,
+    "Transfer Out": Filters.transferOutFilter,
+    "Ethereum": Filters.ethereumFilter,
+    "Bitcoin": Filters.bitcoinFilter,
+    "Dogecoin": Filters.dogecoinFilter,
+    "XEM": Filters.xemFilter,
+
 }
 FILTER_BUTTON = {
     "Exchange": Filters.exchangeButton,
     "Pay Out": Filters.payOutButton,
     "Pay In": Filters.payInButton,
     "Failed": Filters.failedButton,
+    "Transfer In": Filters.transferInButton,
+    "Transfer Out": Filters.transferOutButton,
+    "Ethereum": Filters.ethereumButton,
+    "Bitcoin": Filters.bitcoinButton,
+    "Dogecoin": Filters.dogecoinButton,
+    "XEM": Filters.xemButton,
 }
 
 class DashboardPage(Page):
@@ -46,11 +59,12 @@ class DashboardPage(Page):
 
     def check_receive_wallet(self, currency, extra_id=False):
         self.select_wallet(currency)
+        self.wait_until_element_visible(DepositAddress.depositAddress)
         assert self.get_element_text(DepositAddress.depositAddress) is not None
         assert self.get_element_text(DepositAddress.userId) is not None
         assert self.get_element_text(DepositAddress.link) is not None
         if extra_id:
-            assert self.get_element_text(DepositAddress.memo) is not None
+            assert self.get_element_text(DepositAddress.message) is not None
         self.select_wallet(currency)
         time.sleep(0.5)
 
@@ -77,7 +91,7 @@ class DashboardPage(Page):
 
     def navigate_to_buy_with_a_card(self):
         self.wait_and_click(WalletActionsButtons.buy)
-
+        
     def select_wallet(self, wallet):
         """
         Выбор кошелька в receive
@@ -89,7 +103,9 @@ class DashboardPage(Page):
             "Bitcoin Cash": ReceiveWallets.bcc,
             "Dogecoin": ReceiveWallets.doge,
             "Ethereum": ReceiveWallets.eth,
-            "EOS": ReceiveWallets.eos
+            "EOS": ReceiveWallets.eos,
+            "XEM": ReceiveWallets.xem,
+            "XMR": ReceiveWallets.xmr
         }
         self.wait_and_click(WALLET[wallet])
 
@@ -104,7 +120,9 @@ class DashboardPage(Page):
             "Bitcoin Cash": TopUpWallets.bcc,
             "Ethereum": TopUpWallets.eth,
             "Doge": TopUpWallets.doge,
-            "EOS": TopUpWallets.eos
+            "EOS": TopUpWallets.eos,
+            "XMR": TopUpWallets.xmr,
+            "XEM": TopUpWallets.xem
         }
         self.wait_and_click(WALLET[wallet])
 
@@ -140,6 +158,11 @@ class DashboardPage(Page):
             else:
                 return address
 
+    def check_value_in_deposit_address(self, value):
+        self.assert_element_text_contains_value(DepositAddress.currentAddress, value)
+
+    def check_value_not_in_deposit_address(self, value):
+        self.assert_element_text_not_contains_value(DepositAddress.currentAddress, value)
 
     def check_new_deposit_address(self, current_address):
         """
@@ -150,12 +173,14 @@ class DashboardPage(Page):
         self.wait_and_click(DepositAddress.generateNew)
         self.assert_element_text_is_not_equal(DepositAddress.currentAddress, current_address)
 
-    def generate_new_deposit_address(self,):
+    def generate_new_deposit_address(self):
         """
         Генерирует новый deposit address у текущего выбранного кошелька
-
+        Проверяет что новый deposit address не равен старому
+        :param current_address: старый deposit address
         """
         self.wait_and_click(DepositAddress.generateNew)
+        time.sleep(1)
 
     def check_previous_address_in_list(self, current_address):
         """
@@ -190,6 +215,18 @@ class DashboardPage(Page):
         self.wait_and_click(Filters.applyFilters)
         #self.wait_until_element_visible(FILTER_BUTTON[history_filter])
 
+    def apply_date_filters(self, startDate, endDate):
+        """
+        Применяет фильтры по дате на странице History
+        :param startDate: дата начала выборки
+        :param endDate: дата конца выборки
+        :return:
+        """
+        self.wait_and_click(Filters.filtersButton)
+        self.wait_and_input_text(Filters.startDateFilter, startDate)
+        self.wait_and_input_text(Filters.endDateFilter, endDate)
+        self.wait_and_click(Filters.applyFilters)
+
     def remove_filter(self, history_filter):
         """
         Отключает фильтры на странице History
@@ -197,3 +234,23 @@ class DashboardPage(Page):
         """
         self.wait_and_click_element_within_element(FILTER_BUTTON[history_filter], Filters.removeFilter)
         self.wait_until_element_invisible(FILTER_BUTTON[history_filter], 0.5)
+
+    def check_receive_link(self, currency, user_id):
+        """
+           Проверяет что в ресиве для выбранной валюты currency
+           текст в поле userId равен переданному параметру user_id и что user_id содерждится в юзерлинке
+        """
+        self.select_wallet(currency)
+        self.wait_until_element_visible(DepositAddress.depositAddress)
+        assert self.get_element_text(DepositAddress.depositAddress) is not None
+        assert self.get_element_text(DepositAddress.userId) == user_id
+        assert self.get_element_text(DepositAddress.link).find(user_id)
+        time.sleep(0.5)
+
+    def compare_transactions(self, transactions):
+        texts = []
+        webelements = self.get_elements(Filters.transaction)
+        for element in webelements:
+            text = self.get_text_from_webelement(element)
+            texts.append(text)
+        assert transactions == texts

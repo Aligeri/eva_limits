@@ -15,6 +15,11 @@ def data_basic_registration():
     yield
     sql.delete_user_from_database(NewBasicUser.email)
 
+@pytest.fixture(scope='function')
+def data_1074():
+    yield
+    sql.delete_user_from_database(NewBasicUser.email_1074)
+
 
 @pytest.fixture(scope='function')
 def data_google_registration():
@@ -67,7 +72,7 @@ class TestClass:
         loginPage = LoginPage(driver)
         loginPage.navigate_to_signup_page()
         loginPage.clear_google_cookies()
-        loginPage.login_as_google_user(NewGoogleUser.email, NewGoogleUser.password)
+        loginPage.login_as_google_user(NewGoogleUser.email, NewGoogleUser.password, NewGoogleUser.otp_code)
         loginPage.input_pincode_create(NewGoogleUser.pincode)
         loginPage.input_pincode_repeat(NewGoogleUser.pincode)
         loginPage.wait_until_element_visible(DashboardLocators.logout)
@@ -118,3 +123,16 @@ class TestClass:
         loginPage.assert_signup_button_state("enabled")
         loginPage.wait_and_click(LoginPageLocators.signUpButton)
         loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "Something went wrong. Try again later.")
+
+    @pytest.mark.usefixtures("data_1074")
+    @xray("QA-1074", "QA-1073")
+    @pytest.mark.websmoke
+    def test_pin_codes_must_match(self, driver):
+        loginPage = LoginPage(driver)
+        loginPage.input_basic_user_registration_data(NewBasicUser.email_1074, NewBasicUser.password, NewBasicUser.password)
+        loginPage.wait_and_click(LoginPageLocators.termsCheckbox)
+        loginPage.assert_signup_button_state("enabled")
+        loginPage.wait_and_click(LoginPageLocators.signUpButton)
+        loginPage.input_pincode_create(NewBasicUser.pincode)
+        loginPage.input_pincode_repeat(NewBasicUser.wrong_pincode)
+        loginPage.wait_and_assert_element_text(LoginPageLocators.incorrectPasswordTooltip, "PIN codes don’t match")
