@@ -17,6 +17,7 @@ class Account:
     SaveBtn = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0 settings__button--11kwP button__type-inline--3PR1T')]")
     VerificationPopup = (By.XPATH, "//div[contains(@class, 'pp__popup--2rStv settings__verificationPopup--28NHV')]")
     SendLinkBtn = (By.XPATH, "//button[contains(@class, 'button__button--2ccS0') and text()='Send link']")
+    ResendLink = (By.XPATH, "//a[@class='settings__resendLink--CVBaW']")
     ConfirmEmailText = (By.XPATH, "//div[contains(@class, 'settings__warningDescription--Oh3AO settings__description--3sdDL') and text()='Confirm email change']")
 
     languageDropdown = (By.XPATH, '//div[text()="Language"]/div')

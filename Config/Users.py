@@ -130,6 +130,7 @@ class UserforChangeUserId:
     pincode = "7777"
 
 class RichUser:
+    '''юзер с баблом на балансе в нескольких валютах'''
     email = "testermail35+751@gmail.com"
     password = "12345678"
     pincode = "7777"
@@ -137,12 +138,59 @@ class RichUser:
     btcWallet = "3NWC98QrmFZNNc3NEPcGPSDk2AqYTGEECG"
     dogeWallet = "DQbGyBMGrFyFJeSUzkTjzyraRprvkPQKpf"
 
-class UserforСhangeMail:
+class UserforChangeMail:
     email = "testermail35+810@gmail.com"
     password = "12345678"
     email_password = "123QWEasdZXC"
     pincode = "7777"
     new_email = "testermail35+8101@gmail.com"
+
+class UserforResendLink:
+    email = "testermail35+811@gmail.com"
+    password = "12345678"
+    email_password = "123QWEasdZXC"
+    pincode = "7777"
+
+class UserforAddSecondMultisig:
+    email = "testermail35+816@gmail.com"
+    first_multisig_email = "testermail35@gmail.com"
+    second_multisig_email = "testermail35+816@gmail.com"
+    password = "12345678"
+    email_password = "123QWEasdZXC"
+    pincode = "7777"
+
+class UserforMultisigTransaction:
+    '''юзер с баблом на балансе в BTC и DOGE и включенным мультисигом на два адреса'''
+    email = "testermail35+762@gmail.com"
+    first_multisig_email = "testermail35+762@gmail.com"
+    second_multisig_email = "testermail35+7622@gmail.com"
+    password = "12345678"
+    email_password = "123QWEasdZXC"
+    pincode = "7777"
+
+class UserforDisableMultisig:
+    '''юзер с включенным мультисигом на два адреса, для последующего выключения'''
+    email = "testermail35+899@gmail.com"
+    first_multisig_email = "testermail35+899@gmail.com"
+    second_multisig_email = "testermail35+8999@gmail.com"
+    password = "12345678"
+    email_password = "123QWEasdZXC"
+    pincode = "7777"
+
+class UserforDeleteOneMultisigAddress:
+    '''юзер с включенным мультисигом на два адреса, для удаления одного из двух добавленных адресов'''
+    email = "testermail35+1681@gmail.com"
+    first_multisig_email = "testermail35+1681@gmail.com"
+    second_multisig_email = "testermail35+16811@gmail.com"
+    password = "12345678"
+    email_password = "123QWEasdZXC"
+    pincode = "7777"
+
+class UserforCheckAddWallets:
+    '''юзер для проверки наличия валют во вкладках addwallets'''
+    email = "testermail35+1693@gmail.com"
+    password = "12345678"
+    pincode = "7777"
 
 class CommonData:
     FWTContract = "0xf966bc1e1ab786830fd98a3f8f978940f8e5c13e"

@@ -586,3 +586,29 @@ class TransactionsPage(Page):
             amounts.append(self.get_element_text_within_webelement(transaction, Send.amountBlock))
         assert comment == comments
         assert amount == amounts
+
+    def check_unconfirmed_transaction_by_comment(self, comment):
+        """
+        проверяет, что транзакция подвисла в фиолетовом статусе ожидания мультисиг
+        не переходя в детали транзакции
+        """
+        retries_left = 5
+        while retries_left > 0:
+            try:
+                self.wait_until_element_visible((By.XPATH, (
+                            ".//a[contains(@class, 'item__wrapper--2HY-h item__wrapper__unconfirmed--3YAln')][.//div[contains(text(), '%s')]]" % comment)),
+                                                10)
+                return
+            except:
+                self.navigate_to_send()
+                self.navigate_to_history()
+                retries_left -= 1
+        raise NoSuchElementException("transaction is not found")
+
+    def check_completed_transaction(self, comment):
+        """
+        Проверяет что транзакция закомплитилась
+        """
+        self.open_transaction_by_comment(comment)
+        self.wait_and_assert_element_text(Send.statusInTransaction, "Completed")
+        time.sleep(1)

@@ -163,6 +163,18 @@ class SecurityPage(Page):
         self.wait_and_click(Multisig.gotIt)
         self.wait_and_click(Multisig.continueButton)
 
+    def add_second_multisig_address(self, email):
+        """
+        Добавляет второй емайл в multisig на странице Security > Email confirmation
+        :param email: емейл который добавляется в качестве multisig
+        :return:
+        """
+        self.wait_until_element_visible(Multisig.stats)
+        time.sleep(0.5)
+        self.assert_element_attirbute_value(Multisig.continueButton, "disabled", "true")
+        self.wait_and_input_text(Multisig.email1, email)
+        self.wait_and_click(Multisig.continueButton)
+
 
     def discard_multisig_address(self):
         """
@@ -271,3 +283,27 @@ class SecurityPage(Page):
     def drop_all_sessions(self):
         self.wait_and_click(ActiveSessions.allSessionsDrop)
         self.wait_and_click(ActiveSessions.dropYes)
+
+    def check_veified_multisig_addreses(self, email1, email2):
+        """
+        Проверяет на странице Security > Email confirmation два верицированных емайла
+        :param email1: первый multisig емайл
+        :param email1: второй multisig емайл
+        :return:
+        """
+        emails = self.get_elements(Multisig.confirmedAddressFirst)
+        emails_text = []
+        for i in range(len(emails)):
+            emails_text.append(self.get_text_from_webelement(emails[i]))
+        assert email1 in emails_text
+        assert email2 in emails_text
+
+    def delete_one_multisig_address(self,  email):
+        self.wait_until_element_visible(Multisig.confirmedAddressFirst)
+        emails = self.get_elements(Multisig.confirmedAddressFirst)
+        for i in range(len(emails)):
+            email_text = self.get_text_from_webelement(emails[i])
+            if email_text == email:
+                self.wait_and_click_element_within_webelement(emails[i], Multisig.remove_icon)
+                break
+

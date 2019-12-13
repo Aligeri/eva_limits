@@ -26,13 +26,20 @@ def data_google_user():
 
 @pytest.fixture(scope='function')
 def clear_data_for_change_mail():
-    email.delete_emails_from_gmail(UserforСhangeMail.email, UserforСhangeMail.email_password, "Freewallet", "Verify changing your email address")
-    email.delete_emails_from_gmail(UserforСhangeMail.new_email, UserforСhangeMail.email_password, "Freewallet", "Verify your email address")
-    sql.set_email_for_notifications(UserforСhangeMail.email)
-    sql.delete_user_from_database(UserforСhangeMail.new_email)
+    email.delete_emails_from_gmail(UserforChangeMail.email, UserforChangeMail.email_password, "Freewallet", "Verify changing your email address")
+    email.delete_emails_from_gmail(UserforChangeMail.new_email, UserforChangeMail.email_password, "Freewallet", "Verify your email address")
+    sql.set_email_for_notifications(UserforChangeMail.email)
+    sql.delete_user_from_database(UserforChangeMail.new_email)
     yield
-    email.delete_emails_from_gmail(UserforСhangeMail.email, UserforСhangeMail.email_password, "Freewallet", "Verify changing your email address")
-    email.delete_emails_from_gmail(UserforСhangeMail.new_email, UserforСhangeMail.email_password, "Freewallet", "Verify your email address")
+    email.delete_emails_from_gmail(UserforChangeMail.email, UserforChangeMail.email_password, "Freewallet", "Verify changing your email address")
+    email.delete_emails_from_gmail(UserforChangeMail.new_email, UserforChangeMail.email_password, "Freewallet", "Verify your email address")
+
+@pytest.fixture(scope='function')
+def clear_data_for_resend_link():
+    email.delete_emails_from_gmail(UserforResendLink.email, UserforResendLink.email_password, "Freewallet", "Verify your email address")
+    sql.set_email_unverified(UserforResendLink.email)
+    yield
+    email.delete_emails_from_gmail(UserforResendLink.email, UserforResendLink.email_password, "Freewallet", "Verify your email address")
 
 class TestClass:
 
@@ -78,16 +85,36 @@ class TestClass:
         # проверка смены емайл в настройках QA-810
         loginPage = LoginPage(driver)
         loginPage.reset_session()
-        loginPage.login_as_basic_user(UserforСhangeMail.email, UserforСhangeMail.password)
-        loginPage.input_pincode_login(UserforСhangeMail.pincode)
+        loginPage.login_as_basic_user(UserforChangeMail.email, UserforChangeMail.password)
+        loginPage.input_pincode_login(UserforChangeMail.pincode)
         settingsPage = SettingsPage(driver)
-        settingsPage.check_email_is_loaded(UserforСhangeMail.email)
-        settingsPage.change_email(UserforСhangeMail.new_email)
-        verification_link = email.get_change_mail_link_from_email(UserforСhangeMail.email, UserforСhangeMail.email_password, "Freewallet", "Verify changing your email address")
+        settingsPage.check_email_is_loaded(UserforChangeMail.email)
+        settingsPage.change_email(UserforChangeMail.new_email)
+        verification_link = email.get_change_mail_link_from_email(UserforChangeMail.email, UserforChangeMail.email_password, "Freewallet", "Verify changing your email address")
         settingsPage.navigate_to_link(verification_link)
-        loginPage.input_pincode_login(UserforСhangeMail.pincode)
+        loginPage.input_pincode_login(UserforChangeMail.pincode)
         #settingsPage.check_email_is_not_verified(UserforСhangeMail.new_email) # не работает проверка промежуточного состояния
-        verification_link1 = email.get_verification_link_from_email(UserforСhangeMail.new_email, UserforСhangeMail.email_password,"Freewallet", "Verify your email address")
+        # ждем правки https://jira.adam.loc/browse/EM-7187
+        verification_link1 = email.get_verification_link_from_email(UserforChangeMail.new_email, UserforChangeMail.email_password,"Freewallet", "Verify your email address")
         settingsPage.navigate_to_link(verification_link1)
-        loginPage.input_pincode_login(UserforСhangeMail.pincode)
+        loginPage.input_pincode_login(UserforChangeMail.pincode)
         #settingsPage.check_email_is_verified(UserforСhangeMail.new_email) # не работает проверка финального состояния
+        # ждем правки https://jira.adam.loc/browse/EM-7187
+
+    @xray("QA-811", "QA-784")
+    @pytest.mark.websmoke
+    @pytest.mark.usefixtures("clear_data_for_resend_link")
+    def test_resend_link(self, driver):
+        # получение письма по resend и верификация link QA-811
+        loginPage = LoginPage(driver)
+        loginPage.reset_session()
+        loginPage.login_as_basic_user(UserforResendLink.email, UserforResendLink.password)
+        loginPage.input_pincode_login(UserforResendLink.pincode)
+        settingsPage = SettingsPage(driver)
+        settingsPage.check_email_is_loaded(UserforResendLink.email)
+        settingsPage.resend_link()
+        verification_link = email.get_verification_link_from_email(UserforResendLink.email,UserforResendLink.email_password, "Freewallet","Verify your email address")
+        settingsPage.navigate_to_link(verification_link)
+        loginPage.input_pincode_login(UserforResendLink.pincode)
+        settingsPage.check_email_is_verified(UserforResendLink.email)
+

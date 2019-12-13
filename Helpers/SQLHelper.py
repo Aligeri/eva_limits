@@ -141,10 +141,19 @@ class SQLHelper():
         """
         Устанавливает емайл для нотификаций такой же как и емайл для логина у данного юзера
         :param email: Емейл для логина
-
         """
         cursor, connection = self.connect_to_database()
         user_id = self.__get_user_from_database(login_email)  # получаем ид по емайл, который используется для логина
         cursor.execute("UPDATE public.user SET  email = (%s) WHERE id = (%s)", (login_email, user_id,)) # прописываем емайл для нотиыикаций такой же как и для логина
         cursor.execute("UPDATE public.user SET  email_valid = true WHERE id = (%s)", (user_id,)) # верифицируем
+        connection.commit()
+
+    def set_email_unverified(self, login_email):
+        """
+        Убрает галочку верификации емайл у данного юзера
+        :param email: Емейл для логина
+        """
+        cursor, connection = self.connect_to_database()
+        user_id = self.__get_user_from_database(login_email)  # получаем ид по емайл, который используется для логина
+        cursor.execute("UPDATE public.user SET  email_valid = false WHERE id = (%s)", (user_id,)) # снимаем верификацию
         connection.commit()

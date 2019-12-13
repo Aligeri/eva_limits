@@ -180,3 +180,5 @@ class SettingsPage(Page):
     def send_file(self, field, value):
         a = self.driver.find_element(*IDENTITY_FIELDS[field])
         a.send_keys(value)
+    def resend_link(self):
+        self.wait_and_click(Account.ResendLink)

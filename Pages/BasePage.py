@@ -417,3 +417,38 @@ class Page(object):
             except WebDriverException:
                 retries_left -= 1
         raise NoSuchElementException("Error occurred during clear input")
+
+    def find_element_within_webelement(self, parent_element, child_locator):
+        """
+        Находит элемент внутри другого элемента
+        :param parent_element: родительский веб элемент (не локатор)
+        :param child_locator: локатор дочернего элемента из Locators/*
+        :return: дочерний элемент внутри родительского элемента
+        """
+        retries_left = 2
+        while retries_left > 0:
+            try:
+                child_element = parent_element.find_element(*child_locator)
+                return child_element
+            except WebDriverException:
+                time.sleep(0.5)
+                retries_left -= 1
+        raise WebDriverException("Element is not present on page")
+
+    def wait_and_click_element_within_webelement(self, parent_element, child_locator):
+        """
+        Находит элемент внутри другого вебэлемента и кликает по нему
+        :param parent_element: родительский веб элемент (не локатор)
+        :param child_locator: локатор дочернего элемента из Locators/*
+        """
+        retries_left = 2
+        while retries_left > 0:
+            try:
+                text = self.get_text_from_webelement(parent_element)
+                self.find_element_within_webelement(parent_element, child_locator).click()
+                return
+            except WebDriverException:
+                self.wait_to_be_clickable(child_locator)
+                time.sleep(0.5)
+                retries_left -= 1
+        raise WebDriverException("Element is not clickable or not present on page")

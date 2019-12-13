@@ -73,6 +73,19 @@ class SMTPHelper():
             multisig_link = re.sub("upn=3D", "upn=", nonfixed_link)
         return multisig_link
 
+    def get_add_multisig_link_from_email(self, address, password, email_from, email_subject=''):
+        """линка добавления второго адреса в мультисиг, которая прилетает на ранее добавленный первый емайл"""
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+
+        try:
+            pattern = "https:\/\/\w*?\.?freewallet\.org(\/multisig\/email\/.*?)[<\]]"
+            multisig_link = re.search(pattern, email_string).group(0)
+        except:
+            pattern = 'your request:.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            multisig_link = re.sub("upn=3D", "upn=", nonfixed_link)
+        return multisig_link
+
     def get_verification_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
         pattern = "https:\/\/\w*?\.?freewallet\.org(\/email-validate\/.*?)[<\]]"
@@ -94,8 +107,13 @@ class SMTPHelper():
 
     def get_multisig_transaction_link_from_email(self, address, password, email_from, email_subject=''):
         email_string = self.__getEmailAsString(address, password, email_from, email_subject)
-        pattern = "(https:\/\/\w*?\.?freewallet\.org\/multisig\/tx\/.*?)[<\]]"
-        registration_link = re.search(pattern, email_string).group(1)
+        try:
+            pattern = "(https:\/\/\w*?\.?freewallet\.org\/multisig\/tx\/.*?)[<\]]"
+            registration_link = re.search(pattern, email_string).group(1)
+        except:
+            pattern = 'this transaction.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            registration_link = re.sub("upn=3D", "upn=", nonfixed_link)
         return (registration_link)
 
     def get_session_drop_link_from_email(self, address, password, email_from, email_subject=''):
@@ -132,3 +150,29 @@ class SMTPHelper():
             nonfixed_link = re.search(pattern, email_string).group(1)
             verification_link = re.sub("upn=3D", "upn=", nonfixed_link)
         return (verification_link)
+
+    def get_disable_multisig_link_from_email(self, address, password, email_from, email_subject=''):
+        """линка ОБЩЕГО выключения мультисиг"""
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+
+        try:
+            pattern = "https:\/\/\w*?\.?freewallet\.org(\/multisig\/email\/.*?)[<\]]"
+            multisig_link = re.search(pattern, email_string).group(0)
+        except:
+            pattern = 'this change:.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            multisig_link = re.sub("upn=3D", "upn=", nonfixed_link)
+        return multisig_link
+
+    def get_delete_one_multisig_address_link_from_email(self, address, password, email_from, email_subject=''):
+        """линка удаления ОДНОГО мультисиг адреса"""
+        email_string = self.__getEmailAsString(address, password, email_from, email_subject)
+
+        try:
+            pattern = "https:\/\/\w*?\.?freewallet\.org(\/multisig\/email\/.*?)[<\]]"
+            multisig_link = re.search(pattern, email_string).group(0)
+        except:
+            pattern = 'this removal.*?(https:.*?)" style'
+            nonfixed_link = re.search(pattern, email_string).group(1)
+            multisig_link = re.sub("upn=3D", "upn=", nonfixed_link)
+        return multisig_link
